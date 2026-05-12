@@ -1,6 +1,6 @@
 # HappyHome 🏠
 
-**Première marketplace de ménagères certifiées à Douala, Cameroun.**
+**Première plateforme de prestataires à domicile certifiées au Cameroun.**
 
 Mise en relation entre particuliers et prestataires de services ménagers vérifiées — KYC 6 étapes, paiement Mobile Money, suivi en temps réel.
 

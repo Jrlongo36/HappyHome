@@ -1,6 +1,6 @@
 # HappyHome 🏠
 
-**Première plateforme de prestataires à domicile certifiées au Cameroun.**
+**Première plateforme de prestataires à domicile ve2rifiés et securisée.**
 
 Mise en relation entre particuliers et prestataires de services ménagers vérifiées — KYC 6 étapes, paiement Mobile Money, suivi en temps réel.
 

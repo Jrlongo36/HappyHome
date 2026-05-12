@@ -3,15 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="HappyHome — Ménagères certifiées à Douala. KYC strict, paiement Mobile Money, satisfaction garantie.">
+<meta name="description" content="HappyHome — Prestataires certifiées à Douala. KYC strict, paiement Mobile Money, satisfaction garantie.">
 <meta name="theme-color" content="#0F268C">
-<title>HappyHome — Ménagères certifiées à Douala</title>
+<title>HappyHome — Prestataires certifiées à Douala</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--cb:#0F268C;--cb2:#1a35b8;--cb3:#07112e;--cy:#FFC107;--co:#ff9800;--cg:#4CAF50;--cr:#F44336;--glass:rgba(255,255,255,.07);--glassb:rgba(255,255,255,.13);--t2:rgba(255,255,255,.72);--t3:rgba(255,255,255,.42);--r:10px;--rm:14px;--sidebar:230px;}
+:root{
+  --cb:#0F268C;--cb2:#1a35b8;--cb3:#07112e;
+  --cy:#FFC107;--co:#ff9800;--cg:#4CAF50;--cr:#F44336;
+  --r:10px;--rm:14px;--sidebar:230px;
+  /* Thème sombre (défaut) */
+  --bg:#030a1f;--bg2:rgba(0,0,0,.20);
+  --text:#ffffff;--t2:rgba(255,255,255,.72);--t3:rgba(255,255,255,.42);
+  --card:rgba(255,255,255,.07);--cardb:rgba(255,255,255,.11);
+  --cardd:rgba(0,0,0,.22);--carddb:rgba(255,255,255,.08);
+  --inp-bg:rgba(255,255,255,.07);--inp-b:rgba(255,255,255,.14);
+  --divider:rgba(255,255,255,.08);
+  --overlay:rgba(0,0,0,.65);
+  --modal-bg:#131828;--modal-b:rgba(255,255,255,.10);
+  --sb-bg:rgba(0,0,0,.35);--sb-b:rgba(255,255,255,.07);--sb-text:rgba(255,255,255,.55);
+  --footer-bg:rgba(0,0,0,.20);--footer-b:rgba(255,255,255,.07);
+  --glass:rgba(255,255,255,.07);--glassb:rgba(255,255,255,.13);
+}
+[data-theme="light"]{
+  --bg:#FFF8F0;--bg2:rgba(15,38,140,.04);
+  --text:#1A1A2E;--t2:rgba(26,26,46,.72);--t3:rgba(26,26,46,.42);
+  --card:rgba(255,255,255,.90);--cardb:rgba(15,38,140,.15);
+  --cardd:rgba(15,38,140,.05);--carddb:rgba(15,38,140,.12);
+  --inp-bg:rgba(15,38,140,.05);--inp-b:rgba(15,38,140,.20);
+  --divider:rgba(15,38,140,.10);
+  --overlay:rgba(0,0,0,.55);
+  --modal-bg:#FFFFFF;--modal-b:rgba(15,38,140,.15);
+  --sb-bg:rgba(255,248,240,.97);--sb-b:rgba(15,38,140,.12);--sb-text:rgba(26,26,46,.55);
+  --footer-bg:rgba(15,38,140,.05);--footer-b:rgba(15,38,140,.10);
+  --glass:rgba(255,255,255,.90);--glassb:rgba(15,38,140,.15);
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{font-family:'Outfit',sans-serif;background:var(--cb3);color:#fff;overflow-x:hidden;}
+html,body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;transition:background .3s,color .3s;}
 /* ── MARKETING ── */
 #marketing{min-height:100vh;background:linear-gradient(155deg,#030a1f 0%,#0d1e6b 45%,#1a0050 100%);position:relative;overflow:hidden;}
 .mesh{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 18% 25%,rgba(255,193,7,.07) 0%,transparent 50%),radial-gradient(ellipse at 82% 75%,rgba(15,38,140,.5) 0%,transparent 55%),radial-gradient(ellipse at 55% 5%,rgba(255,255,255,.025) 0%,transparent 40%);}
@@ -26,6 +55,8 @@ html,body{font-family:'Outfit',sans-serif;background:var(--cb3);color:#fff;overf
 .nav-links{display:flex;align-items:center;gap:10px;}
 .nbtn{padding:10px 20px;border-radius:50px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
 .nbtn-out{background:transparent;border:1.5px solid rgba(255,255,255,.25);color:#fff;}
+.nbtn-toggle{line-height:1;display:flex;align-items:center;justify-content:center;}
+[data-theme="light"] .nbtn-toggle{border-color:rgba(255,255,255,.4)!important;color:#fff!important;}
 .nbtn-out:hover{background:rgba(255,255,255,.1);}
 .nbtn-cta{background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;box-shadow:0 4px 18px rgba(255,193,7,.3);}
 .nbtn-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,193,7,.4);}
@@ -80,24 +111,25 @@ html,body{font-family:'Outfit',sans-serif;background:var(--cb3);color:#fff;overf
 .rbtn-g{background:linear-gradient(135deg,#007A3D,#005a2d);color:#fff;}
 .rbtn-b{background:linear-gradient(135deg,var(--cb),var(--cb2));color:#fff;}
 /* Footer */
-.footer{padding:40px 72px;text-align:center;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.2);}
+.footer{padding:40px 72px;text-align:center;border-top:1px solid var(--footer-b);background:var(--footer-bg);}
 .footer-logo{font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;}
 .footer-logo span{color:var(--cy);}
 .footer-t{font-size:12px;color:rgba(255,255,255,.35);}
 
 /* ── PLATFORM DESKTOP ── */
-#platform{display:none;width:100%;min-height:100vh;background:linear-gradient(145deg,#030a1f 0%,#0a1860 100%);}
+#platform{display:none;width:100%;min-height:100vh;background:var(--bg);}
 #platform.active{display:flex;}
+#platform,#marketing{transition:background .3s;}
 .app-shell{display:flex;width:100%;min-height:100vh;}
 /* Sidebar */
-.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:rgba(0,0,0,.35);backdrop-filter:blur(22px);border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;padding:20px 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--sb-bg);backdrop-filter:blur(22px);border-right:1px solid var(--sb-b);display:flex;flex-direction:column;padding:20px 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
 .sb-logo{padding:0 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px;}
 .sb-logo-t{font-size:22px;font-weight:900;color:#fff;letter-spacing:-1px;}
 .sb-logo-t span{color:var(--cy);}
 .sb-logo-s{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
 .sb-sec{padding:0 10px;margin-bottom:6px;}
 .sb-sec-l{font-size:9px;font-weight:700;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin-bottom:3px;}
-.sb-it{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);cursor:pointer;transition:all .2s;font-size:13px;font-weight:600;color:rgba(255,255,255,.55);}
+.sb-it{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);cursor:pointer;transition:all .2s;font-size:13px;font-weight:600;color:var(--sb-text);}
 .sb-it:hover{background:rgba(255,255,255,.08);color:#fff;}
 .sb-it.on{background:rgba(255,193,7,.11);color:var(--cy);border:1px solid rgba(255,193,7,.18);}
 .sb-it-ico{font-size:16px;min-width:20px;text-align:center;}
@@ -133,15 +165,15 @@ html,body{font-family:'Outfit',sans-serif;background:var(--cb3);color:#fff;overf
 /* Split view */
 .split{display:grid;grid-template-columns:1fr 380px;gap:20px;}
 /* Shared */
-.g{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);border-radius:var(--rm);}
-.gd{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);border-radius:var(--rm);}
+.g{background:var(--card);border:1px solid var(--cardb);border-radius:var(--rm);}
+.gd{background:var(--cardd);border:1px solid var(--carddb);border-radius:var(--rm);}
 .cp{padding:16px 18px;margin-bottom:12px;}
-.sec{font-size:10px;font-weight:700;color:rgba(255,255,255,.32);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
-.t-body{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;}
-.t-cap{font-size:11px;color:rgba(255,255,255,.38);}
+.sec{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.t-body{font-size:13px;color:var(--t2);line-height:1.5;}
+.t-cap{font-size:11px;color:var(--t3);}
 .t-y{color:var(--cy);}.t-g{color:#4CAF50;}.t-r{color:#F44336;}
-.dv{height:1px;background:rgba(255,255,255,.08);margin:14px 0;}
-.inp{width:100%;padding:11px 14px;border-radius:var(--r);border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.dv{height:1px;background:var(--divider);margin:14px 0;}
+.inp{width:100%;padding:11px 14px;border-radius:var(--r);border:1.5px solid var(--inp-b);background:var(--inp-bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;outline:none;transition:border-color .2s,background .3s,color .3s;}
 .inp::placeholder{color:rgba(255,255,255,.28);}
 .inp:focus{border-color:rgba(255,193,7,.38);}
 select.inp{-webkit-appearance:none;}
@@ -196,9 +228,9 @@ textarea.inp{resize:none;}
 #d-toast{position:fixed;bottom:28px;right:28px;background:rgba(12,12,12,.97);color:#fff;padding:12px 22px;border-radius:var(--rm);font-size:13px;font-weight:600;opacity:0;transition:all .3s;z-index:9999;border:1px solid rgba(255,255,255,.1);transform:translateY(8px);pointer-events:none;}
 #d-toast.show{opacity:1;transform:translateY(0);}
 /* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:500;}
+.overlay{position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:500;}
 .overlay.show{display:flex;}
-.modal{width:100%;max-width:440px;background:#131828;border-radius:22px;padding:28px;border:1px solid rgba(255,255,255,.1);}
+.modal{width:100%;max-width:440px;background:var(--modal-bg);border-radius:22px;padding:28px;border:1px solid var(--modal-b);}
 .modal-h{font-size:17px;font-weight:800;color:#fff;text-align:center;margin-bottom:4px;}
 .modal-s{font-size:13px;color:rgba(255,255,255,.45);text-align:center;margin-bottom:20px;}
 .pin-row{display:flex;gap:7px;justify-content:center;margin-bottom:18px;}
@@ -207,7 +239,65 @@ textarea.inp{resize:none;}
 /* RESPONSIVE */
 @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr);}.split{grid-template-columns:1fr;}.feat-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:800px){.nav{padding:16px 20px;}.hero{padding:40px 20px 30px;}.section{padding:60px 20px;}.feat-grid{grid-template-columns:1fr;}.roles-grid{grid-template-columns:1fr;}.steps-row{flex-direction:column;}.steps-row::before{display:none;}.footer{padding:30px 20px;}.sidebar{width:190px;min-width:190px;}.main{padding:16px 18px;}.row2,.row3{grid-template-columns:1fr;}.cgrid{grid-template-columns:1fr;}.kpi-row{grid-template-columns:1fr 1fr;}}
+
+/* ═══ MODE JOUR — landing + plateforme ═══ */
+[data-theme="light"] #marketing{background:linear-gradient(155deg,#FFF8F0 0%,#FFE5C9 45%,#FFD4A8 100%)!important;}
+[data-theme="light"] #platform{background:var(--bg);}
+
+/* Textes landing — TITRES en sombre */
+[data-theme="light"] .hero-h1,[data-theme="light"] .sec-hdr h2,[data-theme="light"] .feat-t,[data-theme="light"] .step-t,[data-theme="light"] .role-t,[data-theme="light"] .footer-logo,[data-theme="light"] .nav-logo,[data-theme="light"] .stat-v{color:var(--text)!important;}
+/* Textes landing — DESCRIPTIONS en gris foncé */
+[data-theme="light"] .hero-sub,[data-theme="light"] .sec-hdr p,[data-theme="light"] .feat-d,[data-theme="light"] .step-d,[data-theme="light"] .role-d,[data-theme="light"] .stat-l{color:var(--t2)!important;}
+[data-theme="light"] .footer-t{color:var(--t3)!important;}
+
+/* Cartes landing */
+[data-theme="light"] .stats-bar{background:rgba(255,255,255,.55);border-color:rgba(15,38,140,.15);}
+[data-theme="light"] .feat,[data-theme="light"] .role-c{background:rgba(255,255,255,.65)!important;border-color:rgba(15,38,140,.15)!important;}
+
+/* Hero badge */
+[data-theme="light"] .hero-badge{background:rgba(255,255,255,.6)!important;color:#1A1A2E!important;border-color:rgba(15,38,140,.2)!important;}
+
+/* Footer */
+[data-theme="light"] .footer{background:rgba(15,38,140,.05)!important;border-top:1px solid rgba(15,38,140,.12)!important;}
+
+/* Boutons nav landing */
+[data-theme="light"] .nbtn-out{border-color:rgba(15,38,140,.3)!important;color:var(--text)!important;}
+[data-theme="light"] .nbtn-toggle{border-color:rgba(15,38,140,.3)!important;color:var(--text)!important;}
+
+/* Hero ghost button */
+[data-theme="light"] .hbtn-ghost{background:rgba(15,38,140,.07)!important;color:var(--text)!important;border-color:rgba(15,38,140,.2)!important;}
+
+/* Plateforme */
+[data-theme="light"] #platform .g{background:var(--card);border-color:var(--cardb);}
+[data-theme="light"] #platform .gd{background:var(--cardd);border-color:var(--carddb);}
+[data-theme="light"] #platform .t-body{color:var(--t2);}
+[data-theme="light"] #platform .t-cap{color:var(--t3);}
+[data-theme="light"] #platform .sec{color:var(--t3);}
+[data-theme="light"] #platform .pg-t,[data-theme="light"] #platform .kpi-v,[data-theme="light"] #platform .mr-nm,[data-theme="light"] #platform .pc-name,[data-theme="light"] #platform .sb-un{color:var(--text);}
+[data-theme="light"] #platform .pg-s,[data-theme="light"] #platform .lbl{color:var(--t2);}
+[data-theme="light"] #platform .kpi-l{color:var(--t3);}
+[data-theme="light"] #platform .pcard{background:var(--card);border-color:var(--cardb);}
+[data-theme="light"] #platform .sb-logo-t{color:var(--cb);}
+[data-theme="light"] #platform .modal-h{color:var(--text);}
+[data-theme="light"] #platform .modal-s{color:var(--t2);}
+[data-theme="light"] #platform .sb-it:hover{background:rgba(15,38,140,.08);color:var(--text);}
+[data-theme="light"] #platform .dv{background:var(--divider);}
+[data-theme="light"] #platform .stag{background:rgba(15,38,140,.07);color:var(--t2);border-color:rgba(15,38,140,.15);}
+[data-theme="light"] #platform .stag.on{background:rgba(255,193,7,.18);color:#b8860b;border-color:rgba(255,193,7,.35);}
+[data-theme="light"] #platform .bdg-v{background:rgba(76,175,80,.15);color:#2e7d32;}
+[data-theme="light"] #platform .bdg-p{background:rgba(255,193,7,.15);color:#b8860b;}
+[data-theme="light"] #platform .s-on{background:rgba(76,175,80,.12);color:#2e7d32;}
+[data-theme="light"] #platform .s-off{background:rgba(244,67,54,.12);color:#c62828;}
+[data-theme="light"] select.inp option{background:#fff;color:#1A1A2E;}
+
 </style>
+<script>
+(function(){
+  var t=localStorage.getItem('hh-theme');
+  if(!t)t=window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+})();
+</script>
 </head>
 <body>
 <!-- ═══════════════ MARKETING ═══════════════ -->
@@ -218,35 +308,60 @@ textarea.inp{resize:none;}
 <nav class="nav">
   <a class="nav-logo" href="#">Happy<span>Home</span></a>
   <div class="nav-links">
+    <button class="nbtn nbtn-toggle" id="theme-toggle-m" onclick="toggleTheme()" title="Changer de thème" style="background:transparent;border:1.5px solid rgba(255,255,255,.25);color:#fff;cursor:pointer;font-size:18px;padding:8px 14px;border-radius:50px;font-family:inherit;">🌙</button>
     <button class="nbtn nbtn-out" onclick="openPlatform('login')">Se connecter</button>
+    <button class="nbtn nbtn-out" onclick="openPlatform('login');setTimeout(dOpenAdmin,600)" title="Espace Admin" style="font-size:15px;padding:9px 14px;">🔐</button>
     <button class="nbtn nbtn-cta" onclick="openPlatform('client')">Commencer →</button>
   </div>
 </nav>
 
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-badge">✨ Première marketplace ménagères certifiées à Douala</div>
+  <div class="hero-badge">✨ Plateforme de prestataires vérifiées &amp; sécurisée</div>
   <h1 class="hero-h1">Trouvez la perle rare.<br>En toute <span class="hl">sécurité.</span></h1>
-  <p class="hero-sub">Ménagères 100% vérifiées — CNI, garants, test pratique. Réservation en 3 minutes. Paiement Mobile Money.</p>
+  <p class="hero-sub">Prestataires 100% vérifiées — CNI, garants, test pratique. Réservation en 3 minutes. Paiement Mobile Money.</p>
   <div class="hero-ctas">
-    <button class="hbtn hbtn-y" onclick="openPlatform('client')">🏠 Trouver une ménagère</button>
-    <button class="hbtn hbtn-ghost" onclick="openPlatform('menagere')">👩🏾 Je suis prestataire</button>
+    <button class="hbtn hbtn-y" onclick="openPlatform('client')">🏠 Trouver une prestataire</button>
+    <button class="hbtn hbtn-ghost" onclick="openPlatform('menagere')">👩🏾 Je propose mes services</button>
   </div>
+
+  <!-- ── TYPES DE SERVICE ── -->
+  <div style="padding:32px 20px 0;max-width:900px;margin:0 auto;">
+    <p class="sec" style="text-align:center;font-size:11px;letter-spacing:2px;margin-bottom:20px;">NOS FORMULES</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+      <div class="g cp" style="text-align:center;padding:22px 16px;">
+        <div style="font-size:32px;margin-bottom:10px;line-height:1.2;">⏰</div>
+        <div style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px;letter-spacing:1px;">TEMPORAIRE</div>
+        <div class="t-body" style="font-size:13px;font-weight:600;margin-bottom:4px;">Horaire & Quotidien.</div>
+        <div class="t-body" style="font-size:12px;">Flexible, sans engagement.</div>
+        <div style="margin-top:10px;"><span class="bdg bdg-v" style="font-size:10px;">Disponible</span></div>
+      </div>
+      <div class="g cp" style="text-align:center;padding:22px 16px;">
+        <div style="font-size:32px;margin-bottom:10px;line-height:1.2;">🏠</div>
+        <div style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px;letter-spacing:1px;">PERMANENT</div>
+        <div class="t-body" style="font-size:13px;font-weight:600;margin-bottom:4px;">Résident & Non résident.</div>
+        <div class="t-body" style="font-size:12px;">Engagement mensuel.</div>
+        <div style="margin-top:10px;"><span class="bdg bdg-p" style="font-size:10px;">Bientôt</span></div>
+      </div>
+      </div>
+  </div>
+
+
   <div class="stats-bar">
-    <div class="stat"><div class="stat-v">5</div><div class="stat-l">Ménagères fondatrices</div></div>
+    <div class="stat"><div class="stat-v">< 24h</div><div class="stat-l">Mise en relation</div></div>
     <div class="stat"><div class="stat-v">6</div><div class="stat-l">Étapes vérification KYC</div></div>
-    <div class="stat"><div class="stat-v">N°1</div><div class="stat-l">Plateforme certifiée Douala</div></div>
+    <div class="stat"><div class="stat-v">GPS</div><div class="stat-l">Suivi en temps réel</div></div>
     <div class="stat"><div class="stat-v">100%</div><div class="stat-l">Mobile Money</div></div>
   </div>
 </div>
 
 <!-- Features -->
 <div class="section" style="background:rgba(0,0,0,.18);">
-  <div class="sec-hdr"><h2>Pourquoi HappyHome ?</h2><p>La seule plateforme qui vérifie vraiment ses prestataires.</p></div>
+  <div class="sec-hdr"><h2>Pourquoi HappyHome ?</h2><p>La seule plateforme qui vérifie vraiment ses agents certifiés.</p></div>
   <div class="feat-grid">
     <div class="feat"><div class="feat-ico">🔐</div><div class="feat-t">KYC en 6 étapes</div><div class="feat-d">CNI, photo ID, Mobile Money au même nom, rencontre physique, 2 garants appelés, test pratique rémunéré 2 000 F.</div></div>
     <div class="feat"><div class="feat-ico">⚡</div><div class="feat-t">Réservation en 3 min</div><div class="feat-d">Choisissez votre date, l'heure, les services souhaités. Paiement Orange Money ou MTN MoMo sécurisé.</div></div>
-    <div class="feat"><div class="feat-ico">⭐</div><div class="feat-t">Notation bidirectionnelle</div><div class="feat-d">Clients et prestataires se notent mutuellement après chaque mission. Transparence totale.</div></div>
+    <div class="feat"><div class="feat-ico">⭐</div><div class="feat-t">Notation bidirectionnelle</div><div class="feat-d">Clients et agents se notent mutuellement après chaque mission. Transparence totale.</div></div>
     <div class="feat"><div class="feat-ico">🚨</div><div class="feat-t">Alerte sécurité</div><div class="feat-d">Bouton d'urgence disponible en permanence. Notifie l'admin et les garants en temps réel.</div></div>
     <div class="feat"><div class="feat-ico">📍</div><div class="feat-t">Tracking GPS</div><div class="feat-d">Suivi en temps réel des missions actives. Visible par l'admin uniquement. Consentement CNDP.</div></div>
     <div class="feat"><div class="feat-ico">💬</div><div class="feat-t">Messagerie intégrée</div><div class="feat-d">Communiquez directement avec la prestataire sans partager votre numéro personnel.</div></div>
@@ -275,7 +390,7 @@ textarea.inp{resize:none;}
     </div>
     <div class="role-card role-m" onclick="openPlatform('menagere')">
       <div class="role-ico">👩🏾‍💼</div>
-      <div><div class="role-t">Je suis Prestataire</div><div class="role-d">Gérez vos missions, vos disponibilités et vos revenus depuis votre tableau de bord.</div>
+      <div><div class="role-t">Je suis Agent certifié</div><div class="role-d">Gérez vos missions, vos disponibilités et vos revenus depuis votre tableau de bord.</div>
       <button class="rbtn rbtn-b">Accéder →</button></div>
     </div>
   </div>
@@ -312,7 +427,7 @@ textarea.inp{resize:none;}
   <!-- PRESTA NAV -->
   <div id="sb-presta" style="display:none;">
     <div class="sb-sec">
-      <div class="sb-sec-l">Espace Prestataire</div>
+      <div class="sb-sec-l">Espace Agent</div>
       <div class="sb-it on" id="sbi-m1" onclick="dShow('dm1');sbActive('sbi-m1')"><span class="sb-it-ico">🏠</span>Tableau de bord</div>
       <div class="sb-it" id="sbi-m2" onclick="dShow('dm2');sbActive('sbi-m2')"><span class="sb-it-ico">📅</span>Disponibilités</div>
       <div class="sb-it" id="sbi-m3" onclick="dShow('dm3');sbActive('sbi-m3');dLoadMissionActive()"><span class="sb-it-ico">⚡</span>Mission active</div>
@@ -332,6 +447,10 @@ textarea.inp{resize:none;}
   </div>
 
   <div class="sb-sec" style="margin-top:8px;">
+    <div class="sb-it" onclick="toggleTheme()" style="margin-bottom:4px;">
+      <span class="sb-it-ico" id="theme-icon-sb">🌙</span>
+      <span id="theme-label-sb">Mode jour</span>
+    </div>
     <div class="sb-it" onclick="dDeconnexion()" style="color:rgba(244,67,54,.7);"><span class="sb-it-ico">🚪</span>Déconnecter</div>
     <div class="sb-it" onclick="closePlatform()"><span class="sb-it-ico">←</span>Accueil</div>
   </div>
@@ -358,14 +477,14 @@ textarea.inp{resize:none;}
       <div class="g" style="padding:20px;cursor:pointer;transition:all .2s;" onclick="goToDRole('client')" onmouseover="this.style.borderColor='rgba(0,122,61,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.11)'" >
         <div style="display:flex;align-items:center;gap:14px;">
           <div style="width:48px;height:48px;min-width:48px;border-radius:12px;background:rgba(0,122,61,.18);display:flex;align-items:center;justify-content:center;font-size:24px;">🏠</div>
-          <div><div style="font-size:15px;font-weight:800;color:#fff;">Je suis Usager</div><div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;">Trouver un prestataire certifié</div></div>
+          <div><div style="font-size:15px;font-weight:800;color:#fff;">Je suis Usager</div><div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;">Trouver une prestataire certifiée</div></div>
           <span style="margin-left:auto;color:rgba(255,255,255,.3);font-size:20px;">›</span>
         </div>
       </div>
       <div class="g" style="padding:20px;cursor:pointer;transition:all .2s;" onclick="goToDRole('menagere')" onmouseover="this.style.borderColor='rgba(15,38,140,.5)'" onmouseout="this.style.borderColor='rgba(255,255,255,.11)'">
         <div style="display:flex;align-items:center;gap:14px;">
           <div style="width:48px;height:48px;min-width:48px;border-radius:12px;background:rgba(15,38,140,.25);display:flex;align-items:center;justify-content:center;font-size:24px;">👩🏾‍💼</div>
-          <div><div style="font-size:15px;font-weight:800;color:#fff;">Je suis Prestataire</div><div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;">Gérer mes missions et revenus</div></div>
+          <div><div style="font-size:15px;font-weight:800;color:#fff;">Je suis Agent certifié</div><div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;">Gérer mes missions et revenus</div></div>
           <span style="margin-left:auto;color:rgba(255,255,255,.3);font-size:20px;">›</span>
         </div>
       </div>
@@ -418,7 +537,7 @@ textarea.inp{resize:none;}
 <!-- ── C1 ACCUEIL CLIENT ── -->
 <div class="dscr" id="dc1">
   <div class="pg-hdr">
-    <div><div class="pg-t" id="dc1-hello">Bonjour 👋</div><div class="pg-s">Prestataires disponibles maintenant à Akwa</div></div>
+    <div><div class="pg-t" id="dc1-hello">Bonjour 👋</div><div class="pg-s">Prestataires disponibles à Akwa</div></div>
     <div style="display:flex;gap:8px;align-items:center;">
       <div class="g" style="padding:8px 14px;display:flex;align-items:center;gap:8px;border-radius:50px;cursor:pointer;" onclick="dShow('dc2');sbActive('sbi-c2');renderDListe()"><span>🔍</span><span style="font-size:13px;color:rgba(255,255,255,.6);">Rechercher...</span></div>
       <div class="g" style="padding:8px 12px;border-radius:50px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="dShow('dc8');sbActive('sbi-c8')"><span>👤</span></div>
@@ -526,7 +645,7 @@ textarea.inp{resize:none;}
     <div>
       <div class="gd cp" style="border-color:rgba(255,193,7,.2);background:rgba(255,193,7,.04);position:sticky;top:20px;">
         <p class="sec" style="color:var(--cy);">Récapitulatif prix</p>
-        <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Tarif prestataire</span><span class="t-body" id="dp-base">—</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Tarif de base</span><span class="t-body" id="dp-base">—</span></div>
         <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Commission HappyHome (15%)</span><span class="t-body" id="dp-comm">—</span></div>
         <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Frais Mobile Money (3%)</span><span class="t-body" id="dp-mm">—</span></div>
         <div class="dv"></div>
@@ -597,7 +716,7 @@ textarea.inp{resize:none;}
 
 <!-- ── PRESTA SIGNUP ── -->
 <div class="dscr" id="d-m-signup">
-  <div class="pg-hdr"><div><div class="pg-t">Devenir Prestataire</div><div class="pg-s">KYC 6 étapes · Photo ID + MoMo au même nom obligatoires</div></div><button class="btn btn-out btn-sm" onclick="dShow('d-login')">← Retour</button></div>
+  <div class="pg-hdr"><div><div class="pg-t">Devenir Agent certifié</div><div class="pg-s">KYC 6 étapes · Photo ID + MoMo au même nom obligatoires</div></div><button class="btn btn-out btn-sm" onclick="dShow('d-login')">← Retour</button></div>
   <div class="split">
     <div>
       <div class="g cp">
@@ -607,11 +726,31 @@ textarea.inp{resize:none;}
         </div>
         <div class="row3">
           <div class="fg"><label class="lbl">Quartier</label><select class="inp" id="dm-quartier"><option value="">Sélectionner...</option></select></div>
-          <div class="fg"><label class="lbl">Expérience</label><select class="inp" id="dm-exp"><option value="debutante">Débutante (&lt;2 ans)</option><option value="confirmee">Confirmée (2-5 ans)</option><option value="experte">Experte (5+ ans)</option></select></div>
           <div class="fg"><label class="lbl">Spécialité</label><select class="inp" id="dm-specialite"><option value="">Choisir...</option><option>Ménage résidentiel</option><option>Ménage de bureau</option><option>Cuisine africaine</option><option>Repassage Pro</option><option>Garde enfants</option></select></div>
+          <div class="fg"><label class="lbl">Expérience</label><select class="inp" id="dm-exp"><option value="debutante">Débutante (&lt;2 ans)</option><option value="confirmee">Confirmée (2-5 ans)</option><option value="experte">Experte (5+ ans)</option></select></div>
         </div>
         <div class="fg"><label class="lbl">Services proposés</label>
           <div class="stags" id="dm-services"><span class="stag on" onclick="this.classList.toggle('on')">🏠 Ménage général</span><span class="stag" onclick="this.classList.toggle('on')">👔 Repassage</span><span class="stag" onclick="this.classList.toggle('on')">🍽️ Cuisine</span><span class="stag" onclick="this.classList.toggle('on')">🧺 Lessive</span><span class="stag" onclick="this.classList.toggle('on')">👶 Garde enfants</span><span class="stag" onclick="this.classList.toggle('on')">🪟 Vitres</span></div>
+        </div>
+
+        <!-- SAVOIR-FAIRE -->
+        <div class="g" style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <label class="lbl" style="margin:0;">⭐ Savoir-faire & compétences supplémentaires</label>
+            <span class="t-cap" style="font-size:10px;">Optionnel</span>
+          </div>
+          <div class="stags" id="dm-savoir" style="margin-bottom:12px;">
+            <span class="stag" onclick="this.classList.toggle('on')">🌿 Cuisine bio / diététique</span>
+            <span class="stag" onclick="this.classList.toggle('on')">👗 Couture légère</span>
+            <span class="stag" onclick="this.classList.toggle('on')">🌺 Jardinage</span>
+            <span class="stag" onclick="this.classList.toggle('on')">🐾 Garde animaux</span>
+            <span class="stag" onclick="this.classList.toggle('on')">💊 Aide personne âgée</span>
+            <span class="stag" onclick="this.classList.toggle('on')">🎓 Aide aux devoirs</span>
+            <span class="stag" onclick="this.classList.toggle('on')">🧴 Soins esthétiques basiques</span>
+            <span class="stag" onclick="this.classList.toggle('on')">🚗 Accompagnement courses</span>
+          </div>
+          <textarea class="inp" id="dm-autres" rows="2" placeholder="Autres compétences non listées ci-dessus..." style="resize:none;font-size:13px;"></textarea>
+        
         </div>
       </div>
       <div class="g cp">
@@ -655,7 +794,7 @@ textarea.inp{resize:none;}
 
 <!-- ── M1 DASHBOARD PRESTA ── -->
 <div class="dscr" id="dm1">
-  <div class="pg-hdr"><div><div class="pg-t" id="dm1-hello">Tableau de bord</div><div class="pg-s">Bienvenue sur votre espace prestataire</div></div><span class="bdg bdg-v">✅ Vérifiée HappyHome</span></div>
+  <div class="pg-hdr"><div><div class="pg-t" id="dm1-hello">Tableau de bord</div><div class="pg-s">Bienvenue sur votre espace agent</div></div><span class="bdg bdg-v">✅ Vérifiée HappyHome</span></div>
   <div class="kpi-row">
     <div class="kpi-c"><div class="kpi-v t-y" id="dm1-rev">0</div><div class="kpi-l">FCFA ce mois</div></div>
     <div class="kpi-c"><div class="kpi-v" id="dm1-nb">0</div><div class="kpi-l">Missions</div></div>
@@ -784,7 +923,7 @@ textarea.inp{resize:none;}
   <div class="kpi-row">
     <div class="kpi-c"><div class="kpi-v t-y" id="da1-rev">0</div><div class="kpi-l">FCFA ce mois</div></div>
     <div class="kpi-c"><div class="kpi-v" id="da1-ms">0</div><div class="kpi-l">Missions</div></div>
-    <div class="kpi-c"><div class="kpi-v t-g" id="da1-mg">0</div><div class="kpi-l">Prestataires</div></div>
+    <div class="kpi-c"><div class="kpi-v t-g" id="da1-mg">0</div><div class="kpi-l">Agents</div></div>
     <div class="kpi-c"><div class="kpi-v" id="da1-cl">0</div><div class="kpi-l">Usagers</div></div>
   </div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;">
@@ -837,7 +976,7 @@ textarea.inp{resize:none;}
     <div style="display:flex;flex-direction:column;gap:14px;">
       <div>
         <p class="sec">1. Objet du service</p>
-        <p class="t-body">HappyHome est une plateforme de mise en relation entre particuliers (usagers) et prestataires de services ménagers certifiées, opérant à Douala, Cameroun. HappyHome ne fournit pas directement les services ménagers mais assure la certification, la mise en relation et la sécurité des transactions.</p>
+        <p class="t-body">HappyHome est une plateforme de mise en relation entre particuliers (usagers) et prestataires certifiées, opérant à Douala, Cameroun. HappyHome ne fournit pas directement les services ménagers mais assure la certification, la mise en relation et la sécurité des transactions.</p>
       </div>
       <div class="dv"></div>
       <div>
@@ -903,6 +1042,38 @@ textarea.inp{resize:none;}
 </div>
 <script>
 'use strict';
+
+// ── THÈME JOUR / NUIT ──
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('hh-theme', theme);
+  const isDark = theme === 'dark';
+  const icon = isDark ? '🌙' : '☀️';
+  const label = isDark ? 'Mode jour' : 'Mode nuit';
+  // Nav landing
+  const tm = document.getElementById('theme-toggle-m');
+  if(tm) tm.textContent = icon;
+  // Sidebar
+  const ti = document.getElementById('theme-icon-sb');
+  const tl = document.getElementById('theme-label-sb');
+  if(ti) ti.textContent = icon;
+  if(tl) tl.textContent = label;
+  // Meta theme-color
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.content = isDark ? '#030a1f' : '#FFF8F0';
+}
+function toggleTheme(){
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+function initTheme(){
+  const saved = localStorage.getItem('hh-theme');
+  if(saved){ applyTheme(saved); return; }
+  const prefers = window.matchMedia('(prefers-color-scheme: light)').matches;
+  applyTheme(prefers ? 'light' : 'dark');
+}
+initTheme();
+
 // ── SUPABASE REST (sans SDK — compatible file://) ──
 const SUPABASE_URL='https://bnwlfosmiuctswpaqvcb.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJud2xmb3NtaXVjdHN3cGFxdmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Njk1MjYsImV4cCI6MjA5NDE0NTUyNn0.jF8ubiVhSVw9OSW9dmR8x2wJITCNxLFhphlUj4TFLJU';
@@ -991,7 +1162,7 @@ async function goToDRole(role){
   }
 }
 function dShowClientSidebar(){S('sb-client').style.display='block';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Espace Usager');S('sb-av').textContent='👤';setT('sb-name',dCurrentUser?.nom||'Usager');setT('sb-role','Usager HappyHome');}
-function dShowPrestaSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='block';S('sb-admin').style.display='none';setT('sb-role-label','Espace Prestataire');S('sb-av').textContent='👩🏾';setT('sb-name',dCurrentUser?.nom||'Prestataire');setT('sb-role','Prestataire HappyHome');}
+function dShowPrestaSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='block';S('sb-admin').style.display='none';setT('sb-role-label','Espace Agent');S('sb-av').textContent='👩🏾';setT('sb-name',dCurrentUser?.nom||'Prestataire');setT('sb-role','Agent certifié HappyHome');}
 function dShowAdminSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='block';setT('sb-role-label','Administration');S('sb-av').textContent='⚙️';setT('sb-name','Admin');setT('sb-role','Administrateur');}
 function dShowLoginSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Accueil');setT('sb-name','—');setT('sb-role','—');}
 async function dDeconnexion(){
@@ -1140,7 +1311,9 @@ async function dSignupMenagere(){
   const {data:ex}=await dbGet('prestataire_users',`?select=id&tel=eq.${encodeURIComponent(tel)}&limit=1`);
   if(ex&&ex.length){toast2('⚠️ Numéro déjà enregistré. Connectez-vous.');return;}
   const svcs=[];document.querySelectorAll('#dm-services .stag.on').forEach(s=>svcs.push(s.textContent.trim()));
-  const {data,error}=await dbPost('prestataire_users',{id:'pm_'+Date.now(),nom,tel,quartier:S('dm-quartier')?.value||'',experience:S('dm-exp')?.value||'debutante',specialite:spec,services:svcs,garant1:g1,garant2:g2,statut:'kyc_etape1',badge:false,emoji:'👩🏾'});
+  const savoir=[];document.querySelectorAll('#dm-savoir .stag.on').forEach(s=>savoir.push(s.textContent.trim()));
+  const autres=(S('dm-autres')?.value||'').trim();if(autres)savoir.push(autres);
+  const {data,error}=await dbPost('prestataire_users',{id:'pm_'+Date.now(),nom,tel,quartier:S('dm-quartier')?.value||'',experience:S('dm-exp')?.value||'debutante',specialite:spec,services:svcs,savoir_faire:savoir,garant1:g1,garant2:g2,statut:'kyc_etape1',badge:false,emoji:'👩🏾'});
   if(error){toast2('❌ '+error.message);return;}
   saveSession('hh_prestataire',data);saveSession('hh_role','prestataire');dCurrentUser=data;dCurrentRole='prestataire';
   dbPost('admin_logs',{msg:`Candidature KYC: ${nom} · ${tel} · ${spec}`}).catch(()=>{});

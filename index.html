@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="HappyHome — Prestataires certifiées à Douala. KYC strict, paiement Mobile Money, satisfaction garantie.">
+<meta name="description" content="HappyHome — Prestataires certifiées à Douala. KYC strict 5 étapes, certification progressive, paiement Mobile Money, satisfaction garantie.">
 <meta name="theme-color" content="#0F268C">
 <title>HappyHome — Prestataires certifiées à Douala</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -320,7 +320,7 @@ textarea.inp{resize:none;}
 <div class="hero">
   <div class="hero-badge">✨ Plateforme de prestataires vérifiées &amp; sécurisée</div>
   <h1 class="hero-h1">Trouvez la perle rare.<br>En toute <span class="hl">sécurité.</span></h1>
-  <p class="hero-sub">Prestataires 100% vérifiées — CNI, garants, test pratique. Réservation en 3 minutes. Paiement Mobile Money.</p>
+  <p class="hero-sub">Prestataires vérifiées — CNI, garants, certification progressive par les avis. Réservation en 3 minutes. Paiement Mobile Money.</p>
   <div class="hero-ctas">
     <button class="hbtn hbtn-y" onclick="openPlatform('client')">🏠 Trouver une prestataire</button>
     <button class="hbtn hbtn-ghost" onclick="openPlatform('menagere')">👩🏾 Je propose mes services</button>
@@ -360,7 +360,7 @@ textarea.inp{resize:none;}
 <div class="section" style="background:rgba(0,0,0,.18);">
   <div class="sec-hdr"><h2>Pourquoi HappyHome ?</h2><p>La seule plateforme qui vérifie vraiment ses agents certifiés.</p></div>
   <div class="feat-grid">
-    <div class="feat"><div class="feat-ico">🔐</div><div class="feat-t">KYC en 6 étapes</div><div class="feat-d">CNI, photo ID, Mobile Money au même nom, rencontre physique, 2 garants appelés, test pratique rémunéré 2 000 F.</div></div>
+    <div class="feat"><div class="feat-ico">🔐</div><div class="feat-t">KYC en 5 étapes</div><div class="feat-d">CNI, photo ID, Mobile Money au même nom, rencontre physique à Akwa, 2 garants contactés. Certification complète après 3 missions ≥ 4★.</div></div>
     <div class="feat"><div class="feat-ico">⚡</div><div class="feat-t">Réservation en 3 min</div><div class="feat-d">Choisissez votre date, l'heure, les services souhaités. Paiement Orange Money ou MTN MoMo sécurisé.</div></div>
     <div class="feat"><div class="feat-ico">⭐</div><div class="feat-t">Notation bidirectionnelle</div><div class="feat-d">Clients et agents se notent mutuellement après chaque mission. Transparence totale.</div></div>
     <div class="feat"><div class="feat-ico">🚨</div><div class="feat-t">Alerte sécurité</div><div class="feat-d">Bouton d'urgence disponible en permanence. Notifie l'admin et les garants en temps réel.</div></div>
@@ -544,7 +544,7 @@ textarea.inp{resize:none;}
       <div class="g" style="padding:8px 12px;border-radius:50px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="dShow('dc8');sbActive('sbi-c8')"><span>👤</span></div>
     </div>
   </div>
-  <div class="g cp" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="font-size:24px;">✅</span><div><p style="font-size:13px;font-weight:700;color:#fff;">Membres 100% certifiés KYC 6 étapes</p><p class="t-cap">CNI · Photo ID · Garants · Test pratique rémunéré</p></div></div>
+  <div class="g cp" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="font-size:24px;">✅</span><div><p style="font-size:13px;font-weight:700;color:#fff;">Membres certifiés KYC 5 étapes</p><p class="t-cap">CNI · Photo ID · Garants · Certif. progressive</p></div></div>
   <p class="sec">Disponibles maintenant</p>
   <div class="cgrid" id="dc1-list"></div>
 </div>
@@ -600,7 +600,7 @@ textarea.inp{resize:none;}
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Identité CNI vérifiée</span></div>
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Mobile Money = Nom ID</span></div>
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">2 garants contactés</span></div>
-          <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Test pratique 2h réussi</span></div>
+          <div style="display:flex;gap:8px;align-items:center;" id="dc3-kyc-final"><span style="color:#FFC107;">✨</span><span class="t-body">Nouvelle agente · certif. après 3 missions ≥ 4★</span></div>
         </div>
         <button class="btn btn-y btn-full" onclick="dShow('dc4');dCalcPrix()">📅 Réserver cette prestataire</button>
         <button class="btn btn-out btn-full" style="margin-top:8px;" onclick="dToggleFav()">🤍 Ajouter aux favoris</button>
@@ -717,7 +717,7 @@ textarea.inp{resize:none;}
 
 <!-- ── PRESTA SIGNUP ── -->
 <div class="dscr" id="d-m-signup">
-  <div class="pg-hdr"><div><div class="pg-t">Devenir Agent certifié</div><div class="pg-s">KYC 6 étapes · Photo ID + MoMo au même nom obligatoires</div></div><button class="btn btn-out btn-sm" onclick="dShow('d-login')">← Retour</button></div>
+  <div class="pg-hdr"><div><div class="pg-t">Devenir Agent certifié</div><div class="pg-s">KYC 5 étapes · Photo ID + MoMo au même nom obligatoires</div></div><button class="btn btn-out btn-sm" onclick="dShow('d-login')">← Retour</button></div>
   <div class="split">
     <div>
       <div class="g cp">
@@ -779,15 +779,15 @@ textarea.inp{resize:none;}
     </div>
     <div>
       <div class="g cp" style="background:rgba(15,38,140,.08);border-color:rgba(15,38,140,.3);">
-        <p class="sec" style="color:#93b4ff;">Processus KYC — 6 étapes</p>
+        <p class="sec" style="color:#93b4ff;">Processus KYC — 5 étapes</p>
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-done">1</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Formulaire en ligne</p><p class="t-cap">CNI, garants, Mobile Money</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">2</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Vérification MoMo = Nom CNI</p><p class="t-cap">Automatique après soumission</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">3</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p><p class="t-cap">Akwa, sur rendez-vous</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">4</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Appels 2 garants</p><p class="t-cap">Vérification téléphonique</p></div></div>
-          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">5</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Test pratique 2h</p><p class="t-cap">Rémunéré 2 000 FCFA</p></div></div>
-          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">6</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge</p><p class="t-cap">Profil visible aux usagers</p></div></div>
+          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">5</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge ✨ Nouvelle agente</p><p class="t-cap">Profil visible aux usagers</p></div></div>
         </div>
+        <p class="t-cap" style="margin-top:10px;color:var(--t2);font-style:italic;">🏅 Après 3 missions ≥ 4★ → Badge « Certifiée HappyHome ✅ »</p>
       </div>
     </div>
   </div>
@@ -910,7 +910,7 @@ textarea.inp{resize:none;}
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Photo ID vérifiée</p></div>
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p></div>
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Appels 2 garants</p></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Test pratique · Badge activé</p></div>
+          <div style="display:flex;align-items:center;gap:8px;" id="dm4-kyc-final"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Nouvelle agente ✨</p></div>
         </div>
       </div>
     </div>
@@ -982,7 +982,7 @@ textarea.inp{resize:none;}
       <div class="dv"></div>
       <div>
         <p class="sec">2. Vérification d'identité (KYC)</p>
-        <p class="t-body">Toute prestataire doit compléter un processus de vérification en 6 étapes : formulaire en ligne, vérification Mobile Money au nom réel, rencontre physique à Akwa, vérification téléphonique de 2 garants, test pratique de 2h rémunéré 2 000 FCFA, et activation du badge. Tout faux renseignement entraîne la suspension définitive du compte.</p>
+        <p class="t-body">Toute prestataire doit compléter un processus de vérification en 5 étapes : formulaire en ligne, vérification Mobile Money au nom réel, rencontre physique à Akwa, vérification téléphonique de 2 garants, et activation du badge « Nouvelle agente ✨ ». La certification complète « Certifiée HappyHome ✅ » est attribuée automatiquement après 3 missions réalisées avec une note moyenne ≥ 4★. Tout faux renseignement entraîne la suspension définitive du compte.</p>
       </div>
       <div class="dv"></div>
       <div>
@@ -1318,7 +1318,7 @@ async function dSignupMenagere(){
   if(error){toast2('❌ '+error.message);return;}
   saveSession('hh_prestataire',data);saveSession('hh_role','prestataire');dCurrentUser=data;dCurrentRole='prestataire';
   dbPost('admin_logs',{msg:`Candidature KYC: ${nom} · ${tel} · ${spec}`}).catch(()=>{});
-  dShowPrestaSidebar();await dLoadPrestaHome();dShow('dm1');sbActive('sbi-m1');toast2('🎉 Candidature soumise ! KYC étape 1/6');
+  dShowPrestaSidebar();await dLoadPrestaHome();dShow('dm1');sbActive('sbi-m1');toast2('🎉 Candidature soumise ! KYC étape 1/5');
 }
 
 // ── PRESTATAIRE — DASHBOARD ──
@@ -1334,7 +1334,7 @@ async function dLoadPrestaHome(){
   const ac=S('dm1-activity');
   if(ac)ac.innerHTML=missions.length?missions.slice(0,3).map(m=>`<div class="mr gd"><div class="mr-top"><span class="mr-nm">${m.usager_nom}</span><span class="bdg ${['terminee','notee'].includes(m.statut)?'bdg-v':'bdg-p'}">${m.statut}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:8px 0;">Aucune activité récente</p>';
   const step=parseInt((dCurrentUser.statut||'kyc_etape1').split('etape')[1]||1);
-  setT('dm4-level',step>=6?'✅ Certifiée':step>=4?'⭐ Avancée':'🌱 KYC étape '+step+'/6');
+  setT('dm4-level',step>=5?'✅ Certifiée':step>=4?'⭐ Avancée':'🌱 KYC étape '+step+'/5');
   const svcs=Array.isArray(dCurrentUser.services)?dCurrentUser.services:(typeof dCurrentUser.services==='string'?JSON.parse(dCurrentUser.services||'[]'):[]);
   const svcEl=S('dm4-svcs');if(svcEl)svcEl.innerHTML=svcs.map(s=>`<span class="stag on">${s}</span>`).join('');
 }
@@ -1411,16 +1411,16 @@ async function loadDKyc(){
   const c=S('da2-list'),cnt=S('da2-count');if(!c)return;
   if(!pList||!pList.length){c.innerHTML='<p class="t-body" style="opacity:.5;padding:20px 0;">Aucun dossier en attente</p>';if(cnt)cnt.textContent='0 en attente';return;}
   if(cnt)cnt.textContent=pList.length+' en attente';
-  const stepNames=['Formulaire en ligne','Vérif. MoMo = Nom ID','Rencontre physique','Appels 2 garants','Test pratique 2h','Activation badge'];
+  const stepNames=['Formulaire en ligne','Vérif. MoMo = Nom ID','Rencontre physique','Appels 2 garants','Activation badge Nouvelle agente ✨'];
   c.innerHTML=pList.map(p=>{
     const step=parseInt(p.statut.split('etape')[1]||1);
     return`<div class="g cp" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:24px;">${p.emoji||'👩🏾'}</div><div><p style="font-size:14px;font-weight:700;color:#fff;">${p.nom}</p><p class="t-cap">${p.specialite||''} · ${p.tel||''}</p></div></div><span class="bdg bdg-p">Étape ${step}/6</span></div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">${stepNames.map((n,i)=>`<div style="display:flex;align-items:center;gap:10px;"><div class="kyc-n ${i<step-1?'kyc-done':i===step-1?'kyc-cur':'kyc-todo'}">${i<step-1?'✓':i+1}</div><span class="t-body">${n}</span></div>`).join('')}</div><div style="display:flex;gap:8px;"><button class="btn btn-s btn-sm" style="flex:1;" onclick="dAvancerKyc('${p.id}',${step})">✅ Valider étape ${step}</button><button class="btn btn-r btn-sm" style="flex:1;" onclick="toast2('❌ Refusé')">❌ Refuser</button></div></div>`;
   }).join('');
 }
 async function dAvancerKyc(id,step){
-  await dbPatch('prestataire_users','id',id,step>=6?{statut:'actif',badge:true}:{statut:'kyc_etape'+(step+1)});
-  toast2(step>=6?'🎉 Badge accordé !':'✅ Étape '+step+' → '+(step+1));
-  dbPost('admin_logs',{msg:`KYC ${id}: étape ${step}→${step>=6?'ACTIF':step+1}`}).catch(()=>{});
+  await dbPatch('prestataire_users','id',id,step>=5?{statut:'actif',badge:true,missions_completees:0,note_moyenne:0}:{statut:'kyc_etape'+(step+1)});
+  toast2(step>=5?'🎉 Badge « Nouvelle agente ✨ » accordé !':'✅ Étape '+step+' → '+(step+1));
+  dbPost('admin_logs',{msg:`KYC ${id}: étape ${step}→${step>=5?'ACTIF':step+1}`}).catch(()=>{});
   loadDKyc();
 }
 async function loadDLive(){

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="HappyHome — Prestataires certifiées à Douala. KYC strict 5 étapes, certification progressive, paiement Mobile Money, satisfaction garantie.">
+<meta name="description" content="HappyHome — Prestataires certifiées à Douala. KYC strict, paiement Mobile Money, satisfaction garantie.">
 <meta name="theme-color" content="#0F268C">
 <title>HappyHome — Prestataires certifiées à Douala</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -236,9 +236,51 @@ textarea.inp{resize:none;}
 .pin-row{display:flex;gap:7px;justify-content:center;margin-bottom:18px;}
 .pin-d{width:36px;height:44px;border-radius:var(--r);background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;}
 .pin-d.filled{border-color:rgba(255,193,7,.55);color:var(--cy);}
+/* ── BOTTOM NAV MOBILE (caché par défaut sur desktop) ── */
+.burger-btn{display:none;}
+.sb-overlay{display:none;}
+.bottom-nav{display:none;}
+.bnav-it{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;cursor:pointer;color:var(--sb-text);transition:color .2s;text-align:center;border:none;background:transparent;font-family:'Outfit',sans-serif;}
+.bnav-it.on{color:var(--cy);}
+.bnav-it:active{transform:scale(.92);}
+.bnav-ico{font-size:20px;line-height:1;}
+.bnav-lbl{font-size:10px;font-weight:700;letter-spacing:.2px;white-space:nowrap;}
+
 /* RESPONSIVE */
 @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr);}.split{grid-template-columns:1fr;}.feat-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:800px){.nav{padding:16px 20px;}.hero{padding:40px 20px 30px;}.section{padding:60px 20px;}.feat-grid{grid-template-columns:1fr;}.roles-grid{grid-template-columns:1fr;}.steps-row{flex-direction:column;}.steps-row::before{display:none;}.footer{padding:30px 20px;}.sidebar{width:190px;min-width:190px;}.main{padding:16px 18px;}.row2,.row3{grid-template-columns:1fr;}.cgrid{grid-template-columns:1fr;}.kpi-row{grid-template-columns:1fr 1fr;}.formules-grid{grid-template-columns:1fr 1fr!important;gap:12px!important;max-width:520px;margin:0 auto;}}
+@media(max-width:800px){
+  .nav{padding:16px 20px;}
+  .hero{padding:40px 20px 30px;}
+  .section{padding:60px 20px;}
+  .feat-grid{grid-template-columns:1fr;}
+  .roles-grid{grid-template-columns:1fr;}
+  .steps-row{flex-direction:column;}
+  .steps-row::before{display:none;}
+  .footer{padding:30px 20px;}
+  /* Sidebar devient drawer hors écran */
+  .sidebar{position:fixed;top:0;left:-260px;bottom:0;width:240px;min-width:240px;height:100vh;z-index:300;transition:left .28s ease;box-shadow:none;padding:18px 0 80px;}
+  .sidebar.open{left:0;box-shadow:6px 0 32px rgba(0,0,0,.55);}
+  /* Overlay derrière sidebar ouverte */
+  .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:299;backdrop-filter:blur(2px);}
+  .sb-overlay.show{display:block;}
+  /* Burger floating top-left */
+  .burger-btn{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:12px;z-index:201;width:42px;height:42px;border-radius:50%;background:var(--sb-bg);border:1px solid var(--sb-b);align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--text);backdrop-filter:blur(14px);box-shadow:0 4px 16px rgba(0,0,0,.3);font-family:'Outfit',sans-serif;}
+  /* Main content : padding compensé pour burger en haut + bottom-nav en bas */
+  .main{padding:62px 14px calc(78px + env(safe-area-inset-bottom));}
+  /* Bottom nav fixe en bas */
+  .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:198;background:var(--sb-bg);border-top:1px solid var(--sb-b);backdrop-filter:blur(20px);height:calc(64px + env(safe-area-inset-bottom));padding:6px 4px env(safe-area-inset-bottom);}
+  .row2,.row3{grid-template-columns:1fr;}
+  .cgrid{grid-template-columns:1fr;}
+  .kpi-row{grid-template-columns:1fr 1fr;}
+  .formules-grid{grid-template-columns:1fr 1fr!important;gap:12px!important;max-width:520px;margin:0 auto;}
+  /* En-tête pages : pas chevauché par burger */
+  .pg-hdr{padding-left:48px;}
+  /* Réduire taille titres mobile */
+  .pg-t{font-size:18px;}
+  .pg-s{font-size:11px;}
+  .kpi-v{font-size:20px;}
+  .kpi-c{padding:14px;}
+}
 @media(max-width:480px){.formules-grid{grid-template-columns:1fr!important;max-width:340px;}}
 
 /* ═══ MODE JOUR — landing + plateforme ═══ */
@@ -320,7 +362,7 @@ textarea.inp{resize:none;}
 <div class="hero">
   <div class="hero-badge">✨ Plateforme de prestataires vérifiées &amp; sécurisée</div>
   <h1 class="hero-h1">Trouvez la perle rare.<br>En toute <span class="hl">sécurité.</span></h1>
-  <p class="hero-sub">Prestataires vérifiées — CNI, garants, certification progressive par les avis. Réservation en 3 minutes. Paiement Mobile Money.</p>
+  <p class="hero-sub">Prestataires 100% vérifiées — CNI, garants, rencontre physique. Réservation en 3 minutes. Paiement Mobile Money.</p>
   <div class="hero-ctas">
     <button class="hbtn hbtn-y" onclick="openPlatform('client')">🏠 Trouver une prestataire</button>
     <button class="hbtn hbtn-ghost" onclick="openPlatform('menagere')">👩🏾 Je propose mes services</button>
@@ -350,7 +392,7 @@ textarea.inp{resize:none;}
 
   <div class="stats-bar">
     <div class="stat"><div class="stat-v">< 24h</div><div class="stat-l">Mise en relation</div></div>
-    <div class="stat"><div class="stat-v">6</div><div class="stat-l">Étapes vérification KYC</div></div>
+    <div class="stat"><div class="stat-v">5</div><div class="stat-l">Étapes vérification KYC</div></div>
     <div class="stat"><div class="stat-v">GPS</div><div class="stat-l">Suivi en temps réel</div></div>
     <div class="stat"><div class="stat-v">100%</div><div class="stat-l">Mobile Money</div></div>
   </div>
@@ -360,7 +402,7 @@ textarea.inp{resize:none;}
 <div class="section" style="background:rgba(0,0,0,.18);">
   <div class="sec-hdr"><h2>Pourquoi HappyHome ?</h2><p>La seule plateforme qui vérifie vraiment ses agents certifiés.</p></div>
   <div class="feat-grid">
-    <div class="feat"><div class="feat-ico">🔐</div><div class="feat-t">KYC en 5 étapes</div><div class="feat-d">CNI, photo ID, Mobile Money au même nom, rencontre physique à Akwa, 2 garants contactés. Certification complète après 3 missions ≥ 4★.</div></div>
+    <div class="feat"><div class="feat-ico">🔐</div><div class="feat-t">KYC en 5 étapes</div><div class="feat-d">CNI, photo ID, Mobile Money au même nom, rencontre physique à Akwa, 2 garants appelés. Aucun raccourci toléré.</div></div>
     <div class="feat"><div class="feat-ico">⚡</div><div class="feat-t">Réservation en 3 min</div><div class="feat-d">Choisissez votre date, l'heure, les services souhaités. Paiement Orange Money ou MTN MoMo sécurisé.</div></div>
     <div class="feat"><div class="feat-ico">⭐</div><div class="feat-t">Notation bidirectionnelle</div><div class="feat-d">Clients et agents se notent mutuellement après chaque mission. Transparence totale.</div></div>
     <div class="feat"><div class="feat-ico">🚨</div><div class="feat-t">Alerte sécurité</div><div class="feat-d">Bouton d'urgence disponible en permanence. Notifie l'admin et les garants en temps réel.</div></div>
@@ -448,12 +490,12 @@ textarea.inp{resize:none;}
   </div>
 
   <div class="sb-sec" style="margin-top:8px;">
-    <div class="sb-it" onclick="toggleTheme()" style="margin-bottom:4px;">
+    <div class="sb-it" onclick="toggleTheme();closeMobileSidebar()" style="margin-bottom:4px;">
       <span class="sb-it-ico" id="theme-icon-sb">🌙</span>
       <span id="theme-label-sb">Mode jour</span>
     </div>
-    <div class="sb-it" onclick="dDeconnexion()" style="color:rgba(244,67,54,.7);"><span class="sb-it-ico">🚪</span>Déconnecter</div>
-    <div class="sb-it" onclick="closePlatform()"><span class="sb-it-ico">←</span>Accueil</div>
+    <div class="sb-it" onclick="dDeconnexion();closeMobileSidebar()" style="color:rgba(244,67,54,.7);"><span class="sb-it-ico">🚪</span>Déconnecter</div>
+    <div class="sb-it" onclick="closePlatform();closeMobileSidebar()"><span class="sb-it-ico">←</span>Accueil</div>
   </div>
 
   <div class="sb-ft">
@@ -544,7 +586,7 @@ textarea.inp{resize:none;}
       <div class="g" style="padding:8px 12px;border-radius:50px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="dShow('dc8');sbActive('sbi-c8')"><span>👤</span></div>
     </div>
   </div>
-  <div class="g cp" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="font-size:24px;">✅</span><div><p style="font-size:13px;font-weight:700;color:#fff;">Membres certifiés KYC 5 étapes</p><p class="t-cap">CNI · Photo ID · Garants · Certif. progressive</p></div></div>
+  <div class="g cp" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="font-size:24px;">✅</span><div><p style="font-size:13px;font-weight:700;color:#fff;">Membres 100% certifiés KYC 5 étapes</p><p class="t-cap">CNI · Photo ID · Mobile Money vérifié · 2 garants appelés</p></div></div>
   <p class="sec">Disponibles maintenant</p>
   <div class="cgrid" id="dc1-list"></div>
 </div>
@@ -600,7 +642,7 @@ textarea.inp{resize:none;}
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Identité CNI vérifiée</span></div>
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Mobile Money = Nom ID</span></div>
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">2 garants contactés</span></div>
-          <div style="display:flex;gap:8px;align-items:center;" id="dc3-kyc-final"><span style="color:#FFC107;">✨</span><span class="t-body">Nouvelle agente · certif. après 3 missions ≥ 4★</span></div>
+          <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Rencontre physique validée</span></div>
         </div>
         <button class="btn btn-y btn-full" onclick="dShow('dc4');dCalcPrix()">📅 Réserver cette prestataire</button>
         <button class="btn btn-out btn-full" style="margin-top:8px;" onclick="dToggleFav()">🤍 Ajouter aux favoris</button>
@@ -785,9 +827,8 @@ textarea.inp{resize:none;}
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">2</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Vérification MoMo = Nom CNI</p><p class="t-cap">Automatique après soumission</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">3</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p><p class="t-cap">Akwa, sur rendez-vous</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">4</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Appels 2 garants</p><p class="t-cap">Vérification téléphonique</p></div></div>
-          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">5</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge ✨ Nouvelle agente</p><p class="t-cap">Profil visible aux usagers</p></div></div>
+          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">5</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge ✨</p><p class="t-cap">Profil visible aux usagers</p></div></div>
         </div>
-        <p class="t-cap" style="margin-top:10px;color:var(--t2);font-style:italic;">🏅 Après 3 missions ≥ 4★ → Badge « Certifiée HappyHome ✅ »</p>
       </div>
     </div>
   </div>
@@ -910,7 +951,7 @@ textarea.inp{resize:none;}
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Photo ID vérifiée</p></div>
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p></div>
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Appels 2 garants</p></div>
-          <div style="display:flex;align-items:center;gap:8px;" id="dm4-kyc-final"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Nouvelle agente ✨</p></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Badge activé · Profil visible</p></div>
         </div>
       </div>
     </div>
@@ -961,6 +1002,35 @@ textarea.inp{resize:none;}
 </div>
 
 </main><!-- /main -->
+
+<!-- ═══ MOBILE : Burger menu + Overlay + Bottom Nav ═══ -->
+<button class="burger-btn" id="burger-btn" onclick="toggleMobileSidebar()" aria-label="Menu">☰</button>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleMobileSidebar()"></div>
+
+<!-- BOTTOM NAV CLIENT -->
+<nav class="bottom-nav" id="bnav-client" style="display:none;">
+  <button class="bnav-it on" id="bni-c1" onclick="dShow('dc1');sbActive('sbi-c1');closeMobileSidebar()"><span class="bnav-ico">🏠</span><span class="bnav-lbl">Accueil</span></button>
+  <button class="bnav-it" id="bni-c2" onclick="dShow('dc2');sbActive('sbi-c2');renderDListe();closeMobileSidebar()"><span class="bnav-ico">🔍</span><span class="bnav-lbl">Recherche</span></button>
+  <button class="bnav-it" id="bni-cms" onclick="dShow('dc-missions');sbActive('sbi-cms');loadDMissions();closeMobileSidebar()"><span class="bnav-ico">📋</span><span class="bnav-lbl">Missions</span></button>
+  <button class="bnav-it" id="bni-c8" onclick="dShow('dc8');sbActive('sbi-c8');closeMobileSidebar()"><span class="bnav-ico">👤</span><span class="bnav-lbl">Compte</span></button>
+</nav>
+
+<!-- BOTTOM NAV PRESTATAIRE -->
+<nav class="bottom-nav" id="bnav-presta" style="display:none;">
+  <button class="bnav-it on" id="bni-m1" onclick="dShow('dm1');sbActive('sbi-m1');closeMobileSidebar()"><span class="bnav-ico">🏠</span><span class="bnav-lbl">Tableau</span></button>
+  <button class="bnav-it" id="bni-m2" onclick="dShow('dm2');sbActive('sbi-m2');closeMobileSidebar()"><span class="bnav-ico">📅</span><span class="bnav-lbl">Dispo</span></button>
+  <button class="bnav-it" id="bni-m3" onclick="dShow('dm3');sbActive('sbi-m3');dLoadMissionActive();closeMobileSidebar()"><span class="bnav-ico">⚡</span><span class="bnav-lbl">Mission</span></button>
+  <button class="bnav-it" id="bni-m4" onclick="dShow('dm4');sbActive('sbi-m4');closeMobileSidebar()"><span class="bnav-ico">👤</span><span class="bnav-lbl">Profil</span></button>
+</nav>
+
+<!-- BOTTOM NAV ADMIN -->
+<nav class="bottom-nav" id="bnav-admin" style="display:none;">
+  <button class="bnav-it on" id="bni-a1" onclick="dShow('da1');sbActive('sbi-a1');loadDAdminDash();closeMobileSidebar()"><span class="bnav-ico">📊</span><span class="bnav-lbl">Dashboard</span></button>
+  <button class="bnav-it" id="bni-a2" onclick="dShow('da2');sbActive('sbi-a2');loadDKyc();closeMobileSidebar()"><span class="bnav-ico">🔍</span><span class="bnav-lbl">KYC</span></button>
+  <button class="bnav-it" id="bni-a3" onclick="dShow('da3');sbActive('sbi-a3');loadDLive();closeMobileSidebar()"><span class="bnav-ico">📍</span><span class="bnav-lbl">Live</span></button>
+  <button class="bnav-it" id="bni-a4" onclick="dShow('da4');sbActive('sbi-a4');loadDLitiges();closeMobileSidebar()"><span class="bnav-ico">⚖️</span><span class="bnav-lbl">Litiges</span></button>
+</nav>
+
 </div><!-- /app-shell -->
 </div><!-- /platform -->
 
@@ -982,7 +1052,7 @@ textarea.inp{resize:none;}
       <div class="dv"></div>
       <div>
         <p class="sec">2. Vérification d'identité (KYC)</p>
-        <p class="t-body">Toute prestataire doit compléter un processus de vérification en 5 étapes : formulaire en ligne, vérification Mobile Money au nom réel, rencontre physique à Akwa, vérification téléphonique de 2 garants, et activation du badge « Nouvelle agente ✨ ». La certification complète « Certifiée HappyHome ✅ » est attribuée automatiquement après 3 missions réalisées avec une note moyenne ≥ 4★. Tout faux renseignement entraîne la suspension définitive du compte.</p>
+        <p class="t-body">Toute prestataire doit compléter un processus de vérification en 5 étapes : formulaire en ligne (CNI, garants, Mobile Money), vérification automatique Mobile Money au nom réel, rencontre physique à Akwa, vérification téléphonique des 2 garants, puis activation du badge « Nouvelle agente ✨ ». La certification complète « Certifiée HappyHome ✅ » est attribuée automatiquement après 3 missions réalisées avec une note moyenne ≥ 4★. Tout faux renseignement entraîne la suspension définitive du compte.</p>
       </div>
       <div class="dv"></div>
       <div>
@@ -1130,8 +1200,34 @@ function toast2(msg,dur=3200){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(dToastTimer);dToastTimer=setTimeout(()=>el.classList.remove('show'),dur);
 }
-function dShow(id){document.querySelectorAll('.dscr').forEach(s=>s.classList.remove('active'));const el=S(id);if(el)el.classList.add('active');}
-function sbActive(id){document.querySelectorAll('.sb-it').forEach(i=>i.classList.remove('on'));const el=S(id);if(el)el.classList.add('on');}
+function dShow(id){document.querySelectorAll('.dscr').forEach(s=>s.classList.remove('active'));const el=S(id);if(el)el.classList.add('active');closeMobileSidebar();}
+function sbActive(id){
+  document.querySelectorAll('.sb-it').forEach(i=>i.classList.remove('on'));
+  const el=S(id);if(el)el.classList.add('on');
+  // Sync bottom nav: sbi-X → bni-X
+  const bniId=id.replace('sbi-','bni-');
+  document.querySelectorAll('.bnav-it').forEach(i=>i.classList.remove('on'));
+  const bni=S(bniId);if(bni)bni.classList.add('on');
+}
+// ── MOBILE SIDEBAR DRAWER ──
+function toggleMobileSidebar(){
+  const sb=S('d-sidebar'),ov=S('sb-overlay');
+  if(!sb||!ov)return;
+  const isOpen=sb.classList.contains('open');
+  if(isOpen){sb.classList.remove('open');ov.classList.remove('show');}
+  else{sb.classList.add('open');ov.classList.add('show');}
+}
+function closeMobileSidebar(){
+  const sb=S('d-sidebar'),ov=S('sb-overlay');
+  if(sb)sb.classList.remove('open');if(ov)ov.classList.remove('show');
+}
+// ── BOTTOM NAV ROLE SWITCH ──
+function dShowBnav(role){
+  ['bnav-client','bnav-presta','bnav-admin'].forEach(id=>{const el=S(id);if(el)el.style.display='none';});
+  if(role==='client')S('bnav-client').style.display='flex';
+  else if(role==='presta')S('bnav-presta').style.display='flex';
+  else if(role==='admin')S('bnav-admin').style.display='flex';
+}
 function fillDQuartiers(){
   ['dc-quartier','dc4-quartier','dm-quartier'].forEach(id=>{
     const sel=S(id);if(!sel)return;
@@ -1162,10 +1258,10 @@ async function goToDRole(role){
     dShowLoginSidebar();dShow('d-login');
   }
 }
-function dShowClientSidebar(){S('sb-client').style.display='block';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Espace Usager');S('sb-av').textContent='👤';setT('sb-name',dCurrentUser?.nom||'Usager');setT('sb-role','Usager HappyHome');}
-function dShowPrestaSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='block';S('sb-admin').style.display='none';setT('sb-role-label','Espace Agent');S('sb-av').textContent='👩🏾';setT('sb-name',dCurrentUser?.nom||'Prestataire');setT('sb-role','Agent certifié HappyHome');}
-function dShowAdminSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='block';setT('sb-role-label','Administration');S('sb-av').textContent='⚙️';setT('sb-name','Admin');setT('sb-role','Administrateur');}
-function dShowLoginSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Accueil');setT('sb-name','—');setT('sb-role','—');}
+function dShowClientSidebar(){S('sb-client').style.display='block';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Espace Usager');S('sb-av').textContent='👤';setT('sb-name',dCurrentUser?.nom||'Usager');setT('sb-role','Usager HappyHome');dShowBnav('client');}
+function dShowPrestaSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='block';S('sb-admin').style.display='none';setT('sb-role-label','Espace Agent');S('sb-av').textContent='👩🏾';setT('sb-name',dCurrentUser?.nom||'Prestataire');setT('sb-role','Agent certifié HappyHome');dShowBnav('presta');}
+function dShowAdminSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='block';setT('sb-role-label','Administration');S('sb-av').textContent='⚙️';setT('sb-name','Admin');setT('sb-role','Administrateur');dShowBnav('admin');}
+function dShowLoginSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Accueil');setT('sb-name','—');setT('sb-role','—');dShowBnav(null);}
 async function dDeconnexion(){
   delSession('hh_usager');delSession('hh_prestataire');delSession('hh_role');
   dCurrentUser=null;dCurrentRole=null;await authSignOut();
@@ -1334,7 +1430,7 @@ async function dLoadPrestaHome(){
   const ac=S('dm1-activity');
   if(ac)ac.innerHTML=missions.length?missions.slice(0,3).map(m=>`<div class="mr gd"><div class="mr-top"><span class="mr-nm">${m.usager_nom}</span><span class="bdg ${['terminee','notee'].includes(m.statut)?'bdg-v':'bdg-p'}">${m.statut}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:8px 0;">Aucune activité récente</p>';
   const step=parseInt((dCurrentUser.statut||'kyc_etape1').split('etape')[1]||1);
-  setT('dm4-level',step>=5?'✅ Certifiée':step>=4?'⭐ Avancée':'🌱 KYC étape '+step+'/5');
+  setT('dm4-level',step>=5?'✅ Certifiée':step>=3?'⭐ Avancée':'🌱 KYC étape '+step+'/5');
   const svcs=Array.isArray(dCurrentUser.services)?dCurrentUser.services:(typeof dCurrentUser.services==='string'?JSON.parse(dCurrentUser.services||'[]'):[]);
   const svcEl=S('dm4-svcs');if(svcEl)svcEl.innerHTML=svcs.map(s=>`<span class="stag on">${s}</span>`).join('');
 }
@@ -1411,15 +1507,15 @@ async function loadDKyc(){
   const c=S('da2-list'),cnt=S('da2-count');if(!c)return;
   if(!pList||!pList.length){c.innerHTML='<p class="t-body" style="opacity:.5;padding:20px 0;">Aucun dossier en attente</p>';if(cnt)cnt.textContent='0 en attente';return;}
   if(cnt)cnt.textContent=pList.length+' en attente';
-  const stepNames=['Formulaire en ligne','Vérif. MoMo = Nom ID','Rencontre physique','Appels 2 garants','Activation badge Nouvelle agente ✨'];
+  const stepNames=['Formulaire en ligne','Vérif. MoMo = Nom ID','Rencontre physique','Appels 2 garants','Activation badge ✨'];
   c.innerHTML=pList.map(p=>{
     const step=parseInt(p.statut.split('etape')[1]||1);
-    return`<div class="g cp" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:24px;">${p.emoji||'👩🏾'}</div><div><p style="font-size:14px;font-weight:700;color:#fff;">${p.nom}</p><p class="t-cap">${p.specialite||''} · ${p.tel||''}</p></div></div><span class="bdg bdg-p">Étape ${step}/6</span></div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">${stepNames.map((n,i)=>`<div style="display:flex;align-items:center;gap:10px;"><div class="kyc-n ${i<step-1?'kyc-done':i===step-1?'kyc-cur':'kyc-todo'}">${i<step-1?'✓':i+1}</div><span class="t-body">${n}</span></div>`).join('')}</div><div style="display:flex;gap:8px;"><button class="btn btn-s btn-sm" style="flex:1;" onclick="dAvancerKyc('${p.id}',${step})">✅ Valider étape ${step}</button><button class="btn btn-r btn-sm" style="flex:1;" onclick="toast2('❌ Refusé')">❌ Refuser</button></div></div>`;
+    return`<div class="g cp" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:24px;">${p.emoji||'👩🏾'}</div><div><p style="font-size:14px;font-weight:700;color:#fff;">${p.nom}</p><p class="t-cap">${p.specialite||''} · ${p.tel||''}</p></div></div><span class="bdg bdg-p">Étape ${step}/5</span></div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">${stepNames.map((n,i)=>`<div style="display:flex;align-items:center;gap:10px;"><div class="kyc-n ${i<step-1?'kyc-done':i===step-1?'kyc-cur':'kyc-todo'}">${i<step-1?'✓':i+1}</div><span class="t-body">${n}</span></div>`).join('')}</div><div style="display:flex;gap:8px;"><button class="btn btn-s btn-sm" style="flex:1;" onclick="dAvancerKyc('${p.id}',${step})">✅ Valider étape ${step}</button><button class="btn btn-r btn-sm" style="flex:1;" onclick="toast2('❌ Refusé')">❌ Refuser</button></div></div>`;
   }).join('');
 }
 async function dAvancerKyc(id,step){
-  await dbPatch('prestataire_users','id',id,step>=5?{statut:'actif',badge:true,missions_completees:0,note_moyenne:0}:{statut:'kyc_etape'+(step+1)});
-  toast2(step>=5?'🎉 Badge « Nouvelle agente ✨ » accordé !':'✅ Étape '+step+' → '+(step+1));
+  await dbPatch('prestataire_users','id',id,step>=5?{statut:'actif',badge:true}:{statut:'kyc_etape'+(step+1)});
+  toast2(step>=5?'🎉 Badge accordé !':'✅ Étape '+step+' → '+(step+1));
   dbPost('admin_logs',{msg:`KYC ${id}: étape ${step}→${step>=5?'ACTIF':step+1}`}).catch(()=>{});
   loadDKyc();
 }

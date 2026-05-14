@@ -2,7 +2,7 @@
 
 **Première plateforme de prestataires à domicile verifiés et securisée.**
 
-Mise en relation entre particuliers et prestataires de services ménagers vérifiées — KYC 5 étapes, paiement Mobile Money, suivi en temps réel.
+Mise en relation entre particuliers et prestataires de services ménagers vérifiées — KYC 5 étapes, paiement Mobile Money, tracking en temps réel.
 
 ---
 

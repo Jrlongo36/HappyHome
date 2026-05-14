@@ -354,7 +354,7 @@ textarea.inp{resize:none;}
     <div style="font-size:11px;letter-spacing:2.5px;color:#FFC107;font-weight:800;margin-bottom:8px;">🚀 LANCEMENT OFFICIEL</div>
     <div id="launch-countdown" style="font-size:26px;font-weight:900;color:#fff;letter-spacing:.5px;margin-bottom:6px;">— jours · — heures · — minutes</div>
     <div style="font-size:13px;color:rgba(255,255,255,.78);font-weight:500;">
-      <span id="leads-count" style="color:#FFC107;font-weight:800;">47</span> familles déjà pré-inscrites · 30 juin 2026
+      <span id="leads-info">30 juin 2026 — Inscrivez-vous pour être averti(e)</span>
     </div>
     <button class="hbtn hbtn-y" style="margin-top:14px;padding:10px 22px;font-size:13px;" onclick="openLeadModal()">🔔 Me prévenir du lancement</button>
   </div>
@@ -477,6 +477,32 @@ textarea.inp{resize:none;}
       <div class="sb-it" id="sbi-a2" onclick="dShow('da2');sbActive('sbi-a2');loadDKyc()"><span class="sb-it-ico">🔍</span>KYC</div>
       <div class="sb-it" id="sbi-a3" onclick="dShow('da3');sbActive('sbi-a3');loadDLive()"><span class="sb-it-ico">📍</span>Live</div>
       <div class="sb-it" id="sbi-a4" onclick="dShow('da4');sbActive('sbi-a4');loadDLitiges()"><span class="sb-it-ico">⚖️</span>Litiges</div>
+    </div>
+    <!-- SUPERADMIN — accès toutes pages sans restriction -->
+    <div class="sb-sec" style="margin-top:6px;border-top:1px dashed rgba(255,193,7,.25);padding-top:10px;">
+      <div class="sb-sec-l" style="color:#FFC107;">🔧 Superadmin (test)</div>
+      <div class="sb-it" onclick="superNavToggle()"><span class="sb-it-ico">🗂️</span>Navigation directe ▾</div>
+      <div id="super-nav" style="display:none;padding:4px 0 8px 8px;">
+        <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin:6px 0 4px;">— Usager —</div>
+        <div class="sb-it" onclick="superGo('dc1')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">🏠</span>Accueil usager</div>
+        <div class="sb-it" onclick="superGo('dc2','renderDListe')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">🔍</span>Recherche prestataire</div>
+        <div class="sb-it" onclick="superGo('dc3')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">👤</span>Fiche prestataire</div>
+        <div class="sb-it" onclick="superGo('dc4')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">📅</span>Réservation</div>
+        <div class="sb-it" onclick="superGo('dc5')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">💳</span>Paiement</div>
+        <div class="sb-it" onclick="superGo('dc-missions','loadDMissions')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">📋</span>Mes missions</div>
+        <div class="sb-it" onclick="superGo('dc8')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">👤</span>Mon compte</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin:8px 0 4px;">— Prestataire —</div>
+        <div class="sb-it" onclick="superGo('dm-signup')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">📝</span>Candidature KYC</div>
+        <div class="sb-it" onclick="superGo('dm1')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">📊</span>Dashboard agent</div>
+        <div class="sb-it" onclick="superGo('dm2')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">📅</span>Disponibilités</div>
+        <div class="sb-it" onclick="superGo('dm3','dLoadMissionActive')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">⚡</span>Mission active</div>
+        <div class="sb-it" onclick="superGo('dm4')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">👤</span>Profil agent</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin:8px 0 4px;">— Auth —</div>
+        <div class="sb-it" onclick="superGo('d-login')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">🔐</span>Login splash</div>
+        <div class="sb-it" onclick="superGo('dc-signup')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">✍️</span>Signup client</div>
+      </div>
+      <div class="sb-it" onclick="superExport()"><span class="sb-it-ico">📦</span>Tout exporter (JSON)</div>
+      <div class="sb-it" onclick="superResetAll()" style="color:rgba(244,67,54,.7);"><span class="sb-it-ico">🗑️</span>Reset toutes données</div>
     </div>
   </div>
 
@@ -1524,6 +1550,45 @@ function closeCGU(){const el=document.getElementById('ov-cgu');if(el)el.classLis
 // ── ADMIN TAP ──
 function adminTap2(){dTapCount++;clearTimeout(dTapTimer);if(dTapCount>=3){dTapCount=0;openPlatform('login');setTimeout(dOpenAdmin,600);return;}dTapTimer=setTimeout(()=>{dTapCount=0;},900);}
 
+// ════════════════ SUPERADMIN — accès toutes pages sans restriction ════════════════
+function superNavToggle(){
+  const el = document.getElementById('super-nav');
+  if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+function superGo(screenId, loaderFn){
+  // Accès direct à n'importe quelle page sans contrainte rôle
+  dShow(screenId);
+  if(loaderFn && typeof window[loaderFn] === 'function'){
+    try{ window[loaderFn](); }catch(e){ console.warn('Loader err:', e); }
+  }
+  toast2('🔧 Superadmin → '+screenId);
+}
+function superExport(){
+  const data = {
+    leads: JSON.parse(localStorage.getItem('hh_leads') || '[]'),
+    usager: JSON.parse(localStorage.getItem('hh_usager') || 'null'),
+    prestataire: JSON.parse(localStorage.getItem('hh_prestataire') || 'null'),
+    role: localStorage.getItem('hh_role'),
+    theme: localStorage.getItem('hh-theme'),
+    favoris: JSON.parse(localStorage.getItem('hh_favoris') || '[]'),
+    exported_at: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `happyhome-export-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast2('📦 Export JSON téléchargé');
+}
+function superResetAll(){
+  if(!confirm('⚠️ Effacer TOUTES les données locales (leads, comptes, favoris) ? Cette action est irréversible.')) return;
+  ['hh_leads','hh_usager','hh_prestataire','hh_role','hh_favoris','hh_lead_popup_shown'].forEach(k => localStorage.removeItem(k));
+  toast2('🗑️ Toutes les données effacées');
+  setTimeout(()=>location.reload(), 800);
+}
+
 // ════════════════ COMPTEUR LANCEMENT 30 JUIN 2026 ════════════════
 const LAUNCH_DATE = new Date('2026-06-30T00:00:00+01:00');
 
@@ -1544,9 +1609,15 @@ function updateCountdown(){
 
 function updateLeadsCount(){
   const leads = JSON.parse(localStorage.getItem('hh_leads') || '[]');
-  const total = 47 + leads.length;
-  const el = document.getElementById('leads-count');
-  if(el) el.textContent = total;
+  const el = document.getElementById('leads-info');
+  if(!el) return;
+  if(leads.length === 0){
+    el.textContent = '30 juin 2026 — Inscrivez-vous pour être averti(e)';
+  } else if(leads.length === 1){
+    el.innerHTML = '<span style="color:#FFC107;font-weight:800;">1</span> personne inscrite · 30 juin 2026';
+  } else {
+    el.innerHTML = '<span style="color:#FFC107;font-weight:800;">' + leads.length + '</span> personnes inscrites · 30 juin 2026';
+  }
 }
 
 // ════════════════ CAPTURE LEADS ════════════════

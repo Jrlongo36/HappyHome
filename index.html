@@ -3,9 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="HappyHome — Prestataires certifiées à Douala. KYC strict, paiement Mobile Money, satisfaction garantie.">
+<meta name="description" content="HappyHome — Prestataires de maison certifiées à Douala. KYC strict en 5 étapes, paiement Mobile Money, satisfaction garantie. Lancement officiel 30 juin 2026.">
+<meta name="keywords" content="ménagère Douala, prestataire maison Cameroun, ménage Douala, agent certifié, garde enfants Douala, Mobile Money Cameroun">
 <meta name="theme-color" content="#0F268C">
+<meta name="author" content="HappyHome — Douala, Cameroun">
 <title>HappyHome — Prestataires certifiées à Douala</title>
+<!-- Open Graph / Facebook / WhatsApp -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://happyhome.pages.dev/">
+<meta property="og:title" content="HappyHome — Prestataires certifiées à Douala">
+<meta property="og:description" content="Trouvez votre prestataire de maison vérifiée en 3 minutes. KYC strict, paiement Mobile Money, GPS temps réel. Lancement le 30 juin 2026.">
+<meta property="og:image" content="https://happyhome.pages.dev/og-image.svg">
+<meta property="og:locale" content="fr_CM">
+<meta property="og:site_name" content="HappyHome">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HappyHome — Prestataires certifiées à Douala">
+<meta name="twitter:description" content="Prestataires de maison 100% vérifiées. Lancement le 30 juin 2026.">
+<meta name="twitter:image" content="https://happyhome.pages.dev/og-image.svg">
+<!-- Favicon SVG -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230F268C'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='52' font-family='system-ui,sans-serif' font-weight='800' fill='%23FFC107'%3EH%3C/text%3E%3C/svg%3E">
+<!-- Schema.org LocalBusiness -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"LocalBusiness","name":"HappyHome","description":"Plateforme HappyHome de prestataires de maison certifiées à Douala","url":"https://happyhome.pages.dev/","telephone":"+237","address":{"@type":"PostalAddress","addressLocality":"Douala","addressCountry":"CM"},"areaServed":"Douala et environs","priceRange":"8 000 - 24 000 FCFA","openingHours":"Mo-Su 07:00-18:00"}
+</script>
+<!-- Leaflet (carte gratuite, OpenStreetMap) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -236,51 +259,9 @@ textarea.inp{resize:none;}
 .pin-row{display:flex;gap:7px;justify-content:center;margin-bottom:18px;}
 .pin-d{width:36px;height:44px;border-radius:var(--r);background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;}
 .pin-d.filled{border-color:rgba(255,193,7,.55);color:var(--cy);}
-/* ── BOTTOM NAV MOBILE (caché par défaut sur desktop) ── */
-.burger-btn{display:none;}
-.sb-overlay{display:none;}
-.bottom-nav{display:none;}
-.bnav-it{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;cursor:pointer;color:var(--sb-text);transition:color .2s;text-align:center;border:none;background:transparent;font-family:'Outfit',sans-serif;}
-.bnav-it.on{color:var(--cy);}
-.bnav-it:active{transform:scale(.92);}
-.bnav-ico{font-size:20px;line-height:1;}
-.bnav-lbl{font-size:10px;font-weight:700;letter-spacing:.2px;white-space:nowrap;}
-
 /* RESPONSIVE */
 @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr);}.split{grid-template-columns:1fr;}.feat-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:800px){
-  .nav{padding:16px 20px;}
-  .hero{padding:40px 20px 30px;}
-  .section{padding:60px 20px;}
-  .feat-grid{grid-template-columns:1fr;}
-  .roles-grid{grid-template-columns:1fr;}
-  .steps-row{flex-direction:column;}
-  .steps-row::before{display:none;}
-  .footer{padding:30px 20px;}
-  /* Sidebar devient drawer hors écran */
-  .sidebar{position:fixed;top:0;left:-260px;bottom:0;width:240px;min-width:240px;height:100vh;z-index:300;transition:left .28s ease;box-shadow:none;padding:18px 0 80px;}
-  .sidebar.open{left:0;box-shadow:6px 0 32px rgba(0,0,0,.55);}
-  /* Overlay derrière sidebar ouverte */
-  .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:299;backdrop-filter:blur(2px);}
-  .sb-overlay.show{display:block;}
-  /* Burger floating top-left */
-  .burger-btn{display:flex;position:fixed;top:max(12px,env(safe-area-inset-top));left:12px;z-index:201;width:42px;height:42px;border-radius:50%;background:var(--sb-bg);border:1px solid var(--sb-b);align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--text);backdrop-filter:blur(14px);box-shadow:0 4px 16px rgba(0,0,0,.3);font-family:'Outfit',sans-serif;}
-  /* Main content : padding compensé pour burger en haut + bottom-nav en bas */
-  .main{padding:62px 14px calc(78px + env(safe-area-inset-bottom));}
-  /* Bottom nav fixe en bas */
-  .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:198;background:var(--sb-bg);border-top:1px solid var(--sb-b);backdrop-filter:blur(20px);height:calc(64px + env(safe-area-inset-bottom));padding:6px 4px env(safe-area-inset-bottom);}
-  .row2,.row3{grid-template-columns:1fr;}
-  .cgrid{grid-template-columns:1fr;}
-  .kpi-row{grid-template-columns:1fr 1fr;}
-  .formules-grid{grid-template-columns:1fr 1fr!important;gap:12px!important;max-width:520px;margin:0 auto;}
-  /* En-tête pages : pas chevauché par burger */
-  .pg-hdr{padding-left:48px;}
-  /* Réduire taille titres mobile */
-  .pg-t{font-size:18px;}
-  .pg-s{font-size:11px;}
-  .kpi-v{font-size:20px;}
-  .kpi-c{padding:14px;}
-}
+@media(max-width:800px){.nav{padding:16px 20px;}.hero{padding:40px 20px 30px;}.section{padding:60px 20px;}.feat-grid{grid-template-columns:1fr;}.roles-grid{grid-template-columns:1fr;}.steps-row{flex-direction:column;}.steps-row::before{display:none;}.footer{padding:30px 20px;}.sidebar{width:190px;min-width:190px;}.main{padding:16px 18px;}.row2,.row3{grid-template-columns:1fr;}.cgrid{grid-template-columns:1fr;}.kpi-row{grid-template-columns:1fr 1fr;}.formules-grid{grid-template-columns:1fr 1fr!important;gap:12px!important;max-width:520px;margin:0 auto;}}
 @media(max-width:480px){.formules-grid{grid-template-columns:1fr!important;max-width:340px;}}
 
 /* ═══ MODE JOUR — landing + plateforme ═══ */
@@ -310,7 +291,7 @@ textarea.inp{resize:none;}
 /* Hero ghost button */
 [data-theme="light"] .hbtn-ghost{background:rgba(15,38,140,.07)!important;color:var(--text)!important;border-color:rgba(15,38,140,.2)!important;}
 
-/* Plateforme */
+/* Plateforme HappyHome */
 [data-theme="light"] #platform .g{background:var(--card);border-color:var(--cardb);}
 [data-theme="light"] #platform .gd{background:var(--cardd);border-color:var(--carddb);}
 [data-theme="light"] #platform .t-body{color:var(--t2);}
@@ -360,12 +341,22 @@ textarea.inp{resize:none;}
 
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-badge">✨ Plateforme de prestataires vérifiées &amp; sécurisée</div>
+  <div class="hero-badge">✨ Plateforme HappyHome de prestataires vérifiées &amp; sécurisée</div>
   <h1 class="hero-h1">Trouvez la perle rare.<br>En toute <span class="hl">sécurité.</span></h1>
   <p class="hero-sub">Prestataires 100% vérifiées — CNI, garants, rencontre physique. Réservation en 3 minutes. Paiement Mobile Money.</p>
   <div class="hero-ctas">
     <button class="hbtn hbtn-y" onclick="openPlatform('client')">🏠 Trouver une prestataire</button>
     <button class="hbtn hbtn-ghost" onclick="openPlatform('menagere')">👩🏾 Je propose mes services</button>
+  </div>
+
+  <!-- ── COMPTEUR LANCEMENT 30 JUIN 2026 ── -->
+  <div class="launch-counter" style="margin:36px auto 0;max-width:560px;padding:18px 20px;background:linear-gradient(135deg,rgba(255,193,7,.14),rgba(255,152,0,.08));border:1px solid rgba(255,193,7,.32);border-radius:18px;text-align:center;">
+    <div style="font-size:11px;letter-spacing:2.5px;color:#FFC107;font-weight:800;margin-bottom:8px;">🚀 LANCEMENT OFFICIEL</div>
+    <div id="launch-countdown" style="font-size:26px;font-weight:900;color:#fff;letter-spacing:.5px;margin-bottom:6px;">— jours · — heures · — minutes</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.78);font-weight:500;">
+      <span id="leads-count" style="color:#FFC107;font-weight:800;">47</span> familles déjà pré-inscrites · 30 juin 2026
+    </div>
+    <button class="hbtn hbtn-y" style="margin-top:14px;padding:10px 22px;font-size:13px;" onclick="openLeadModal()">🔔 Me prévenir du lancement</button>
   </div>
 
   <!-- ── TYPES DE SERVICE ── -->
@@ -392,7 +383,7 @@ textarea.inp{resize:none;}
 
   <div class="stats-bar">
     <div class="stat"><div class="stat-v">< 24h</div><div class="stat-l">Mise en relation</div></div>
-    <div class="stat"><div class="stat-v">5</div><div class="stat-l">Étapes vérification KYC</div></div>
+    <div class="stat"><div class="stat-v">6</div><div class="stat-l">Étapes vérification KYC</div></div>
     <div class="stat"><div class="stat-v">GPS</div><div class="stat-l">Suivi en temps réel</div></div>
     <div class="stat"><div class="stat-v">100%</div><div class="stat-l">Mobile Money</div></div>
   </div>
@@ -402,7 +393,7 @@ textarea.inp{resize:none;}
 <div class="section" style="background:rgba(0,0,0,.18);">
   <div class="sec-hdr"><h2>Pourquoi HappyHome ?</h2><p>La seule plateforme qui vérifie vraiment ses agents certifiés.</p></div>
   <div class="feat-grid">
-    <div class="feat"><div class="feat-ico">🔐</div><div class="feat-t">KYC en 5 étapes</div><div class="feat-d">CNI, photo ID, Mobile Money au même nom, rencontre physique à Akwa, 2 garants appelés. Aucun raccourci toléré.</div></div>
+    <div class="feat"><div class="feat-ico">🔐</div><div class="feat-t">KYC en 5 étapes</div><div class="feat-d">CNI, photo ID, Mobile Money au même nom, rencontre physique à Douala, 2 garants appelés, activation et badge.</div></div>
     <div class="feat"><div class="feat-ico">⚡</div><div class="feat-t">Réservation en 3 min</div><div class="feat-d">Choisissez votre date, l'heure, les services souhaités. Paiement Orange Money ou MTN MoMo sécurisé.</div></div>
     <div class="feat"><div class="feat-ico">⭐</div><div class="feat-t">Notation bidirectionnelle</div><div class="feat-d">Clients et agents se notent mutuellement après chaque mission. Transparence totale.</div></div>
     <div class="feat"><div class="feat-ico">🚨</div><div class="feat-t">Alerte sécurité</div><div class="feat-d">Bouton d'urgence disponible en permanence. Notifie l'admin et les garants en temps réel.</div></div>
@@ -428,7 +419,7 @@ textarea.inp{resize:none;}
   <div class="roles-grid">
     <div class="role-card role-c" onclick="openPlatform('client')">
       <div class="role-ico">🏠</div>
-      <div><div class="role-t">Je suis Usager</div><div class="role-d">Particulier, famille, expatrié. Trouvez une prestataire certifiée près de chez vous à Akwa.</div>
+      <div><div class="role-t">Je suis Usager</div><div class="role-d">Particulier, famille, expatrié. Trouvez une prestataire certifiée près de chez vous à Douala.</div>
       <button class="rbtn rbtn-g">Accéder →</button></div>
     </div>
     <div class="role-card role-m" onclick="openPlatform('menagere')">
@@ -442,7 +433,7 @@ textarea.inp{resize:none;}
 <!-- Footer -->
 <div class="footer">
   <div class="footer-logo">Happy<span>Home</span></div>
-  <div class="footer-t">© 2026 HappyHome · Douala, Cameroun · Akwa · Paiement Mobile Money uniquement<br><span id="tap-admin2" onclick="adminTap2()" style="cursor:default;user-select:none;">v1.1</span> · <span onclick="openCGU()" style="cursor:pointer;text-decoration:underline;">CGU & Confidentialité</span></div>
+  <div class="footer-t">© 2026 HappyHome · Douala et environs, Cameroun · Paiement Mobile Money uniquement<br><span id="tap-admin2" onclick="adminTap2()" style="cursor:default;user-select:none;">v1.2</span> · <span onclick="openCGU()" style="cursor:pointer;text-decoration:underline;">CGU & Confidentialité</span></div>
 </div>
 </div><!-- /marketing -->
 <!-- ═══════════════ PLATFORM DESKTOP ═══════════════ -->
@@ -453,7 +444,7 @@ textarea.inp{resize:none;}
 <aside class="sidebar" id="d-sidebar">
   <div class="sb-logo">
     <div class="sb-logo-t">Happy<span>Home</span></div>
-    <div class="sb-logo-s" id="sb-role-label">Plateforme</div>
+    <div class="sb-logo-s" id="sb-role-label">Plateforme HappyHome</div>
   </div>
 
   <!-- CLIENT NAV -->
@@ -490,12 +481,12 @@ textarea.inp{resize:none;}
   </div>
 
   <div class="sb-sec" style="margin-top:8px;">
-    <div class="sb-it" onclick="toggleTheme();closeMobileSidebar()" style="margin-bottom:4px;">
+    <div class="sb-it" onclick="toggleTheme()" style="margin-bottom:4px;">
       <span class="sb-it-ico" id="theme-icon-sb">🌙</span>
       <span id="theme-label-sb">Mode jour</span>
     </div>
-    <div class="sb-it" onclick="dDeconnexion();closeMobileSidebar()" style="color:rgba(244,67,54,.7);"><span class="sb-it-ico">🚪</span>Déconnecter</div>
-    <div class="sb-it" onclick="closePlatform();closeMobileSidebar()"><span class="sb-it-ico">←</span>Accueil</div>
+    <div class="sb-it" onclick="dDeconnexion()" style="color:rgba(244,67,54,.7);"><span class="sb-it-ico">🚪</span>Déconnecter</div>
+    <div class="sb-it" onclick="closePlatform()"><span class="sb-it-ico">←</span>Accueil</div>
   </div>
 
   <div class="sb-ft">
@@ -580,13 +571,13 @@ textarea.inp{resize:none;}
 <!-- ── C1 ACCUEIL CLIENT ── -->
 <div class="dscr" id="dc1">
   <div class="pg-hdr">
-    <div><div class="pg-t" id="dc1-hello">Bonjour 👋</div><div class="pg-s">Prestataires disponibles à Akwa</div></div>
+    <div><div class="pg-t" id="dc1-hello">Bonjour 👋</div><div class="pg-s">Prestataires disponibles à Douala</div></div>
     <div style="display:flex;gap:8px;align-items:center;">
       <div class="g" style="padding:8px 14px;display:flex;align-items:center;gap:8px;border-radius:50px;cursor:pointer;" onclick="dShow('dc2');sbActive('sbi-c2');renderDListe()"><span>🔍</span><span style="font-size:13px;color:rgba(255,255,255,.6);">Rechercher...</span></div>
       <div class="g" style="padding:8px 12px;border-radius:50px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="dShow('dc8');sbActive('sbi-c8')"><span>👤</span></div>
     </div>
   </div>
-  <div class="g cp" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="font-size:24px;">✅</span><div><p style="font-size:13px;font-weight:700;color:#fff;">Membres 100% certifiés KYC 5 étapes</p><p class="t-cap">CNI · Photo ID · Mobile Money vérifié · 2 garants appelés</p></div></div>
+  <div class="g cp" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="font-size:24px;">✅</span><div><p style="font-size:13px;font-weight:700;color:#fff;">Membres 100% certifiés KYC 5 étapes</p><p class="t-cap">CNI · Photo ID · Garants · Rencontre physique</p></div></div>
   <p class="sec">Disponibles maintenant</p>
   <div class="cgrid" id="dc1-list"></div>
 </div>
@@ -642,7 +633,7 @@ textarea.inp{resize:none;}
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Identité CNI vérifiée</span></div>
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Mobile Money = Nom ID</span></div>
           <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">2 garants contactés</span></div>
-          <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Rencontre physique validée</span></div>
+          <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Garants 2 contactés validés</span></div>
         </div>
         <button class="btn btn-y btn-full" onclick="dShow('dc4');dCalcPrix()">📅 Réserver cette prestataire</button>
         <button class="btn btn-out btn-full" style="margin-top:8px;" onclick="dToggleFav()">🤍 Ajouter aux favoris</button>
@@ -772,6 +763,13 @@ textarea.inp{resize:none;}
           <div class="fg"><label class="lbl">Spécialité</label><select class="inp" id="dm-specialite"><option value="">Choisir...</option><option>Ménage résidentiel</option><option>Ménage de bureau</option><option>Cuisine africaine</option><option>Repassage Pro</option><option>Garde enfants</option></select></div>
           <div class="fg"><label class="lbl">Expérience</label><select class="inp" id="dm-exp"><option value="debutante">Débutante (&lt;2 ans)</option><option value="confirmee">Confirmée (2-5 ans)</option><option value="experte">Experte (5+ ans)</option></select></div>
         </div>
+        <div class="fg"><label class="lbl">📍 Coordonnées GPS de votre zone de travail (auto)</label>
+          <div style="display:flex;gap:8px;">
+            <input class="inp" id="dm-gps" type="text" placeholder="—, —" readonly style="flex:1;background:rgba(255,255,255,.04);">
+            <button type="button" class="btn btn-out" id="gps-btn-dm-gps" onclick="dCaptureGPS('dm-gps')" style="padding:0 16px;white-space:nowrap;">📍 Capturer</button>
+          </div>
+          <p class="t-cap" style="margin-top:4px;">Permet le calcul automatique du transport pour vos missions.</p>
+        </div>
         <div class="fg"><label class="lbl">Services proposés</label>
           <div class="stags" id="dm-services"><span class="stag on" onclick="this.classList.toggle('on')">🏠 Ménage général</span><span class="stag" onclick="this.classList.toggle('on')">👔 Repassage</span><span class="stag" onclick="this.classList.toggle('on')">🍽️ Cuisine</span><span class="stag" onclick="this.classList.toggle('on')">🧺 Lessive</span><span class="stag" onclick="this.classList.toggle('on')">👶 Garde enfants</span><span class="stag" onclick="this.classList.toggle('on')">🪟 Vitres</span></div>
         </div>
@@ -825,9 +823,9 @@ textarea.inp{resize:none;}
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-done">1</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Formulaire en ligne</p><p class="t-cap">CNI, garants, Mobile Money</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">2</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Vérification MoMo = Nom CNI</p><p class="t-cap">Automatique après soumission</p></div></div>
-          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">3</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p><p class="t-cap">Akwa, sur rendez-vous</p></div></div>
+          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">3</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p><p class="t-cap">Douala, sur rendez-vous</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">4</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Appels 2 garants</p><p class="t-cap">Vérification téléphonique</p></div></div>
-          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">5</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge ✨</p><p class="t-cap">Profil visible aux usagers</p></div></div>
+          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">5</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge</p><p class="t-cap">Profil visible aux usagers</p></div></div>
         </div>
       </div>
     </div>
@@ -883,7 +881,7 @@ textarea.inp{resize:none;}
     </div>
     <div>
       <div class="g cp"><p class="sec">Zones de travail</p>
-        <div class="stags" id="dm2-zones"><span class="stag on" onclick="this.classList.toggle('on')">Akwa Centre</span><span class="stag on" onclick="this.classList.toggle('on')">Akwa Nord</span><span class="stag" onclick="this.classList.toggle('on')">Bonanjo</span><span class="stag" onclick="this.classList.toggle('on')">Bonapriso</span><span class="stag" onclick="this.classList.toggle('on')">Bali</span><span class="stag" onclick="this.classList.toggle('on')">Deido</span><span class="stag" onclick="this.classList.toggle('on')">Makepe</span></div>
+        <div class="stags" id="dm2-zones"><span class="stag" onclick="this.classList.toggle('on')">Akwa Centre</span><span class="stag" onclick="this.classList.toggle('on')">Akwa Nord</span><span class="stag" onclick="this.classList.toggle('on')">Bonanjo</span><span class="stag" onclick="this.classList.toggle('on')">Bonapriso</span><span class="stag" onclick="this.classList.toggle('on')">Bali</span><span class="stag" onclick="this.classList.toggle('on')">Deido</span><span class="stag" onclick="this.classList.toggle('on')">Makepe</span></div>
       </div>
     </div>
   </div>
@@ -951,7 +949,7 @@ textarea.inp{resize:none;}
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Photo ID vérifiée</p></div>
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p></div>
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Appels 2 garants</p></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Badge activé · Profil visible</p></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Activation et badge délivré</p></div>
         </div>
       </div>
     </div>
@@ -969,10 +967,10 @@ textarea.inp{resize:none;}
     <div class="kpi-c"><div class="kpi-v" id="da1-cl">0</div><div class="kpi-l">Usagers</div></div>
   </div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;">
+    <div class="g cp" style="text-align:center;cursor:pointer;background:linear-gradient(135deg,rgba(255,193,7,.18),rgba(255,152,0,.08));border-color:rgba(255,193,7,.32);" onclick="openAdminLeads()"><div style="font-size:28px;margin-bottom:6px;">📋</div><p style="font-size:12px;font-weight:700;color:#fff;">Leads pré-lancement</p><span class="bdg bdg-p" style="margin-top:4px;" id="da1-leads">0</span></div>
     <div class="g cp" style="text-align:center;cursor:pointer;" onclick="dShow('da2');sbActive('sbi-a2');loadDKyc()"><div style="font-size:28px;margin-bottom:6px;">🔍</div><p style="font-size:12px;font-weight:700;color:#fff;">KYC</p><span class="bdg bdg-p" style="margin-top:4px;" id="da1-kyc">0</span></div>
     <div class="g cp" style="text-align:center;cursor:pointer;" onclick="dShow('da3');sbActive('sbi-a3');loadDLive()"><div style="font-size:28px;margin-bottom:6px;">📍</div><p style="font-size:12px;font-weight:700;color:#fff;">Live</p><span class="bdg bdg-v" style="margin-top:4px;" id="da1-live">0</span></div>
     <div class="g cp" style="text-align:center;cursor:pointer;" onclick="dShow('da4');sbActive('sbi-a4');loadDLitiges()"><div style="font-size:28px;margin-bottom:6px;">⚖️</div><p style="font-size:12px;font-weight:700;color:#fff;">Litiges</p><span class="bdg bdg-r" style="margin-top:4px;" id="da1-lit">0</span></div>
-    <div class="g cp" style="text-align:center;cursor:pointer;" onclick="toast2('💰 Finances — Firebase M3+')"><div style="font-size:28px;margin-bottom:6px;">💰</div><p style="font-size:12px;font-weight:700;color:#fff;">Finances</p><span class="bdg bdg-v" style="margin-top:4px;">M5+</span></div>
   </div>
   <p class="sec">Activité récente</p>
   <div id="da1-activity"></div>
@@ -1002,35 +1000,6 @@ textarea.inp{resize:none;}
 </div>
 
 </main><!-- /main -->
-
-<!-- ═══ MOBILE : Burger menu + Overlay + Bottom Nav ═══ -->
-<button class="burger-btn" id="burger-btn" onclick="toggleMobileSidebar()" aria-label="Menu">☰</button>
-<div class="sb-overlay" id="sb-overlay" onclick="toggleMobileSidebar()"></div>
-
-<!-- BOTTOM NAV CLIENT -->
-<nav class="bottom-nav" id="bnav-client" style="display:none;">
-  <button class="bnav-it on" id="bni-c1" onclick="dShow('dc1');sbActive('sbi-c1');closeMobileSidebar()"><span class="bnav-ico">🏠</span><span class="bnav-lbl">Accueil</span></button>
-  <button class="bnav-it" id="bni-c2" onclick="dShow('dc2');sbActive('sbi-c2');renderDListe();closeMobileSidebar()"><span class="bnav-ico">🔍</span><span class="bnav-lbl">Recherche</span></button>
-  <button class="bnav-it" id="bni-cms" onclick="dShow('dc-missions');sbActive('sbi-cms');loadDMissions();closeMobileSidebar()"><span class="bnav-ico">📋</span><span class="bnav-lbl">Missions</span></button>
-  <button class="bnav-it" id="bni-c8" onclick="dShow('dc8');sbActive('sbi-c8');closeMobileSidebar()"><span class="bnav-ico">👤</span><span class="bnav-lbl">Compte</span></button>
-</nav>
-
-<!-- BOTTOM NAV PRESTATAIRE -->
-<nav class="bottom-nav" id="bnav-presta" style="display:none;">
-  <button class="bnav-it on" id="bni-m1" onclick="dShow('dm1');sbActive('sbi-m1');closeMobileSidebar()"><span class="bnav-ico">🏠</span><span class="bnav-lbl">Tableau</span></button>
-  <button class="bnav-it" id="bni-m2" onclick="dShow('dm2');sbActive('sbi-m2');closeMobileSidebar()"><span class="bnav-ico">📅</span><span class="bnav-lbl">Dispo</span></button>
-  <button class="bnav-it" id="bni-m3" onclick="dShow('dm3');sbActive('sbi-m3');dLoadMissionActive();closeMobileSidebar()"><span class="bnav-ico">⚡</span><span class="bnav-lbl">Mission</span></button>
-  <button class="bnav-it" id="bni-m4" onclick="dShow('dm4');sbActive('sbi-m4');closeMobileSidebar()"><span class="bnav-ico">👤</span><span class="bnav-lbl">Profil</span></button>
-</nav>
-
-<!-- BOTTOM NAV ADMIN -->
-<nav class="bottom-nav" id="bnav-admin" style="display:none;">
-  <button class="bnav-it on" id="bni-a1" onclick="dShow('da1');sbActive('sbi-a1');loadDAdminDash();closeMobileSidebar()"><span class="bnav-ico">📊</span><span class="bnav-lbl">Dashboard</span></button>
-  <button class="bnav-it" id="bni-a2" onclick="dShow('da2');sbActive('sbi-a2');loadDKyc();closeMobileSidebar()"><span class="bnav-ico">🔍</span><span class="bnav-lbl">KYC</span></button>
-  <button class="bnav-it" id="bni-a3" onclick="dShow('da3');sbActive('sbi-a3');loadDLive();closeMobileSidebar()"><span class="bnav-ico">📍</span><span class="bnav-lbl">Live</span></button>
-  <button class="bnav-it" id="bni-a4" onclick="dShow('da4');sbActive('sbi-a4');loadDLitiges();closeMobileSidebar()"><span class="bnav-ico">⚖️</span><span class="bnav-lbl">Litiges</span></button>
-</nav>
-
 </div><!-- /app-shell -->
 </div><!-- /platform -->
 
@@ -1052,7 +1021,7 @@ textarea.inp{resize:none;}
       <div class="dv"></div>
       <div>
         <p class="sec">2. Vérification d'identité (KYC)</p>
-        <p class="t-body">Toute prestataire doit compléter un processus de vérification en 5 étapes : formulaire en ligne (CNI, garants, Mobile Money), vérification automatique Mobile Money au nom réel, rencontre physique à Akwa, vérification téléphonique des 2 garants, puis activation du badge « Nouvelle agente ✨ ». La certification complète « Certifiée HappyHome ✅ » est attribuée automatiquement après 3 missions réalisées avec une note moyenne ≥ 4★. Tout faux renseignement entraîne la suspension définitive du compte.</p>
+        <p class="t-body">Toute prestataire doit compléter un processus de vérification en 5 étapes : formulaire en ligne, vérification Mobile Money au nom réel, rencontre physique à Douala, vérification téléphonique de 2 garants, et activation du badge. Tout faux renseignement entraîne la suspension définitive du compte.</p>
       </div>
       <div class="dv"></div>
       <div>
@@ -1072,7 +1041,7 @@ textarea.inp{resize:none;}
       <div class="dv"></div>
       <div>
         <p class="sec">6. Contact</p>
-        <p class="t-body">Pour toute question relative à vos données personnelles ou aux présentes CGU, contactez : <strong>contact@happyhome.cm</strong> · Akwa, Douala, Cameroun.</p>
+        <p class="t-body">Pour toute question relative à vos données personnelles ou aux présentes CGU, contactez : <strong>contact@happyhome.cm</strong> · Douala et environs, Cameroun.</p>
       </div>
     </div>
     <button class="btn btn-y btn-full" style="margin-top:18px;" onclick="closeCGU()">J'ai compris ✓</button>
@@ -1111,6 +1080,37 @@ textarea.inp{resize:none;}
     <button class="btn btn-out btn-full" style="margin-top:8px;" onclick="dCloseAdminLogin()">Annuler</button>
   </div>
 </div>
+
+<!-- Modale capture leads -->
+<div class="overlay" id="ov-lead" onclick="if(event.target===this)closeLeadModal()">
+  <div class="modal" style="max-width:440px;">
+    <button class="modal-close" onclick="closeLeadModal()">×</button>
+    <div style="text-align:center;font-size:34px;margin-bottom:6px;">🔔</div>
+    <h2 style="text-align:center;font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">Soyez prévenu(e) du lancement</h2>
+    <p class="t-body" style="text-align:center;margin-bottom:18px;">Le <strong style="color:#FFC107;">30 juin 2026</strong>, nous activons HappyHome. Inscrivez-vous pour être averti(e) par WhatsApp dès l'ouverture.</p>
+    <div class="fg"><label class="lbl">Prénom *</label><input class="inp" id="lead-prenom" type="text" placeholder="Marie"></div>
+    <div class="fg"><label class="lbl">Numéro WhatsApp *</label><input class="inp" id="lead-wa" type="tel" placeholder="6XX XXX XXX" maxlength="20"></div>
+    <div class="fg"><label class="lbl">Email (optionnel)</label><input class="inp" id="lead-email" type="email" placeholder="vous@email.com"></div>
+    <div class="fg"><label class="lbl">Quartier (Douala)</label><select class="inp" id="lead-quartier"><option value="">Sélectionner...</option></select></div>
+    <div class="fg"><label class="lbl">Vous êtes ?</label><select class="inp" id="lead-role"><option value="usager">Particulier — je cherche une prestataire</option><option value="agent">Prestataire — je propose mes services</option></select></div>
+    <p style="text-align:center;font-size:12px;color:#F44336;min-height:18px;" id="lead-err"></p>
+    <button class="btn btn-b btn-full" onclick="submitLead()">M'avertir du lancement →</button>
+    <p class="t-cap" style="text-align:center;margin-top:8px;">Vos données ne sont jamais partagées. Vous pouvez vous désinscrire à tout moment.</p>
+  </div>
+</div>
+
+<!-- Modale leads admin (export CSV) -->
+<div class="overlay" id="ov-admin-leads" onclick="if(event.target===this)closeAdminLeads()">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeAdminLeads()">×</button>
+    <h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">📋 Leads pré-inscription</h2>
+    <p class="t-body" style="margin-bottom:12px;"><span id="leads-admin-count">0</span> inscription(s) collectée(s).</p>
+    <div id="leads-admin-list" style="max-height:300px;overflow-y:auto;background:rgba(0,0,0,.2);border-radius:10px;padding:10px;margin-bottom:14px;font-size:12px;"></div>
+    <button class="btn btn-b btn-full" onclick="exportLeadsCSV()" style="margin-bottom:7px;">📥 Exporter en CSV</button>
+    <button class="btn btn-out btn-full" onclick="closeAdminLeads()">Fermer</button>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -1182,7 +1182,7 @@ function authSignOut(){localStorage.removeItem('hh-auth-token');return Promise.r
 function authGetSession(){const t=localStorage.getItem('hh-auth-token');return Promise.resolve({data:{session:t?{access_token:t}:null},error:null});}
 
 // ── CONSTANTES ──
-const QUARTIERS=['Akwa','Akwa Nord','Akwa Centre','Bali','Bonanjo','Bonapriso','Deido','New Deido','Mboppi','New Bell','Nkongmondo','Bépanda','Logpom','Makepe','Kotto','Cité des Palmiers','PK 8','PK 10','Bonaberi','Bassa','Ndokotti','Bessengue','Yassa','Nyalla','Logbaba','Nylon','Japoma'];
+const QUARTIERS=['Akwa Centre','Akwa Nord','Bali','Bonanjo','Bonapriso','Deido','New Deido','Mboppi','New Bell','Nkongmondo','Bépanda','Logpom','Makepe','Kotto','Cité des Palmiers','PK 8','PK 10','Bonaberi','Bassa','Ndokotti','Bessengue','Yassa','Nyalla','Logbaba','Nylon','Japoma'];
 
 let dCurrentUser=null,dCurrentRole=null,dCurrentPresta=null;
 let dMenagereDispo=true,dCheckedIn=false,dActiveFilter='all';
@@ -1200,34 +1200,8 @@ function toast2(msg,dur=3200){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(dToastTimer);dToastTimer=setTimeout(()=>el.classList.remove('show'),dur);
 }
-function dShow(id){document.querySelectorAll('.dscr').forEach(s=>s.classList.remove('active'));const el=S(id);if(el)el.classList.add('active');closeMobileSidebar();}
-function sbActive(id){
-  document.querySelectorAll('.sb-it').forEach(i=>i.classList.remove('on'));
-  const el=S(id);if(el)el.classList.add('on');
-  // Sync bottom nav: sbi-X → bni-X
-  const bniId=id.replace('sbi-','bni-');
-  document.querySelectorAll('.bnav-it').forEach(i=>i.classList.remove('on'));
-  const bni=S(bniId);if(bni)bni.classList.add('on');
-}
-// ── MOBILE SIDEBAR DRAWER ──
-function toggleMobileSidebar(){
-  const sb=S('d-sidebar'),ov=S('sb-overlay');
-  if(!sb||!ov)return;
-  const isOpen=sb.classList.contains('open');
-  if(isOpen){sb.classList.remove('open');ov.classList.remove('show');}
-  else{sb.classList.add('open');ov.classList.add('show');}
-}
-function closeMobileSidebar(){
-  const sb=S('d-sidebar'),ov=S('sb-overlay');
-  if(sb)sb.classList.remove('open');if(ov)ov.classList.remove('show');
-}
-// ── BOTTOM NAV ROLE SWITCH ──
-function dShowBnav(role){
-  ['bnav-client','bnav-presta','bnav-admin'].forEach(id=>{const el=S(id);if(el)el.style.display='none';});
-  if(role==='client')S('bnav-client').style.display='flex';
-  else if(role==='presta')S('bnav-presta').style.display='flex';
-  else if(role==='admin')S('bnav-admin').style.display='flex';
-}
+function dShow(id){document.querySelectorAll('.dscr').forEach(s=>s.classList.remove('active'));const el=S(id);if(el)el.classList.add('active');}
+function sbActive(id){document.querySelectorAll('.sb-it').forEach(i=>i.classList.remove('on'));const el=S(id);if(el)el.classList.add('on');}
 function fillDQuartiers(){
   ['dc-quartier','dc4-quartier','dm-quartier'].forEach(id=>{
     const sel=S(id);if(!sel)return;
@@ -1258,10 +1232,10 @@ async function goToDRole(role){
     dShowLoginSidebar();dShow('d-login');
   }
 }
-function dShowClientSidebar(){S('sb-client').style.display='block';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Espace Usager');S('sb-av').textContent='👤';setT('sb-name',dCurrentUser?.nom||'Usager');setT('sb-role','Usager HappyHome');dShowBnav('client');}
-function dShowPrestaSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='block';S('sb-admin').style.display='none';setT('sb-role-label','Espace Agent');S('sb-av').textContent='👩🏾';setT('sb-name',dCurrentUser?.nom||'Prestataire');setT('sb-role','Agent certifié HappyHome');dShowBnav('presta');}
-function dShowAdminSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='block';setT('sb-role-label','Administration');S('sb-av').textContent='⚙️';setT('sb-name','Admin');setT('sb-role','Administrateur');dShowBnav('admin');}
-function dShowLoginSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Accueil');setT('sb-name','—');setT('sb-role','—');dShowBnav(null);}
+function dShowClientSidebar(){S('sb-client').style.display='block';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Espace Usager');S('sb-av').textContent='👤';setT('sb-name',dCurrentUser?.nom||'Usager');setT('sb-role','Usager HappyHome');}
+function dShowPrestaSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='block';S('sb-admin').style.display='none';setT('sb-role-label','Espace Agent');S('sb-av').textContent='👩🏾';setT('sb-name',dCurrentUser?.nom||'Prestataire');setT('sb-role','Agent certifié HappyHome');}
+function dShowAdminSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='block';setT('sb-role-label','Administration');S('sb-av').textContent='⚙️';setT('sb-name','Admin');setT('sb-role','Administrateur');}
+function dShowLoginSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Accueil');setT('sb-name','—');setT('sb-role','—');}
 async function dDeconnexion(){
   delSession('hh_usager');delSession('hh_prestataire');delSession('hh_role');
   dCurrentUser=null;dCurrentRole=null;await authSignOut();
@@ -1414,7 +1388,7 @@ async function dSignupMenagere(){
   if(error){toast2('❌ '+error.message);return;}
   saveSession('hh_prestataire',data);saveSession('hh_role','prestataire');dCurrentUser=data;dCurrentRole='prestataire';
   dbPost('admin_logs',{msg:`Candidature KYC: ${nom} · ${tel} · ${spec}`}).catch(()=>{});
-  dShowPrestaSidebar();await dLoadPrestaHome();dShow('dm1');sbActive('sbi-m1');toast2('🎉 Candidature soumise ! KYC étape 1/5');
+  dShowPrestaSidebar();await dLoadPrestaHome();dShow('dm1');sbActive('sbi-m1');toast2('🎉 Candidature soumise ! KYC étape 1/6');
 }
 
 // ── PRESTATAIRE — DASHBOARD ──
@@ -1430,7 +1404,7 @@ async function dLoadPrestaHome(){
   const ac=S('dm1-activity');
   if(ac)ac.innerHTML=missions.length?missions.slice(0,3).map(m=>`<div class="mr gd"><div class="mr-top"><span class="mr-nm">${m.usager_nom}</span><span class="bdg ${['terminee','notee'].includes(m.statut)?'bdg-v':'bdg-p'}">${m.statut}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:8px 0;">Aucune activité récente</p>';
   const step=parseInt((dCurrentUser.statut||'kyc_etape1').split('etape')[1]||1);
-  setT('dm4-level',step>=5?'✅ Certifiée':step>=3?'⭐ Avancée':'🌱 KYC étape '+step+'/5');
+  setT('dm4-level',step>=6?'✅ Certifiée':step>=4?'⭐ Avancée':'🌱 KYC étape '+step+'/6');
   const svcs=Array.isArray(dCurrentUser.services)?dCurrentUser.services:(typeof dCurrentUser.services==='string'?JSON.parse(dCurrentUser.services||'[]'):[]);
   const svcEl=S('dm4-svcs');if(svcEl)svcEl.innerHTML=svcs.map(s=>`<span class="stag on">${s}</span>`).join('');
 }
@@ -1491,8 +1465,10 @@ async function loadDAdminDash(){
     dbGet('alertes','?select=id,nom,statut'),
   ]);
   const ms=r1.data||[],us=r2.data||[],ps=r3.data||[],lit=r4.data||[],al=r5.data||[];
+  const leads=JSON.parse(localStorage.getItem('hh_leads')||'[]');
   setT('da1-rev',ms.reduce((s,m)=>s+Math.round((m.montant||0)*0.18),0).toLocaleString());
   setT('da1-ms',ms.length);setT('da1-cl',us.length);setT('da1-mg',ps.length);
+  setT('da1-leads',leads.length);
   setT('da1-kyc',ps.filter(p=>p.statut?.startsWith('kyc')).length+' en attente');
   setT('da1-live',ms.filter(m=>m.statut==='en_cours').length+' en cours');
   setT('da1-lit',lit.filter(l=>l.statut==='ouvert').length+' ouvert(s)');
@@ -1507,16 +1483,16 @@ async function loadDKyc(){
   const c=S('da2-list'),cnt=S('da2-count');if(!c)return;
   if(!pList||!pList.length){c.innerHTML='<p class="t-body" style="opacity:.5;padding:20px 0;">Aucun dossier en attente</p>';if(cnt)cnt.textContent='0 en attente';return;}
   if(cnt)cnt.textContent=pList.length+' en attente';
-  const stepNames=['Formulaire en ligne','Vérif. MoMo = Nom ID','Rencontre physique','Appels 2 garants','Activation badge ✨'];
+  const stepNames=['Formulaire en ligne','Vérif. MoMo = Nom ID','Rencontre physique','Appels 2 garants','Activation badge'];
   c.innerHTML=pList.map(p=>{
     const step=parseInt(p.statut.split('etape')[1]||1);
-    return`<div class="g cp" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:24px;">${p.emoji||'👩🏾'}</div><div><p style="font-size:14px;font-weight:700;color:#fff;">${p.nom}</p><p class="t-cap">${p.specialite||''} · ${p.tel||''}</p></div></div><span class="bdg bdg-p">Étape ${step}/5</span></div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">${stepNames.map((n,i)=>`<div style="display:flex;align-items:center;gap:10px;"><div class="kyc-n ${i<step-1?'kyc-done':i===step-1?'kyc-cur':'kyc-todo'}">${i<step-1?'✓':i+1}</div><span class="t-body">${n}</span></div>`).join('')}</div><div style="display:flex;gap:8px;"><button class="btn btn-s btn-sm" style="flex:1;" onclick="dAvancerKyc('${p.id}',${step})">✅ Valider étape ${step}</button><button class="btn btn-r btn-sm" style="flex:1;" onclick="toast2('❌ Refusé')">❌ Refuser</button></div></div>`;
+    return`<div class="g cp" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:24px;">${p.emoji||'👩🏾'}</div><div><p style="font-size:14px;font-weight:700;color:#fff;">${p.nom}</p><p class="t-cap">${p.specialite||''} · ${p.tel||''}</p></div></div><span class="bdg bdg-p">Étape ${step}/6</span></div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">${stepNames.map((n,i)=>`<div style="display:flex;align-items:center;gap:10px;"><div class="kyc-n ${i<step-1?'kyc-done':i===step-1?'kyc-cur':'kyc-todo'}">${i<step-1?'✓':i+1}</div><span class="t-body">${n}</span></div>`).join('')}</div><div style="display:flex;gap:8px;"><button class="btn btn-s btn-sm" style="flex:1;" onclick="dAvancerKyc('${p.id}',${step})">✅ Valider étape ${step}</button><button class="btn btn-r btn-sm" style="flex:1;" onclick="toast2('❌ Refusé')">❌ Refuser</button></div></div>`;
   }).join('');
 }
 async function dAvancerKyc(id,step){
-  await dbPatch('prestataire_users','id',id,step>=5?{statut:'actif',badge:true}:{statut:'kyc_etape'+(step+1)});
-  toast2(step>=5?'🎉 Badge accordé !':'✅ Étape '+step+' → '+(step+1));
-  dbPost('admin_logs',{msg:`KYC ${id}: étape ${step}→${step>=5?'ACTIF':step+1}`}).catch(()=>{});
+  await dbPatch('prestataire_users','id',id,step>=6?{statut:'actif',badge:true}:{statut:'kyc_etape'+(step+1)});
+  toast2(step>=6?'🎉 Badge accordé !':'✅ Étape '+step+' → '+(step+1));
+  dbPost('admin_logs',{msg:`KYC ${id}: étape ${step}→${step>=6?'ACTIF':step+1}`}).catch(()=>{});
   loadDKyc();
 }
 async function loadDLive(){
@@ -1548,11 +1524,172 @@ function closeCGU(){const el=document.getElementById('ov-cgu');if(el)el.classLis
 // ── ADMIN TAP ──
 function adminTap2(){dTapCount++;clearTimeout(dTapTimer);if(dTapCount>=3){dTapCount=0;openPlatform('login');setTimeout(dOpenAdmin,600);return;}dTapTimer=setTimeout(()=>{dTapCount=0;},900);}
 
-// ── INIT ──
+// ════════════════ COMPTEUR LANCEMENT 30 JUIN 2026 ════════════════
+const LAUNCH_DATE = new Date('2026-06-30T00:00:00+01:00');
+
+function updateCountdown(){
+  const now = new Date();
+  const diff = LAUNCH_DATE - now;
+  const el = document.getElementById('launch-countdown');
+  if(!el) return;
+  if(diff <= 0){
+    el.innerHTML = '🚀 <span style="color:#4CAF50;">HappyHome est en ligne !</span>';
+    return;
+  }
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  el.innerHTML = `<span style="color:#FFC107;">${days}</span> jours · <span style="color:#FFC107;">${hours}</span>h · <span style="color:#FFC107;">${mins}</span>min`;
+}
+
+function updateLeadsCount(){
+  const leads = JSON.parse(localStorage.getItem('hh_leads') || '[]');
+  const total = 47 + leads.length;
+  const el = document.getElementById('leads-count');
+  if(el) el.textContent = total;
+}
+
+// ════════════════ CAPTURE LEADS ════════════════
+function openLeadModal(){
+  const sel = document.getElementById('lead-quartier');
+  if(sel && sel.options.length <= 1){
+    QUARTIERS.forEach(q => {
+      const o = document.createElement('option');
+      o.value = q; o.textContent = q; sel.appendChild(o);
+    });
+  }
+  document.getElementById('ov-lead').classList.add('show');
+  setTimeout(()=>document.getElementById('lead-prenom')?.focus(), 200);
+}
+function closeLeadModal(){document.getElementById('ov-lead').classList.remove('show');}
+
+function submitLead(){
+  const prenom = (document.getElementById('lead-prenom').value || '').trim();
+  const wa = (document.getElementById('lead-wa').value || '').trim();
+  const email = (document.getElementById('lead-email').value || '').trim();
+  const quartier = document.getElementById('lead-quartier').value || '';
+  const role = document.getElementById('lead-role').value || 'usager';
+  const err = document.getElementById('lead-err');
+
+  if(!prenom){err.textContent='⚠️ Prénom requis';return;}
+  if(!wa || wa.replace(/\D/g,'').length < 9){err.textContent='⚠️ Numéro WhatsApp invalide (9 chiffres min)';return;}
+  if(email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){err.textContent='⚠️ Email invalide';return;}
+  err.textContent='';
+
+  const leads = JSON.parse(localStorage.getItem('hh_leads') || '[]');
+  // Anti-doublon par numéro WhatsApp
+  if(leads.some(l => l.wa.replace(/\D/g,'') === wa.replace(/\D/g,''))){
+    err.textContent = '✅ Ce numéro est déjà inscrit. Merci !';
+    setTimeout(closeLeadModal, 1800);
+    return;
+  }
+  // GPS optionnel : capture en arrière-plan si l'utilisateur autorise
+  const lead = {
+    id: 'L' + Date.now().toString(36),
+    prenom, wa, email, quartier, role,
+    ts: new Date().toISOString(),
+    source: 'landing_hero'
+  };
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos => { lead.lat = pos.coords.latitude.toFixed(5); lead.lng = pos.coords.longitude.toFixed(5); saveLeadFinal(lead); },
+      () => saveLeadFinal(lead),
+      {timeout: 3000}
+    );
+  } else saveLeadFinal(lead);
+}
+
+function saveLeadFinal(lead){
+  const leads = JSON.parse(localStorage.getItem('hh_leads') || '[]');
+  leads.push(lead);
+  localStorage.setItem('hh_leads', JSON.stringify(leads));
+  updateLeadsCount();
+  // Confirmation visuelle
+  const m = document.getElementById('ov-lead');
+  if(m) m.querySelector('.modal').innerHTML = `
+    <div style="text-align:center;padding:30px 10px;">
+      <div style="font-size:60px;margin-bottom:14px;">✅</div>
+      <h2 style="font-size:22px;font-weight:800;color:#fff;margin-bottom:10px;">Merci ${lead.prenom} !</h2>
+      <p style="color:rgba(255,255,255,.8);margin-bottom:18px;">Nous vous contacterons sur WhatsApp dès l'ouverture officielle le <strong style="color:#FFC107;">30 juin 2026</strong>.</p>
+      <button class="btn btn-b" onclick="closeLeadModal();setTimeout(()=>location.reload(),200)">Fermer</button>
+    </div>`;
+}
+
+// ════════════════ ADMIN — VOIR / EXPORTER LEADS ════════════════
+function openAdminLeads(){
+  const leads = JSON.parse(localStorage.getItem('hh_leads') || '[]');
+  const c = document.getElementById('leads-admin-list');
+  document.getElementById('leads-admin-count').textContent = leads.length;
+  if(!leads.length){
+    c.innerHTML = '<p style="opacity:.5;text-align:center;padding:30px 0;">Aucun lead pour le moment</p>';
+  } else {
+    c.innerHTML = leads.slice().reverse().map(l => `
+      <div style="border-bottom:1px solid rgba(255,255,255,.08);padding:8px 4px;">
+        <div style="font-weight:700;color:#fff;">${l.prenom} <span style="color:rgba(255,255,255,.5);font-weight:400;font-size:11px;">· ${l.role}</span></div>
+        <div style="color:rgba(255,255,255,.7);font-size:11px;">📱 ${l.wa}${l.email ? ' · ✉️ '+l.email : ''}</div>
+        <div style="color:rgba(255,255,255,.5);font-size:10px;">${l.quartier || '—'} · ${new Date(l.ts).toLocaleString('fr-FR')}${l.lat ? ' · 📍 '+l.lat+','+l.lng : ''}</div>
+      </div>`).join('');
+  }
+  document.getElementById('ov-admin-leads').classList.add('show');
+}
+function closeAdminLeads(){document.getElementById('ov-admin-leads').classList.remove('show');}
+
+function exportLeadsCSV(){
+  const leads = JSON.parse(localStorage.getItem('hh_leads') || '[]');
+  if(!leads.length){alert('Aucun lead à exporter');return;}
+  const header = ['id','prenom','wa','email','quartier','role','lat','lng','source','ts'];
+  const rows = leads.map(l => header.map(k => `"${(l[k]||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv = '\ufeff' + header.join(',') + '\n' + rows.join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `happyhome-leads-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ════════════════ GÉOLOCALISATION GPS PRESTATAIRE ════════════════
+function dCaptureGPS(targetInputId, callback){
+  if(!navigator.geolocation){alert('⚠️ Géolocalisation non supportée par votre navigateur');return;}
+  const btn = document.getElementById('gps-btn-'+targetInputId);
+  if(btn){btn.textContent='📍 Localisation...';btn.disabled=true;}
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude.toFixed(5);
+      const lng = pos.coords.longitude.toFixed(5);
+      const inp = document.getElementById(targetInputId);
+      if(inp) inp.value = `${lat}, ${lng}`;
+      if(btn){btn.textContent='✅ Position capturée';btn.style.background='rgba(76,175,80,.2)';}
+      if(callback) callback(lat, lng);
+    },
+    err => {
+      if(btn){btn.textContent='📍 Réessayer';btn.disabled=false;}
+      alert('❌ Activez la géolocalisation dans votre navigateur');
+    },
+    {timeout: 10000, enableHighAccuracy: true}
+  );
+}
+
+// ════════════════ INIT ════════════════
 document.addEventListener('DOMContentLoaded',async()=>{
   fillDQuartiers();
   const di=S('dc4-date');if(di){const t=new Date();di.min=t.toISOString().split('T')[0];di.value=t.toISOString().split('T')[0];}
-  fetchPrestataires(); // prefetch sans bloquer
+  fetchPrestataires();
+  // Compteur et leads
+  updateCountdown();
+  setInterval(updateCountdown, 60000); // mise à jour chaque minute
+  updateLeadsCount();
+  // Pop-up automatique au bout de 30 secondes (si jamais inscrit)
+  if(!localStorage.getItem('hh_lead_popup_shown')){
+    setTimeout(()=>{
+      const leads = JSON.parse(localStorage.getItem('hh_leads') || '[]');
+      if(!leads.length){
+        openLeadModal();
+        localStorage.setItem('hh_lead_popup_shown','1');
+      }
+    }, 30000);
+  }
   const role=loadSession('hh_role');
   if(role==='usager'){const u=loadSession('hh_usager');if(u){dCurrentUser=u;dCurrentRole='usager';openPlatform('client');return;}}
   else if(role==='prestataire'){const p=loadSession('hh_prestataire');if(p){dCurrentUser=p;dCurrentRole='prestataire';openPlatform('menagere');return;}}

@@ -710,7 +710,7 @@ textarea.inp{resize:none;}
       <div class="gd cp" style="border-color:rgba(255,193,7,.2);background:rgba(255,193,7,.04);position:sticky;top:20px;">
         <p class="sec" style="color:var(--cy);">Récapitulatif prix</p>
         <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Tarif de base</span><span class="t-body" id="dp-base">—</span></div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Commission HappyHome (15%)</span><span class="t-body" id="dp-comm">—</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Commission HappyHome (20%)</span><span class="t-body" id="dp-comm">—</span></div>
         <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Frais Mobile Money (3%)</span><span class="t-body" id="dp-mm">—</span></div>
         <div class="dv"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:14px;font-weight:700;color:#fff;">TOTAL</span><span style="font-size:26px;font-weight:900;color:var(--cy);" id="dp-total">—</span></div>
@@ -774,6 +774,7 @@ textarea.inp{resize:none;}
         <div style="padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="openCGU()"><span>🛡️</span><span class="t-body">Confidentialité & CGU</span><span style="margin-left:auto;color:rgba(255,255,255,.3);">›</span></div>
       </div>
       <button class="btn btn-out btn-full" style="margin-top:12px;" onclick="dDeconnexion()">🚪 Se déconnecter</button>
+      <button class="btn btn-full" style="margin-top:8px;background:transparent;border:1px solid rgba(244,67,54,.35);color:#F44336;font-size:13px;padding:11px;" onclick="ouvrirSuppressionCompte()">🗑️ Supprimer mon compte</button>
     </div>
   </div>
 </div>
@@ -1056,7 +1057,7 @@ textarea.inp{resize:none;}
       <div class="dv"></div>
       <div>
         <p class="sec">3. Paiement & Remboursements</p>
-        <p class="t-body">Tous les paiements s'effectuent exclusivement via Orange Money ou MTN Mobile Money. Une commission de 15% est prélevée par HappyHome sur chaque mission. En cas d'annulation par la prestataire, un remboursement intégral est traité sous 48h. En cas d'annulation par l'usager moins de 2h avant la mission, des frais de 20% s'appliquent.</p>
+        <p class="t-body">Tous les paiements s'effectuent exclusivement via Orange Money ou MTN Mobile Money. Le prix affiché au Client inclut le prix de base du prestataire, une commission HappyHome de 20% et des frais de plateforme Mobile Money de 3%. Le prestataire perçoit 100% de son prix de base. En cas d'annulation par la prestataire, un remboursement intégral est traité sous 48h. En cas d'annulation par l'usager moins de 2h avant la mission, des frais de 20% s'appliquent.</p>
       </div>
       <div class="dv"></div>
       <div>
@@ -1141,8 +1142,160 @@ textarea.inp{resize:none;}
   </div>
 </div>
 
+<!-- ── MODAL SUPPRESSION COMPTE ── -->
+<div id="ov-delete-account" style="position:fixed;inset:0;z-index:8000;background:rgba(3,10,31,.97);backdrop-filter:blur(10px);display:none;align-items:flex-end;justify-content:center;">
+  <div style="width:100%;max-width:480px;background:var(--card);border:1px solid rgba(244,67,54,.25);border-radius:20px 20px 0 0;padding:24px 20px 32px;box-sizing:border-box;max-height:88vh;overflow-y:auto;">
+
+    <!-- VUE 1 : Avertissement -->
+    <div id="del-vue1">
+      <div style="text-align:center;margin-bottom:18px;">
+        <div style="font-size:36px;margin-bottom:8px;">⚠️</div>
+        <div style="font-size:18px;font-weight:900;color:#F44336;">Supprimer mon compte</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:5px;">Cette action est irréversible</div>
+      </div>
+      <div style="background:rgba(244,67,54,.07);border:1px solid rgba(244,67,54,.2);border-radius:12px;padding:14px 16px;margin-bottom:18px;">
+        <div style="font-size:12px;font-weight:700;color:#F44336;margin-bottom:10px;letter-spacing:.4px;">CE QUI SE PASSE IMMÉDIATEMENT</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.8;">
+          <div>🔒 Votre compte est désactivé — plus accessible</div>
+          <div>👁️ Votre profil disparaît pour les autres utilisateurs</div>
+          <div>❌ Vos missions en cours sont annulées</div>
+          <div>🗑️ Vos données personnelles sont anonymisées sous 30 jours</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,193,7,.06);border:1px solid rgba(255,193,7,.15);border-radius:10px;padding:11px 14px;margin-bottom:18px;font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;">
+        📋 Conformément aux CGU v1.3 (Art. 14.2), les données KYC sont conservées 5 ans et les transactions 10 ans pour obligations légales et comptables.
+      </div>
+      <button onclick="continuerSuppression()" style="width:100%;padding:13px;background:rgba(244,67,54,.15);color:#F44336;font-size:14px;font-weight:800;border:1px solid rgba(244,67,54,.35);border-radius:12px;cursor:pointer;margin-bottom:10px;">
+        Continuer →
+      </button>
+      <button onclick="fermerSuppressionCompte()" style="width:100%;padding:12px;background:transparent;color:rgba(255,255,255,.45);font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,.12);border-radius:12px;cursor:pointer;">
+        Annuler — garder mon compte
+      </button>
+    </div>
+
+    <!-- VUE 2 : Confirmation numéro -->
+    <div id="del-vue2" style="display:none;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:32px;margin-bottom:8px;">📱</div>
+        <div style="font-size:17px;font-weight:900;color:var(--text);">Confirmation requise</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:5px;">Saisissez votre numéro pour confirmer</div>
+      </div>
+      <div style="margin-bottom:18px;">
+        <label style="font-size:12px;color:rgba(255,255,255,.5);font-weight:600;display:block;margin-bottom:8px;">NUMÉRO DE TÉLÉPHONE DU COMPTE</label>
+        <input id="del-tel-confirm" class="inp" type="tel" placeholder="6XX XXX XXX" style="width:100%;box-sizing:border-box;">
+        <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:6px;">Saisissez le numéro lié à votre compte HappyHome</div>
+      </div>
+      <div id="del-erreur" style="display:none;background:rgba(244,67,54,.1);border:1px solid rgba(244,67,54,.3);border-radius:8px;padding:10px 12px;font-size:12px;color:#F44336;margin-bottom:14px;text-align:center;">
+        ❌ Numéro incorrect. Vérifiez et réessayez.
+      </div>
+      <button onclick="confirmerSuppression()" style="width:100%;padding:14px;background:#F44336;color:#fff;font-size:15px;font-weight:900;border:none;border-radius:12px;cursor:pointer;margin-bottom:10px;">
+        🗑️ Supprimer définitivement
+      </button>
+      <button onclick="retourVue1Suppression()" style="width:100%;padding:11px;background:transparent;color:rgba(255,255,255,.4);font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,.12);border-radius:12px;cursor:pointer;">
+        ← Retour
+      </button>
+    </div>
+
+    <!-- VUE 3 : Carence (missions en cours) -->
+    <div id="del-vue3" style="display:none;text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">⏳</div>
+      <div style="font-size:17px;font-weight:900;color:var(--cy);margin-bottom:10px;">Demande enregistrée</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:20px;">
+        Vous avez des missions en cours. Votre demande de suppression a été enregistrée.<br><br>
+        Votre compte sera supprimé automatiquement à la résolution de toutes vos missions actives (délai maximum : 30 jours, conformément à l'Art. 14.2.4 des CGU).
+      </div>
+      <div style="background:rgba(255,193,7,.07);border:1px solid rgba(255,193,7,.18);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:rgba(255,255,255,.5);">
+        📧 Un email de confirmation sera envoyé à <span id="del-email-carence">—</span>
+      </div>
+      <button onclick="fermerSuppressionCompte()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;font-size:14px;font-weight:900;border:none;border-radius:12px;cursor:pointer;">
+        Compris, fermer
+      </button>
+    </div>
+
+    <!-- VUE 4 : Succès suppression -->
+    <div id="del-vue4" style="display:none;text-align:center;">
+      <div style="font-size:40px;margin-bottom:12px;">✅</div>
+      <div style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:10px;">Compte supprimé</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:22px;">
+        Vos données personnelles seront anonymisées sous 30 jours.<br>
+        Merci d'avoir utilisé HappyHome.
+      </div>
+      <button onclick="finaliserSuppression()" style="width:100%;padding:13px;background:var(--card);color:var(--text);font-size:14px;font-weight:700;border:1px solid var(--cardb);border-radius:12px;cursor:pointer;">
+        Retour à l'accueil
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── BANDEAU CONSENTEMENT CGU ── -->
+<div id="ov-consent" style="position:fixed;inset:0;z-index:9000;background:rgba(3,10,31,.96);backdrop-filter:blur(10px);display:none;align-items:flex-end;justify-content:center;padding:0;">
+  <div id="consent-box" style="width:100%;max-width:480px;background:var(--card);border:1px solid var(--cardb);border-radius:20px 20px 0 0;padding:24px 20px 32px;box-sizing:border-box;max-height:90vh;overflow-y:auto;">
+
+    <!-- État ACCUEIL -->
+    <div id="consent-accept-view">
+      <div style="text-align:center;margin-bottom:18px;">
+        <div style="font-size:36px;margin-bottom:8px;">🏠</div>
+        <div style="font-size:20px;font-weight:900;color:var(--text);">Bienvenue sur HappyHome</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:6px;">Services à domicile · Douala, Cameroun</div>
+      </div>
+
+      <div style="background:rgba(255,193,7,.07);border:1px solid rgba(255,193,7,.18);border-radius:12px;padding:14px 16px;margin-bottom:18px;">
+        <div style="font-size:12px;font-weight:700;color:var(--cy);margin-bottom:10px;letter-spacing:.4px;">AVANT DE CONTINUER — POINTS ESSENTIELS</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.7;">
+          <div style="margin-bottom:6px;">✅ HappyHome est un <strong>intermédiaire</strong> — pas votre employeur</div>
+          <div style="margin-bottom:6px;">✅ Paiements <strong>Mobile Money uniquement</strong> (Orange Money / MTN MoMo)</div>
+          <div style="margin-bottom:6px;">✅ Prix Client = prix prestataire <strong>+ 20% commission + 3% Mobile Money</strong></div>
+          <div style="margin-bottom:6px;">✅ Vos données protégées selon la <strong>loi camerounaise n° 2010/012</strong></div>
+          <div>✅ Droit de <strong>suppression de compte</strong> à tout moment, sans justification</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-bottom:18px;">
+        <span onclick="openCGUFromBandeau()" style="font-size:13px;color:var(--cy);text-decoration:underline;cursor:pointer;font-weight:600;">Lire les CGU complètes (v1.3) →</span>
+      </div>
+
+      <button onclick="acceptConsent()" style="width:100%;padding:15px;background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;font-size:15px;font-weight:900;border:none;border-radius:12px;cursor:pointer;margin-bottom:10px;letter-spacing:.3px;">
+        ✓ J'accepte et je continue
+      </button>
+      <button onclick="refuseConsent()" style="width:100%;padding:12px;background:transparent;color:rgba(255,255,255,.4);font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,.15);border-radius:12px;cursor:pointer;">
+        Refuser
+      </button>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:rgba(255,255,255,.3);line-height:1.5;">
+        En cliquant sur "J'accepte", vous confirmez avoir lu et accepté<br>les CGU HappyHome v1.3 en vigueur au 15 mai 2026.
+      </div>
+    </div>
+
+    <!-- État REFUS -->
+    <div id="consent-refuse-view" style="display:none;text-align:center;">
+      <div style="font-size:40px;margin-bottom:14px;">🔒</div>
+      <div style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:10px;">Accès non disponible</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:24px;">
+        L'utilisation de HappyHome nécessite l'acceptation des Conditions Générales d'Utilisation.<br><br>
+        Sans acceptation, vous ne pouvez pas accéder à la plateforme.
+      </div>
+      <button onclick="revenirConsent()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;font-size:14px;font-weight:900;border:none;border-radius:12px;cursor:pointer;">
+        ← Revenir et accepter
+      </button>
+    </div>
+
+  </div>
+</div>
+
 <script>
 'use strict';
+
+// ── SÉCURITÉ XSS — Sanitisation obligatoire pour tout innerHTML ──
+function esc(s){
+  if(s===null||s===undefined)return'';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;')
+    .replace(/\//g,'&#x2F;');
+}
 
 // ── THÈME JOUR / NUIT ──
 function applyTheme(theme){
@@ -1355,7 +1508,7 @@ async function renderDListe(filtre,recherche){
 }
 function dCardHTML(p){
   const niv=p.experience==='experte'?'⭐ Experte':p.experience==='confirmée'?'✨ Confirmée':'🌱 Débutante';
-  return`<div class="pcard" onclick="dOuvrirPresta('${p.id}')"><div class="pc-top"><div class="pc-av">${p.emoji}</div><div style="flex:1;min-width:0;"><div class="pc-name">${p.nom}</div><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:3px;"><span class="spill ${p.dispo?'s-on':'s-off'}" style="font-size:10px;"><span class="sdot"></span>${p.dispo?'Disponible':'Occupée'}</span><span class="t-cap">${niv}</span>${p.badge?'<span class="bdg bdg-v" style="font-size:9px;">✅</span>':''}</div><div style="margin-top:3px;font-size:11px;color:var(--cy);">${'⭐'.repeat(Math.round(p.note))} <b>${p.note}</b> <span class="t-cap">(${p.nb_avis})</span></div></div></div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:8px;">${p.specialite}</div><div class="pc-bot"><span class="pc-pr">${p.prix.toLocaleString()} F<span style="font-size:11px;font-weight:400;color:rgba(255,255,255,.4);">/jour</span></span><button class="btn btn-y btn-sm">Réserver</button></div></div>`;
+  return`<div class="pcard" onclick="dOuvrirPresta('${p.id}')"><div class="pc-top"><div class="pc-av">${esc(p.emoji)}</div><div style="flex:1;min-width:0;"><div class="pc-name">${esc(p.nom)}</div><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:3px;"><span class="spill ${p.dispo?'s-on':'s-off'}" style="font-size:10px;"><span class="sdot"></span>${p.dispo?'Disponible':'Occupée'}</span><span class="t-cap">${niv}</span>${p.badge?'<span class="bdg bdg-v" style="font-size:9px;">✅</span>':''}</div><div style="margin-top:3px;font-size:11px;color:var(--cy);">${'⭐'.repeat(Math.round(p.note))} <b>${p.note}</b> <span class="t-cap">(${p.nb_avis})</span></div></div></div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:8px;">${esc(p.specialite)}</div><div class="pc-bot"><span class="pc-pr">${p.prix.toLocaleString()} F<span style="font-size:11px;font-weight:400;color:rgba(255,255,255,.4);">/jour</span></span><button class="btn btn-y btn-sm">Réserver</button></div></div>`;
 }
 function filterDMenageres(val){renderDListe('all',val);}
 function dSetFilter(el,val){dActiveFilter=val;document.querySelectorAll('#dc2 .stag').forEach(s=>s.classList.remove('on'));el.classList.add('on');renderDListe(val);}
@@ -1374,10 +1527,10 @@ function dToggleFav(){if(!dCurrentPresta)return;const favs=loadSession('hh_favor
 function dCalcPrix(){
   if(!dCurrentPresta)return;const dur=parseInt(S('dc4-duree')?.value||8);
   let base=dCurrentPresta.prix;if(dur===4)base=Math.round(base*0.6);
-  const comm=Math.round(base*0.15),mm=Math.round((base+comm)*0.03),total=base+comm+mm;
+  const comm=Math.round(base*0.20),mm=Math.round((base+comm)*0.03),total=base+comm+mm;
   setT('dp-base',base.toLocaleString()+' FCFA');setT('dp-comm',comm.toLocaleString()+' FCFA');
   setT('dp-mm',mm.toLocaleString()+' FCFA');setT('dp-total',total.toLocaleString()+' FCFA');
-  window._dtotal=total;window._dbase=base;
+  window._dtotal=total;window._dbase=base;window._dcomm=comm;window._dfrais=mm;
 }
 function dConfirmerResa(){
   const date=S('dc4-date')?.value,adresse=(S('dc4-adresse')?.value||'').trim(),heure=S('dc4-heure')?.value||'08:00';
@@ -1394,7 +1547,7 @@ async function dConfirmerPaiement(){
   const {data:last}=await dbGet('missions','?select=id&order=created_at.desc&limit=1');
   const nextNum=last&&last[0]?parseInt((last[0].id||'M0').replace('M',''))+1:1;
   const mId='M'+nextNum.toString().padStart(3,'0');
-  const {error}=await dbPost('missions',{id:mId,usager_id:dCurrentUser?.id||'',usager_nom:dCurrentUser?.nom||'',presta_id:dCurrentPresta?.id||'',presta_nom:dCurrentPresta?.nom||'',presta_emoji:dCurrentPresta?.emoji||'',date:window._dresa?.date||'',heure:window._dresa?.heure||'',adresse:window._dresa?.adresse||'',services:window._dresa?.services||[],exigences:window._dresa?.exigences||'',montant:window._dtotal||0,txn,statut:'confirmee'});
+  const {error}=await dbPost('missions',{id:mId,usager_id:dCurrentUser?.id||'',usager_nom:dCurrentUser?.nom||'',presta_id:dCurrentPresta?.id||'',presta_nom:dCurrentPresta?.nom||'',presta_emoji:dCurrentPresta?.emoji||'',date:window._dresa?.date||'',heure:window._dresa?.heure||'',adresse:window._dresa?.adresse||'',services:window._dresa?.services||[],exigences:window._dresa?.exigences||'',montant:window._dtotal||0,prix_base:window._dbase||0,commission_hhome:window._dcomm||0,frais_paiement:window._dfrais||0,txn,statut:'confirmee'});
   if(error){toast2('❌ '+error.message);return;}
   dbPost('admin_logs',{msg:`Mission ${mId} — ${dCurrentPresta?.nom||''} → ${dCurrentUser?.nom||''} · ${(window._dtotal||0).toLocaleString()} FCFA`}).catch(()=>{});
   toast2('✅ Mission '+mId+' confirmée !');
@@ -1405,8 +1558,8 @@ async function loadDMissions(){
   if(c)c.innerHTML='<p class="t-cap" style="padding:10px 0;">Chargement...</p>';
   const {data:all}=await dbGet('missions',`?select=*&usager_id=eq.${dCurrentUser?.id||''}&order=created_at.desc`);
   const mine=all||[],ec=mine.filter(m=>['confirmee','en_cours'].includes(m.statut)),ht=mine.filter(m=>['terminee','notee'].includes(m.statut));
-  if(c)c.innerHTML=ec.length?ec.map(m=>`<div class="mr g"><div class="mr-top"><span class="mr-nm">${m.presta_nom}</span><span class="bdg bdg-p">⏳ En cours</span></div><div class="mr-dt"><span>📅</span><span>${m.date} · ${m.heure}</span></div><div class="mr-dt"><span>📍</span><span>${m.adresse}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:10px 0;">Aucune mission en cours</p>';
-  if(h)h.innerHTML=ht.length?ht.map(m=>`<div class="mr g"><div class="mr-top"><span class="mr-nm">${m.presta_nom}</span><span class="bdg bdg-v">✅ Terminée</span></div><div class="mr-dt"><span>📅</span><span>${m.date}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:10px 0;">Aucune mission passée</p>';
+  if(c)c.innerHTML=ec.length?ec.map(m=>`<div class="mr g"><div class="mr-top"><span class="mr-nm">${esc(m.presta_nom)}</span><span class="bdg bdg-p">⏳ En cours</span></div><div class="mr-dt"><span>📅</span><span>${esc(m.date)} · ${esc(m.heure)}</span></div><div class="mr-dt"><span>📍</span><span>${esc(m.adresse)}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:10px 0;">Aucune mission en cours</p>';
+  if(h)h.innerHTML=ht.length?ht.map(m=>`<div class="mr g"><div class="mr-top"><span class="mr-nm">${esc(m.presta_nom)}</span><span class="bdg bdg-v">✅ Terminée</span></div><div class="mr-dt"><span>📅</span><span>${esc(m.date)}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:10px 0;">Aucune mission passée</p>';
   setT('dc8-nb',mine.length);
 }
 
@@ -1435,13 +1588,13 @@ async function dLoadPrestaHome(){
   if(!dCurrentUser)return;
   setT('dm1-hello','Bonjour '+dCurrentUser.nom.split(' ')[0]+' 👋');setT('dm4-name',dCurrentUser.nom);setT('dm4-spec',dCurrentUser.specialite||'');
   const {data:ms}=await dbGet('missions',`?select=*&presta_id=eq.${dCurrentUser.id}&order=created_at.desc`);
-  const missions=ms||[],rev=missions.filter(m=>['terminee','notee'].includes(m.statut)).reduce((s,m)=>s+Math.round((m.montant||0)*0.82),0);
+  const missions=ms||[],rev=missions.filter(m=>['terminee','notee'].includes(m.statut)).reduce((s,m)=>s+(m.prix_base||Math.round((m.montant||0)/1.236)),0);
   setT('dm1-rev',rev.toLocaleString());setT('dm1-nb',missions.length);setT('dm4-nb',missions.length+' missions');
   const active=missions.find(m=>['confirmee','en_cours'].includes(m.statut));
   const mc=S('dm1-mission');
-  if(mc)mc.innerHTML=active?`<div class="mr g cp"><div class="mr-top"><span class="mr-nm">${active.usager_nom}</span><span class="bdg bdg-p">⏳ ${active.statut==='en_cours'?'En cours':'Confirmée'}</span></div><div class="mr-dt"><span>📅</span><span>${active.date} · ${active.heure}</span></div><div class="mr-dt"><span>📍</span><span>${active.adresse}</span></div><div class="mr-dt t-y"><span>💰</span><span>${active.montant.toLocaleString()} FCFA</span></div></div>`:'<p class="t-cap" style="padding:8px 0;">Aucune mission prévue</p>';
+  if(mc)mc.innerHTML=active?`<div class="mr g cp"><div class="mr-top"><span class="mr-nm">${esc(active.usager_nom)}</span><span class="bdg bdg-p">⏳ ${active.statut==='en_cours'?'En cours':'Confirmée'}</span></div><div class="mr-dt"><span>📅</span><span>${esc(active.date)} · ${esc(active.heure)}</span></div><div class="mr-dt"><span>📍</span><span>${esc(active.adresse)}</span></div><div class="mr-dt t-y"><span>💰</span><span>${active.montant.toLocaleString()} FCFA</span></div></div>`:'<p class="t-cap" style="padding:8px 0;">Aucune mission prévue</p>';
   const ac=S('dm1-activity');
-  if(ac)ac.innerHTML=missions.length?missions.slice(0,3).map(m=>`<div class="mr gd"><div class="mr-top"><span class="mr-nm">${m.usager_nom}</span><span class="bdg ${['terminee','notee'].includes(m.statut)?'bdg-v':'bdg-p'}">${m.statut}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:8px 0;">Aucune activité récente</p>';
+  if(ac)ac.innerHTML=missions.length?missions.slice(0,3).map(m=>`<div class="mr gd"><div class="mr-top"><span class="mr-nm">${esc(m.usager_nom)}</span><span class="bdg ${['terminee','notee'].includes(m.statut)?'bdg-v':'bdg-p'}">${esc(m.statut)}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-cap" style="padding:8px 0;">Aucune activité récente</p>';
   const step=parseInt((dCurrentUser.statut||'kyc_etape1').split('etape')[1]||1);
   setT('dm4-level',step>=6?'✅ Certifiée':step>=4?'⭐ Avancée':'🌱 KYC étape '+step+'/6');
   const svcs=Array.isArray(dCurrentUser.services)?dCurrentUser.services:(typeof dCurrentUser.services==='string'?JSON.parse(dCurrentUser.services||'[]'):[]);
@@ -1463,7 +1616,7 @@ async function dLoadMissionActive(){
   setT('dm3-usager',m.usager_nom);setT('dm3-adresse',m.adresse);
   const svcs=Array.isArray(m.services)?m.services:JSON.parse(m.services||'[]');
   setT('dm3-services',svcs.join(', '));setT('dm3-exigences',m.exigences||'—');
-  setT('dm3-net',Math.round((m.montant||0)*0.82).toLocaleString()+' FCFA');setT('dm3-horaire',m.heure);
+  setT('dm3-net',(m.prix_base||Math.round((m.montant||0)/1.236)).toLocaleString()+' FCFA');setT('dm3-horaire',m.heure);
 }
 async function dCheckIn(){
   if(dCheckedIn){toast2('⚠️ Déjà arrivée');return;}dCheckedIn=true;
@@ -1505,7 +1658,7 @@ async function loadDAdminDash(){
   ]);
   const ms=r1.data||[],us=r2.data||[],ps=r3.data||[],lit=r4.data||[],al=r5.data||[];
   const leads=JSON.parse(localStorage.getItem('hh_leads')||'[]');
-  setT('da1-rev',ms.reduce((s,m)=>s+Math.round((m.montant||0)*0.18),0).toLocaleString());
+  setT('da1-rev',ms.reduce((s,m)=>s+(m.commission_hhome||Math.round((m.montant||0)*0.162)),0).toLocaleString());
   setT('da1-ms',ms.length);setT('da1-cl',us.length);setT('da1-mg',ps.length);
   setT('da1-leads',leads.length);
   setT('da1-kyc',ps.filter(p=>p.statut?.startsWith('kyc')).length+' en attente');
@@ -1525,7 +1678,7 @@ async function loadDKyc(){
   const stepNames=['Formulaire en ligne','Vérif. MoMo = Nom ID','Rencontre physique','Appels 2 garants','Activation badge'];
   c.innerHTML=pList.map(p=>{
     const step=parseInt(p.statut.split('etape')[1]||1);
-    return`<div class="g cp" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:24px;">${p.emoji||'👩🏾'}</div><div><p style="font-size:14px;font-weight:700;color:#fff;">${p.nom}</p><p class="t-cap">${p.specialite||''} · ${p.tel||''}</p></div></div><span class="bdg bdg-p">Étape ${step}/6</span></div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">${stepNames.map((n,i)=>`<div style="display:flex;align-items:center;gap:10px;"><div class="kyc-n ${i<step-1?'kyc-done':i===step-1?'kyc-cur':'kyc-todo'}">${i<step-1?'✓':i+1}</div><span class="t-body">${n}</span></div>`).join('')}</div><div style="display:flex;gap:8px;"><button class="btn btn-s btn-sm" style="flex:1;" onclick="dAvancerKyc('${p.id}',${step})">✅ Valider étape ${step}</button><button class="btn btn-r btn-sm" style="flex:1;" onclick="toast2('❌ Refusé')">❌ Refuser</button></div></div>`;
+    return`<div class="g cp" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:24px;">${p.emoji||'👩🏾'}</div><div><p style="font-size:14px;font-weight:700;color:#fff;">${esc(p.nom)}</p><p class="t-cap">${p.specialite||''} · ${p.tel||''}</p></div></div><span class="bdg bdg-p">Étape ${step}/6</span></div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">${stepNames.map((n,i)=>`<div style="display:flex;align-items:center;gap:10px;"><div class="kyc-n ${i<step-1?'kyc-done':i===step-1?'kyc-cur':'kyc-todo'}">${i<step-1?'✓':i+1}</div><span class="t-body">${n}</span></div>`).join('')}</div><div style="display:flex;gap:8px;"><button class="btn btn-s btn-sm" style="flex:1;" onclick="dAvancerKyc('${p.id}',${step})">✅ Valider étape ${step}</button><button class="btn btn-r btn-sm" style="flex:1;" onclick="toast2('❌ Refusé')">❌ Refuser</button></div></div>`;
   }).join('');
 }
 async function dAvancerKyc(id,step){
@@ -1538,7 +1691,7 @@ async function loadDLive(){
   const {data:ms}=await dbGet('missions','?select=*&statut=in.(en_cours,confirmee)&order=created_at.desc');
   const live=ms||[];setT('da3-map-info',live.length+' missions actives');
   const c=S('da3-list');if(!c)return;
-  c.innerHTML=live.length?live.map(m=>`<div class="mr gd" style="border-left:3px solid ${m.statut==='en_cours'?'#4CAF50':'var(--cy)'};"><div class="mr-top"><span class="mr-nm">${m.presta_nom} → ${m.usager_nom}</span><span class="spill ${m.statut==='en_cours'?'s-on':'s-wait'}"><span class="sdot"></span>${m.statut==='en_cours'?'En cours':'Confirmée'}</span></div><div class="mr-dt"><span>📍</span><span>${m.adresse}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-body" style="opacity:.5;padding:12px 0;">Aucune mission active</p>';
+  c.innerHTML=live.length?live.map(m=>`<div class="mr gd" style="border-left:3px solid ${m.statut==='en_cours'?'#4CAF50':'var(--cy)'};"><div class="mr-top"><span class="mr-nm">${esc(m.presta_nom)} → ${esc(m.usager_nom)}</span><span class="spill ${m.statut==='en_cours'?'s-on':'s-wait'}"><span class="sdot"></span>${m.statut==='en_cours'?'En cours':'Confirmée'}</span></div><div class="mr-dt"><span>📍</span><span>${esc(m.adresse)}</span></div><div class="mr-dt t-y"><span>💰</span><span>${m.montant.toLocaleString()} FCFA</span></div></div>`).join(''):'<p class="t-body" style="opacity:.5;padding:12px 0;">Aucune mission active</p>';
 }
 async function loadDLitiges(){
   const {data:lits}=await dbGet('litiges','?select=*&order=created_at.desc');
@@ -1756,8 +1909,155 @@ function dCaptureGPS(targetInputId, callback){
 }
 
 // ════════════════ INIT ════════════════
+// ── SUPPRESSION COMPTE ──
+function ouvrirSuppressionCompte(){
+  if(!dCurrentUser){toast2('⚠️ Connexion requise');return;}
+  // Réinitialiser toutes les vues
+  ['del-vue1','del-vue2','del-vue3','del-vue4'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el)el.style.display=i===0?'block':'none';
+  });
+  const errEl=document.getElementById('del-erreur');
+  if(errEl)errEl.style.display='none';
+  const inp=document.getElementById('del-tel-confirm');
+  if(inp)inp.value='';
+  document.getElementById('ov-delete-account').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+
+function fermerSuppressionCompte(){
+  document.getElementById('ov-delete-account').style.display='none';
+  document.body.style.overflow='';
+}
+
+function retourVue1Suppression(){
+  document.getElementById('del-vue2').style.display='none';
+  document.getElementById('del-vue1').style.display='block';
+  const errEl=document.getElementById('del-erreur');
+  if(errEl)errEl.style.display='none';
+}
+
+async function continuerSuppression(){
+  if(!dCurrentUser)return;
+  // Vérifier missions en cours
+  toast2('⏳ Vérification en cours...');
+  try{
+    const {data:missions}=await dbGet('missions',`?usager_id=eq.${encodeURIComponent(dCurrentUser.id)}&statut=in.(confirmee,en_cours)&select=id`);
+    if(missions&&missions.length>0){
+      // Délai de carence — enregistrer la demande
+      await dbPatch('usagers','id',dCurrentUser.id,{deletion_requested_at:new Date().toISOString()});
+      const emailEl=document.getElementById('del-email-carence');
+      if(emailEl)emailEl.textContent=dCurrentUser.email||'votre email enregistré';
+      document.getElementById('del-vue1').style.display='none';
+      document.getElementById('del-vue3').style.display='block';
+    }else{
+      // Pas de mission en cours → aller à la confirmation
+      document.getElementById('del-vue1').style.display='none';
+      document.getElementById('del-vue2').style.display='block';
+    }
+  }catch(e){
+    // En cas d'erreur réseau, laisser passer vers confirmation
+    document.getElementById('del-vue1').style.display='none';
+    document.getElementById('del-vue2').style.display='block';
+  }
+}
+
+async function confirmerSuppression(){
+  if(!dCurrentUser)return;
+  const inp=document.getElementById('del-tel-confirm');
+  const errEl=document.getElementById('del-erreur');
+  const saisi=(inp?.value||'').replace(/\s/g,'');
+  const ref=(dCurrentUser.tel||'').replace(/\s/g,'');
+  if(saisi!==ref){
+    if(errEl)errEl.style.display='block';
+    return;
+  }
+  if(errEl)errEl.style.display='none';
+  toast2('⏳ Suppression en cours...');
+  try{
+    // Soft delete : marquer is_deleted + horodatage
+    await dbPatch('usagers','id',dCurrentUser.id,{
+      is_deleted:true,
+      deletion_requested_at:new Date().toISOString(),
+      deleted_at:new Date().toISOString()
+    });
+    // Succès → vue 4
+    document.getElementById('del-vue2').style.display='none';
+    document.getElementById('del-vue4').style.display='block';
+  }catch(e){
+    toast2('❌ Erreur lors de la suppression. Réessayez.');
+  }
+}
+
+function finaliserSuppression(){
+  // Effacer toutes les sessions locales
+  delSession('hh_usager');delSession('hh_role');delSession('hh_prestataire');
+  localStorage.removeItem('hh_consent');
+  localStorage.removeItem('hh_lead_popup_shown');
+  dCurrentUser=null;dCurrentRole=null;
+  document.getElementById('ov-delete-account').style.display='none';
+  document.body.style.overflow='';
+  // Retour landing
+  closePlatform();
+}
+
+// ── CONSENTEMENT CGU ──
+const CGU_VERSION='1.3';
+const CONSENT_KEY='hh_consent';
+
+function initConsent(){
+  const stored=localStorage.getItem(CONSENT_KEY);
+  if(stored){
+    try{const c=JSON.parse(stored);if(c.accepted&&c.version===CGU_VERSION)return;}catch(e){}
+  }
+  // Afficher le bandeau — bloquer navigation
+  const el=document.getElementById('ov-consent');
+  if(el){el.style.display='flex';document.body.style.overflow='hidden';}
+}
+
+async function acceptConsent(){
+  const ts=new Date().toISOString();
+  const payload={accepted:true,version:CGU_VERSION,ts,ua:navigator.userAgent.substring(0,200)};
+  localStorage.setItem(CONSENT_KEY,JSON.stringify(payload));
+  // Enregistrer en Supabase (best-effort, sans bloquer)
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/consents`,{
+      method:'POST',
+      headers:{...SB_H,'Prefer':'return=minimal'},
+      body:JSON.stringify({cgu_version:CGU_VERSION,user_agent:navigator.userAgent.substring(0,500),platform:'web',accepted_at:ts})
+    });
+  }catch(e){}
+  // Fermer bandeau
+  const el=document.getElementById('ov-consent');
+  if(el){el.style.display='none';}
+  document.body.style.overflow='';
+}
+
+function refuseConsent(){
+  document.getElementById('consent-accept-view').style.display='none';
+  document.getElementById('consent-refuse-view').style.display='block';
+}
+
+function revenirConsent(){
+  document.getElementById('consent-refuse-view').style.display='none';
+  document.getElementById('consent-accept-view').style.display='block';
+}
+
+function openCGUFromBandeau(){
+  const el=document.getElementById('ov-cgu');
+  if(el){el.style.zIndex='10000';el.classList.add('show');}
+  // Remettre z-index normal à la fermeture
+  const orig=closeCGU;
+  window._closeCGUOrig=orig;
+  closeCGU=function(){
+    const c=document.getElementById('ov-cgu');
+    if(c){c.style.zIndex='';c.classList.remove('show');}
+    closeCGU=window._closeCGUOrig;
+  };
+}
+
 document.addEventListener('DOMContentLoaded',async()=>{
-  fillDQuartiers();
+  initConsent();
   const di=S('dc4-date');if(di){const t=new Date();di.min=t.toISOString().split('T')[0];di.value=t.toISOString().split('T')[0];}
   fetchPrestataires();
   // Compteur et leads

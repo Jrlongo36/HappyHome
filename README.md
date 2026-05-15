@@ -54,14 +54,13 @@ Schéma complet : `happyhome_schema.sql`
 
 ---
 
-## Processus KYC — 6 étapes
+## Processus KYC — 5 étapes
 
 1. Formulaire en ligne (CNI, garants, Mobile Money)
 2. Vérification MoMo = Nom CNI
 3. Rencontre physique à Akwa
 4. Appels 2 garants
-5. Test pratique 2h — rémunéré 2 000 FCFA
-6. Activation badge
+5. Activation badge
 
 ---
 

@@ -94,7 +94,7 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)
 .hero-h1 .hl{color:var(--cy);}
 .hero-sub{font-size:clamp(15px,1.8vw,19px);color:rgba(255,255,255,.65);max-width:560px;line-height:1.65;margin-bottom:42px;font-weight:400;}
 .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:64px;}
-.hbtn{padding:16px 32px;border-radius:50px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:10px;}
+.hbtn{padding:16px 32px;border-radius:50px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:10px;}
 .hbtn-y{background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;box-shadow:0 8px 28px rgba(255,193,7,.32);}
 .hbtn-y:hover{transform:translateY(-3px);box-shadow:0 14px 38px rgba(255,193,7,.42);}
 .hbtn-ghost{background:rgba(255,255,255,.09);color:#fff;border:1.5px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);}
@@ -265,8 +265,93 @@ textarea.inp{resize:none;}
 .pin-d.filled{border-color:rgba(255,193,7,.55);color:var(--cy);}
 /* RESPONSIVE */
 @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr);}.split{grid-template-columns:1fr;}.feat-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:800px){.nav{padding:16px 20px;}.hero{padding:40px 20px 30px;}.section{padding:60px 20px;}.feat-grid{grid-template-columns:1fr;}.roles-grid{grid-template-columns:1fr;}.steps-row{flex-direction:column;}.steps-row::before{display:none;}.footer{padding:30px 20px;}.sidebar{width:190px;min-width:190px;}.main{padding:16px 18px;}.row2,.row3{grid-template-columns:1fr;}.cgrid{grid-template-columns:1fr;}.kpi-row{grid-template-columns:1fr 1fr;}.formules-grid{grid-template-columns:1fr 1fr!important;gap:12px!important;max-width:520px;margin:0 auto;}}
-@media(max-width:480px){.formules-grid{grid-template-columns:1fr!important;max-width:340px;}}
+
+@media(max-width:768px){
+  /* ── Bottom-nav prend le relais de la sidebar ── */
+  .sidebar{display:none!important;}
+  .main{padding:14px 14px 90px!important;width:100%;}
+  .app-shell{flex-direction:column;}
+  .bottom-nav{display:flex!important;}
+  /* ── Landing nav : hamburger ── */
+  .nav{padding:14px 16px;}
+  .nav-links .nbtn:not(.nbtn-toggle):not(.nbtn-burger){display:none;}
+  .nbtn-burger{display:inline-flex!important;}
+  .mobile-menu.open{display:flex!important;}
+  /* ── Hero compact ── */
+  .hero{padding:40px 18px 26px;}
+  .hero-h1{font-size:clamp(28px,7vw,52px)!important;letter-spacing:-1.5px;}
+  .hero-sub{font-size:14px!important;margin-bottom:28px;}
+  .hero-badge{font-size:11px;padding:6px 14px;}
+  .hero-ctas{flex-direction:column;gap:10px;width:100%;max-width:340px;margin:0 auto 36px;}
+  .hbtn{width:100%;justify-content:center;padding:14px 24px;font-size:14px;min-height:48px;box-sizing:border-box;}
+  /* ── Sections ── */
+  .section{padding:48px 18px;}
+  .sec-hdr{margin-bottom:32px;}
+  .sec-hdr h2{font-size:clamp(22px,6vw,36px)!important;}
+  .feat-grid{grid-template-columns:1fr;gap:14px;}
+  .feat{padding:22px 20px;}
+  .roles-grid{grid-template-columns:1fr;gap:14px;}
+  .role-card{padding:22px 20px;}
+  .steps-row{flex-direction:column;gap:18px;}
+  .steps-row::before{display:none;}
+  .footer{padding:26px 18px;}
+  /* ── Compteur lancement ── */
+  .launch-counter{margin-top:24px!important;padding:14px 16px!important;}
+  #launch-countdown{font-size:20px!important;}
+  /* ── Stats-bar grille 2x2 ── */
+  .stats-bar{flex-wrap:wrap;}
+  .stat{flex:1 1 50%;border-right:none;border-bottom:1px solid rgba(255,255,255,.07);padding:16px 12px;}
+  .stat:nth-child(2){border-right:none;}
+  .stat:nth-child(3),.stat:nth-child(4){border-bottom:none;}
+  .stat:nth-child(odd){border-right:1px solid rgba(255,255,255,.07);}
+  .stat-v{font-size:22px;}
+  /* ── Formules ── */
+  .formules-grid{grid-template-columns:1fr 1fr!important;gap:12px!important;max-width:520px;margin:0 auto;}
+  /* ── Grids écran ── */
+  .row2,.row3{grid-template-columns:1fr!important;}
+  .cgrid{grid-template-columns:1fr;}
+  .kpi-row{grid-template-columns:1fr 1fr;}
+  /* ── Touch targets ── */
+  .btn{min-height:48px;padding:13px 18px;}
+  .btn-sm{min-height:36px;padding:8px 14px;}
+  /* ── dc1 : services en grille 2x2 sans squeeze ── */
+  .pg-hdr{flex-direction:row;align-items:center;gap:8px;}
+  .pg-t{font-size:17px;}
+  /* ── Headers + KPI ── */
+  .kpi-c{padding:12px 10px;}
+  .kpi-v{font-size:20px;}
+  /* ── Modal full bottom-sheet style ── */
+  .modal{max-width:100%!important;border-radius:20px 20px 0 0;padding:22px 18px 28px;max-height:90vh;overflow-y:auto;}
+  .overlay{align-items:flex-end;}
+}
+
+@media(max-width:480px){
+  .hero-h1{font-size:clamp(24px,8vw,40px)!important;letter-spacing:-1px;}
+  .hero-sub{font-size:13px!important;}
+  #launch-countdown{font-size:17px!important;letter-spacing:.2px;}
+  .formules-grid{grid-template-columns:1fr!important;max-width:340px;}
+  .stat-v{font-size:18px;}
+  .stat-l{font-size:10px;}
+  .pg-t{font-size:15px;}
+  /* dc1 services : garder 2x2 mais cards plus compactes */
+  .dscr .g.cp{padding:16px 10px!important;}
+}
+
+/* ── BOTTOM-NAV mobile (iOS-style) ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--sb-bg);backdrop-filter:blur(22px);border-top:1px solid var(--sb-b);padding:6px 4px calc(env(safe-area-inset-bottom,0px) + 6px);justify-content:space-around;align-items:stretch;z-index:400;height:auto;}
+.bottom-nav.hide-bn{display:none!important;}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 4px;cursor:pointer;color:rgba(255,255,255,.55);transition:color .15s;min-height:56px;border-radius:10px;}
+.bn-item.on{color:var(--cy);}
+.bn-item-ico{font-size:22px;line-height:1;}
+.bn-item-label{font-size:10px;font-weight:600;letter-spacing:.2px;}
+[data-theme="light"] .bn-item{color:rgba(15,38,140,.55);}
+[data-theme="light"] .bn-item.on{color:var(--cy);}
+
+/* ── HAMBURGER landing ── */
+.nbtn-burger{display:none;background:transparent;border:1.5px solid rgba(255,255,255,.25);color:#fff;cursor:pointer;font-size:20px;padding:8px 12px;border-radius:50px;align-items:center;justify-content:center;line-height:1;}
+.mobile-menu{display:none;position:fixed;top:62px;right:14px;background:rgba(20,20,20,.96);backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px;flex-direction:column;gap:6px;z-index:300;min-width:220px;box-shadow:0 8px 28px rgba(0,0,0,.4);}
+.mobile-menu .nbtn{width:100%;text-align:left;justify-content:flex-start;}
+[data-theme="light"] .mobile-menu{background:rgba(255,255,255,.97);border-color:rgba(15,38,140,.15);}
 
 /* ═══ MODE JOUR — landing + plateforme ═══ */
 [data-theme="light"] #marketing{background:linear-gradient(155deg,#FFF8F0 0%,#FFE5C9 45%,#FFD4A8 100%)!important;}
@@ -338,8 +423,12 @@ textarea.inp{resize:none;}
   <div class="nav-links">
     <button class="nbtn nbtn-toggle" id="theme-toggle-m" onclick="toggleTheme()" title="Changer de thème" style="background:transparent;border:1.5px solid rgba(255,255,255,.25);color:#fff;cursor:pointer;font-size:18px;padding:8px 14px;border-radius:50px;font-family:inherit;">🌙</button>
     <button class="nbtn nbtn-out" onclick="openPlatform('login')">Se connecter</button>
-    <button class="nbtn nbtn-out" onclick="openPlatform('login');setTimeout(dOpenAdmin,600)" title="Espace Admin" style="font-size:15px;padding:9px 14px;">🔐</button>
     <button class="nbtn nbtn-cta" onclick="openPlatform('client')">Commencer →</button>
+    <button class="nbtn nbtn-burger" id="nav-burger" onclick="toggleMobileMenu()" title="Menu" aria-label="Ouvrir le menu">☰</button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <button class="nbtn nbtn-out" onclick="openPlatform('login');closeMobileMenu();">Se connecter</button>
+    <button class="nbtn nbtn-cta" onclick="openPlatform('client');closeMobileMenu();">Commencer →</button>
   </div>
 </nav>
 
@@ -360,7 +449,7 @@ textarea.inp{resize:none;}
     <div style="font-size:13px;color:rgba(255,255,255,.78);font-weight:500;">
       <span id="leads-info">30 juin 2026 — Inscrivez-vous pour être averti(e)</span>
     </div>
-    <button class="hbtn hbtn-y" style="margin-top:14px;padding:10px 22px;font-size:13px;" onclick="openLeadModal()">🔔 Me prévenir du lancement</button>
+    <button class="hbtn hbtn-y" style="margin-top:14px;padding:10px 22px;font-size:13px;display:inline-block;" onclick="openLeadModal()">🔔 Me prévenir du lancement</button>
   </div>
 
   <!-- ── TYPES DE SERVICE ── -->
@@ -456,8 +545,8 @@ textarea.inp{resize:none;}
     <div class="sb-sec">
       <div class="sb-sec-l">Espace Usager</div>
       <div class="sb-it on" id="sbi-c1" onclick="dShow('dc1');sbActive('sbi-c1')"><span class="sb-it-ico">🏠</span>Accueil</div>
-      <div class="sb-it" id="sbi-c2" onclick="dShow('dc2');sbActive('sbi-c2');renderDListe()"><span class="sb-it-ico">🔍</span>Recherche</div>
-      <div class="sb-it" id="sbi-cms" onclick="dShow('dc-missions');sbActive('sbi-cms');loadDMissions()"><span class="sb-it-ico">📋</span>Mes missions</div>
+      <div class="sb-it" id="sbi-c2" onclick="dGoToCommander()"><span class="sb-it-ico">📋</span>Commander</div>
+      <div class="sb-it" id="sbi-cms" onclick="dShow('dc-missions');sbActive('sbi-cms');loadDMissions()"><span class="sb-it-ico">⚡</span>Mes missions</div>
       <div class="sb-it" id="sbi-c8" onclick="dShow('dc8');sbActive('sbi-c8')"><span class="sb-it-ico">👤</span>Mon compte</div>
     </div>
   </div>
@@ -489,7 +578,7 @@ textarea.inp{resize:none;}
       <div id="super-nav" style="display:none;padding:4px 0 8px 8px;">
         <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin:6px 0 4px;">— Usager —</div>
         <div class="sb-it" onclick="superGo('dc1')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">🏠</span>Accueil usager</div>
-        <div class="sb-it" onclick="superGo('dc2','renderDListe')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">🔍</span>Recherche prestataire</div>
+        <div class="sb-it" onclick="superGo('dc2')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">🔍</span>Commander (Yango)</div>
         <div class="sb-it" onclick="superGo('dc3')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">👤</span>Fiche prestataire</div>
         <div class="sb-it" onclick="superGo('dc4')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">📅</span>Réservation</div>
         <div class="sb-it" onclick="superGo('dc5')" style="font-size:12px;padding:6px 10px;"><span class="sb-it-ico">💳</span>Paiement</div>
@@ -601,147 +690,331 @@ textarea.inp{resize:none;}
 <!-- ── C1 ACCUEIL CLIENT ── -->
 <div class="dscr" id="dc1">
   <div class="pg-hdr">
-    <div><div class="pg-t" id="dc1-hello">Bonjour 👋</div><div class="pg-s">Prestataires disponibles à Douala</div></div>
+    <div><div class="pg-t" id="dc1-hello">Bonjour 👋</div><div class="pg-s">Quel service souhaitez-vous commander ?</div></div>
     <div style="display:flex;gap:8px;align-items:center;">
-      <div class="g" style="padding:8px 14px;display:flex;align-items:center;gap:8px;border-radius:50px;cursor:pointer;" onclick="dShow('dc2');sbActive('sbi-c2');renderDListe()"><span>🔍</span><span style="font-size:13px;color:rgba(255,255,255,.6);">Rechercher...</span></div>
       <div class="g" style="padding:8px 12px;border-radius:50px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="dShow('dc8');sbActive('sbi-c8')"><span>👤</span></div>
     </div>
   </div>
-  <div class="g cp" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);display:flex;align-items:center;gap:12px;margin-bottom:18px;"><span style="font-size:24px;">✅</span><div><p style="font-size:13px;font-weight:700;color:#fff;">Membres 100% certifiés KYC 5 étapes</p><p class="t-cap">CNI · Photo ID · Garants · Rencontre physique</p></div></div>
-  <p class="sec">Disponibles maintenant</p>
-  <div class="cgrid" id="dc1-list"></div>
+  <div class="g cp" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);display:flex;align-items:center;gap:12px;margin-bottom:22px;"><span style="font-size:24px;">✅</span><div><p style="font-size:13px;font-weight:700;color:#fff;">Agents 100% certifiés KYC 5 étapes</p><p class="t-cap">CNI · Photo ID · Garants · Rencontre physique</p></div></div>
+
+  <p class="sec" style="margin-bottom:14px;">Choisissez un service</p>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px;">
+    <div class="g cp" onclick="dSelectService('cuisine','Cuisine','🍳',8000)" style="padding:20px 14px;text-align:center;border-left:3px solid var(--cy);">
+      <div style="font-size:36px;margin-bottom:8px;">🍳</div>
+      <div style="font-size:14px;font-weight:800;color:#fff;">Cuisine</div>
+      <div class="t-cap" style="margin-top:4px;">Préparation repas</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--cy);font-weight:700;">dès 8 000 FCFA</div>
+    </div>
+    <div class="g cp" onclick="dSelectService('nounous','Garde enfants','👶',6000)" style="padding:20px 14px;text-align:center;border-left:3px solid #4CAF50;">
+      <div style="font-size:36px;margin-bottom:8px;">👶</div>
+      <div style="font-size:14px;font-weight:800;color:#fff;">Nounous</div>
+      <div class="t-cap" style="margin-top:4px;">Garde d'enfants</div>
+      <div style="margin-top:8px;font-size:12px;color:#4CAF50;font-weight:700;">dès 6 000 FCFA</div>
+    </div>
+    <div class="g cp" onclick="dSelectService('menage','Nettoyage simple','🧹',5000)" style="padding:20px 14px;text-align:center;border-left:3px solid #2196F3;">
+      <div style="font-size:36px;margin-bottom:8px;">🧹</div>
+      <div style="font-size:14px;font-weight:800;color:#fff;">Nettoyage simple</div>
+      <div class="t-cap" style="margin-top:4px;">Ménage résidentiel</div>
+      <div style="margin-top:8px;font-size:12px;color:#2196F3;font-weight:700;">dès 5 000 FCFA</div>
+    </div>
+    <div class="g cp" onclick="dSelectService('fete','Après fête','🎉',18000)" style="padding:20px 14px;text-align:center;border-left:3px solid #E91E63;">
+      <div style="font-size:36px;margin-bottom:8px;">🎉</div>
+      <div style="font-size:14px;font-weight:800;color:#fff;">Nettoyage après fête</div>
+      <div class="t-cap" style="margin-top:4px;">Post-événement</div>
+      <div style="margin-top:8px;font-size:12px;color:#E91E63;font-weight:700;">dès 18 000 FCFA</div>
+    </div>
+  </div>
+  <div class="g cp" onclick="dSelectService('courses','Courses','🛒',3000)" style="padding:16px 18px;display:flex;align-items:center;gap:16px;border-left:3px solid #9C27B0;margin-bottom:24px;">
+    <div style="font-size:32px;">🛒</div>
+    <div style="flex:1;"><div style="font-size:14px;font-weight:800;color:#fff;">Courses</div><div class="t-cap">Faire les courses pour vous</div></div>
+    <div style="font-size:12px;color:#9C27B0;font-weight:700;">dès 3 000 FCFA</div>
+  </div>
+
+  <p class="sec" style="margin-bottom:12px;">Types de mission</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
+    <div class="gd" style="padding:12px 10px;text-align:center;border-top:2px solid #F44336;">
+      <div style="font-size:20px;">⚡</div>
+      <div style="font-size:11px;font-weight:800;color:#F44336;margin-top:4px;">FLASH</div>
+      <div class="t-cap" style="font-size:10px;margin-top:3px;">< 6h · +25%</div>
+    </div>
+    <div class="gd" style="padding:12px 10px;text-align:center;border-top:2px solid #4CAF50;">
+      <div style="font-size:20px;">🟢</div>
+      <div style="font-size:11px;font-weight:800;color:#4CAF50;margin-top:4px;">NORMALE</div>
+      <div class="t-cap" style="font-size:10px;margin-top:3px;">6-24h · prix fixe</div>
+    </div>
+    <div class="gd" style="padding:12px 10px;text-align:center;border-top:2px solid var(--cy);">
+      <div style="font-size:20px;">📅</div>
+      <div style="font-size:11px;font-weight:800;color:var(--cy);margin-top:4px;">PLANIFIÉE</div>
+      <div class="t-cap" style="font-size:10px;margin-top:3px;">> 24h · -10%</div>
+    </div>
+  </div>
 </div>
 
-<!-- ── C2 RECHERCHE ── -->
+<!-- ── C2 CONFIGURATION COMMANDE ── -->
 <div class="dscr" id="dc2">
-  <div class="pg-hdr"><div><div class="pg-t">Recherche</div><div class="pg-s">Filtrez par disponibilité, expérience ou service</div></div></div>
-  <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;">
-    <div class="g" style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:50px;"><span>🔍</span><input type="text" placeholder="Nom, spécialité, service..." style="flex:1;background:transparent;border:none;outline:none;font-family:Outfit,sans-serif;font-size:13px;color:#fff;" oninput="filterDMenageres(this.value)"></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;">
-      <span class="stag on" onclick="dSetFilter(this,'all')">Toutes</span>
-      <span class="stag" onclick="dSetFilter(this,'disponible')">Disponibles</span>
-      <span class="stag" onclick="dSetFilter(this,'experte')">Expertes</span>
-      <span class="stag" onclick="dSetFilter(this,'low')">Moins chère</span>
+  <div class="pg-hdr"><div><div class="pg-t">Configurer ma commande</div><div class="pg-s" id="dc2-service-label">Service sélectionné</div></div><button class="btn btn-out btn-sm" onclick="dShow('dc1');sbActive('sbi-c1')">← Retour</button></div>
+
+  <div class="g" style="padding:14px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;">
+    <span style="font-size:28px;" id="dc2-emoji">🏠</span>
+    <div><div style="font-size:15px;font-weight:800;color:#fff;" id="dc2-nom">—</div><div class="t-cap">Sélectionnez les options ci-dessous</div></div>
+  </div>
+
+  <p class="sec" style="margin-bottom:6px;">Type de mission</p>
+  <p class="t-cap" style="margin-bottom:10px;font-size:11px;">⚙️ Auto-déterminé selon la date et l'heure que vous choisissez ci-dessous.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;">
+    <div id="btn-flash" class="g cp" onclick="dSetTypologie('FLASH',this)" style="padding:14px 8px;text-align:center;border-top:2px solid #F44336;">
+      <div style="font-size:22px;">⚡</div>
+      <div style="font-size:12px;font-weight:900;color:#F44336;">FLASH</div>
+      <div class="t-cap" style="font-size:10px;">Urgent · &lt;6h · +25%</div>
+    </div>
+    <div id="btn-normale" class="g cp" onclick="dSetTypologie('NORMALE',this)" style="padding:14px 8px;text-align:center;border-top:3px solid var(--cy);background:rgba(255,193,7,.1);">
+      <div style="font-size:22px;">🟢</div>
+      <div style="font-size:12px;font-weight:900;color:var(--cy);">NORMALE</div>
+      <div class="t-cap" style="font-size:10px;">Standard · prix base</div>
+    </div>
+    <div id="btn-planifiee" class="g cp" onclick="dSetTypologie('PLANIFIÉE',this)" style="padding:14px 8px;text-align:center;border-top:2px solid rgba(255,255,255,.2);">
+      <div style="font-size:22px;">📅</div>
+      <div style="font-size:12px;font-weight:900;color:rgba(255,255,255,.6);">PLANIFIÉE</div>
+      <div class="t-cap" style="font-size:10px;">Programmée · -10%</div>
     </div>
   </div>
-  <div class="cgrid" id="dc2-list"></div>
+
+  <div class="row2">
+    <div class="fg"><label class="lbl">Date</label><input class="inp" id="dc2-date" type="date" oninput="dc2CheckForm()"></div>
+    <div class="fg"><label class="lbl">Heure de début</label>
+      <select class="inp" id="dc2-heure" oninput="dc2CheckForm()">
+        <option value="">Choisir...</option>
+        <option value="07:00">07h00</option><option value="08:00">08h00</option>
+        <option value="09:00">09h00</option><option value="10:00">10h00</option>
+        <option value="11:00">11h00</option><option value="12:00">12h00</option>
+        <option value="13:00">13h00</option><option value="14:00">14h00</option>
+        <option value="15:00">15h00</option><option value="16:00">16h00</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="fg" style="margin-bottom:14px;">
+    <label class="lbl">Durée</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div id="dur-4" class="g cp" onclick="dSetDuree(4,this)" style="padding:12px;text-align:center;">
+        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6);">Demi-journée</div>
+        <div class="t-cap">4 heures</div>
+      </div>
+      <div id="dur-8" class="g cp" onclick="dSetDuree(8,this)" style="padding:12px;text-align:center;border:1px solid rgba(255,193,7,.4);background:rgba(255,193,7,.07);">
+        <div style="font-size:13px;font-weight:700;color:var(--cy);">Journée complète</div>
+        <div class="t-cap">8 heures</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fg" style="margin-bottom:14px;">
+    <label class="lbl">Quartier</label>
+    <select class="inp" id="dc2-quartier" oninput="dc2QuartierChange(this)">
+      <option value="">Sélectionner votre quartier...</option>
+      <optgroup label="Centre">
+        <option>Akwa Centre</option><option>Akwa Nord</option><option>Bonanjo</option>
+        <option>Bonapriso</option><option>Bali</option><option>Deido</option>
+        <option>New Deido</option><option>Mboppi</option>
+      </optgroup>
+      <optgroup label="Ouest">
+        <option>Bonaberi</option><option>Bassa</option><option>Ndokotti</option>
+      </optgroup>
+      <optgroup label="Nord">
+        <option>Nkongmondo</option><option>Bépanda</option><option>Logpom</option>
+        <option>Makepe</option><option>Bonamoussadi</option><option>Logbessou</option>
+      </optgroup>
+      <optgroup label="Est">
+        <option>Kotto</option><option>Cité des Palmiers</option><option>PK 8</option>
+        <option>PK 10</option><option>PK 12</option><option>PK 17</option>
+      </optgroup>
+      <optgroup label="Sud">
+        <option>Bessengue</option><option>Yassa</option><option>Nyalla</option>
+        <option>Logbaba</option><option>Nylon</option><option>Japoma</option>
+      </optgroup>
+      <optgroup label="Périphérie">
+        <option>Kilomètre 5</option><option>Borne 10</option>
+        <option>Bilongué</option><option>Messa Presso</option><option>Village</option>
+      </optgroup>
+      <option value="autres">Autres (préciser ci-dessous)</option>
+    </select>
+  </div>
+  <div class="fg" id="dc2-autres-bloc" style="display:none;margin-bottom:14px;">
+    <label class="lbl">Préciser votre quartier</label>
+    <input class="inp" id="dc2-quartier-autre" type="text" placeholder="Nom du quartier...">
+  </div>
+
+  <div class="fg" style="margin-bottom:14px;">
+    <label class="lbl">Adresse complète</label>
+    <input class="inp" id="dc2-adresse" type="text" placeholder="Ex: Rue Joffre, imm. 3, apt. 5..." oninput="dc2CheckForm()">
+    <div style="display:flex;gap:8px;margin-top:6px;">
+      <button type="button" class="btn btn-out btn-sm" onclick="dCaptureGPS2()" style="font-size:12px;padding:6px 12px;">📍 GPS auto</button>
+      <span id="dc2-gps-ok" style="font-size:11px;color:#4CAF50;align-self:center;display:none;">✓ Position capturée</span>
+    </div>
+  </div>
+
+  <div class="fg" style="margin-bottom:20px;">
+    <label class="lbl">Exigences particulières (optionnel)</label>
+    <textarea class="inp" id="dc2-exigences" placeholder="Ex: apporter son propre matériel, allergie au chlore..." style="resize:none;height:72px;"></textarea>
+  </div>
+
+  <button id="dc2-btn-next" class="btn btn-y btn-full" onclick="dValiderCommande()" style="opacity:.45;pointer-events:none;">
+    Voir le détail du prix →
+  </button>
 </div>
 
-<!-- ── C3 PROFIL PRESTA ── -->
+<!-- ── C3 FACTURATION DÉTAILLÉE ── -->
 <div class="dscr" id="dc3">
-  <div class="pg-hdr"><div class="pg-t" id="dc3-name">Profil</div><button class="btn btn-out btn-sm" onclick="dShow('dc2');renderDListe()">← Retour</button></div>
-  <div class="split">
-    <div>
-      <div class="g cp" style="display:flex;gap:16px;align-items:center;">
-        <div style="width:70px;height:70px;min-width:70px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:36px;" id="dc3-av">👩🏾</div>
-        <div style="flex:1;">
-          <p style="font-size:18px;font-weight:800;color:#fff;" id="dc3-name2">—</p>
-          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;">
-            <span class="bdg bdg-v">✅ Vérifiée</span>
-            <span class="spill s-on" id="dc3-dispo"><span class="sdot"></span>Disponible</span>
-          </div>
-          <p style="font-size:13px;color:var(--cy);margin-top:7px;">⭐⭐⭐⭐⭐ <span id="dc3-note">4.9</span> <span class="t-cap">(<span id="dc3-avis">0</span> avis)</span></p>
-        </div>
-        <div style="text-align:right;">
-          <p style="font-size:22px;font-weight:900;color:var(--cy);" id="dc3-prix">—</p>
-          <p class="t-cap">/journée (8h)</p>
-          <p class="t-cap" id="dc3-missions" style="margin-top:4px;"></p>
-        </div>
-      </div>
-      <div class="g cp"><p class="sec">Services</p><div class="stags" id="dc3-services"></div></div>
-      <div class="g cp"><p class="sec">À propos</p><p class="t-body" id="dc3-bio">—</p></div>
-      <div class="g cp"><p class="sec">Derniers avis</p>
-        <div id="dc3-avis-list" style="padding:8px 0;">
-          <p class="t-cap" style="text-align:center;padding:10px 0;">Les avis s'afficheront après les premières missions.</p>
-        </div>
-      </div>
+  <div class="pg-hdr"><div class="pg-t">Détail de ma commande</div><button class="btn btn-out btn-sm" onclick="dShow('dc2')">← Modifier</button></div>
+
+  <div class="g" style="padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.2);">
+    <span style="font-size:28px;" id="dc3-emoji">🏠</span>
+    <div style="flex:1;">
+      <div style="font-size:15px;font-weight:800;color:#fff;" id="dc3-service-nom">—</div>
+      <div class="t-cap" id="dc3-type-badge">—</div>
     </div>
-    <div>
-      <div class="g cp" style="background:rgba(255,193,7,.04);border-color:rgba(255,193,7,.18);">
-        <p class="sec">Certifications KYC</p>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-          <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Identité CNI vérifiée</span></div>
-          <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Mobile Money = Nom ID</span></div>
-          <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">2 garants contactés</span></div>
-          <div style="display:flex;gap:8px;align-items:center;"><span class="t-g">✅</span><span class="t-body">Garants 2 contactés validés</span></div>
-        </div>
-        <button class="btn btn-y btn-full" onclick="dShow('dc4');dCalcPrix()">📅 Réserver cette prestataire</button>
-        <button class="btn btn-out btn-full" style="margin-top:8px;" onclick="dToggleFav()">🤍 Ajouter aux favoris</button>
-      </div>
+    <div style="text-align:right;">
+      <div style="font-size:12px;font-weight:700;" id="dc3-duree-label">—</div>
+      <div class="t-cap" id="dc3-date-label">—</div>
     </div>
   </div>
-</div>
 
-<!-- ── C4 RÉSERVATION ── -->
-<div class="dscr" id="dc4">
-  <div class="pg-hdr"><div class="pg-t">Réserver une mission</div><button class="btn btn-out btn-sm" onclick="dShow('dc3')">← Retour</button></div>
-  <div class="split">
-    <div>
-      <div class="g cp">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-          <div style="font-size:28px;" id="dc4-av">👩🏾</div>
-          <div style="flex:1;"><p style="font-size:14px;font-weight:700;color:#fff;" id="dc4-name">—</p><span class="bdg bdg-v">✅ Vérifiée</span></div>
-          <div style="text-align:right;"><p class="t-y" style="font-size:18px;font-weight:900;" id="dc4-tarif">—</p><p class="t-cap">/journée</p></div>
-        </div>
-        <div class="row3">
-          <div class="fg"><label class="lbl">Date</label><input class="inp" id="dc4-date" type="date" oninput="dCalcPrix()"></div>
-          <div class="fg"><label class="lbl">Heure début</label><select class="inp" id="dc4-heure" oninput="dCalcPrix()"><option value="07:00">07h00</option><option value="08:00">08h00</option><option value="09:00">09h00</option><option value="10:00">10h00</option></select></div>
-          <div class="fg"><label class="lbl">Durée</label><select class="inp" id="dc4-duree" oninput="dCalcPrix()"><option value="4">Demi-journée (4h)</option><option value="8" selected>Journée (8h)</option></select></div>
-        </div>
-        <div class="fg"><label class="lbl">Services souhaités</label>
-          <div class="stags" id="dc4-services">
-            <span class="stag on" onclick="this.classList.toggle('on')">🏠 Ménage général</span>
-            <span class="stag" onclick="this.classList.toggle('on')">👔 Repassage</span>
-            <span class="stag" onclick="this.classList.toggle('on')">🍽️ Cuisine</span>
-            <span class="stag" onclick="this.classList.toggle('on')">🧺 Lessive</span>
-            <span class="stag" onclick="this.classList.toggle('on')">🪟 Vitres</span>
-            <span class="stag" onclick="this.classList.toggle('on')">👶 Garde enfants</span>
-          </div>
-        </div>
-        <div class="row2">
-          <div class="fg"><label class="lbl">Quartier</label><select class="inp" id="dc4-quartier"><option value="">Sélectionner...</option></select></div>
-          <div class="fg"><label class="lbl">Adresse précise</label><input class="inp" id="dc4-adresse" type="text" placeholder="Rue, immeuble, étage..."></div>
-        </div>
-        <div class="fg"><label class="lbl">Exigences particulières</label><textarea class="inp" rows="3" id="dc4-exigences" placeholder="Allergie produits chlorés · Code porte · Animaux..."></textarea></div>
-        <button class="btn btn-y btn-full" onclick="dConfirmerResa()">Continuer → Paiement</button>
-      </div>
+  <div class="g" style="padding:16px;margin-bottom:16px;">
+    <p class="sec" style="color:var(--cy);margin-bottom:12px;">Décomposition du prix</p>
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.07);"><span class="t-body">Prix de base prestataire</span><span class="t-body" id="dc3-base">—</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.07);"><span class="t-body" id="dc3-multi-label">Multiplicateur mission</span><span class="t-body" id="dc3-multi-val">—</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.07);"><span class="t-body">Commission HappyHome (20%)</span><span class="t-body" id="dc3-comm">—</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px;padding-bottom:14px;border-bottom:2px solid rgba(255,255,255,.12);"><span class="t-body">Frais Mobile Money (3%)</span><span class="t-body" id="dc3-mm">—</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:15px;font-weight:800;color:#fff;">TOTAL À PAYER</span>
+      <span style="font-size:28px;font-weight:900;color:var(--cy);" id="dc3-total">—</span>
     </div>
-    <div>
-      <div class="gd cp" style="border-color:rgba(255,193,7,.2);background:rgba(255,193,7,.04);position:sticky;top:20px;">
-        <p class="sec" style="color:var(--cy);">Récapitulatif prix</p>
-        <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Tarif de base</span><span class="t-body" id="dp-base">—</span></div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Commission HappyHome (20%)</span><span class="t-body" id="dp-comm">—</span></div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span class="t-body">Frais Mobile Money (3%)</span><span class="t-body" id="dp-mm">—</span></div>
-        <div class="dv"></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:14px;font-weight:700;color:#fff;">TOTAL</span><span style="font-size:26px;font-weight:900;color:var(--cy);" id="dp-total">—</span></div>
-        <p class="t-cap" style="margin-top:8px;text-align:center;">Paiement 100% sécurisé · Mobile Money</p>
-      </div>
+    <div style="margin-top:10px;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;">
+      <span style="font-size:12px;color:#4CAF50;">✓ Le prestataire reçoit</span>
+      <span style="font-size:13px;font-weight:800;color:#4CAF50;" id="dc3-presta-net">—</span>
     </div>
   </div>
+
+  <div class="gd" style="padding:12px 14px;margin-bottom:18px;font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;">
+    💡 Les fonds sont sécurisés en <strong style="color:rgba(255,255,255,.7);">escrow</strong>. Le prestataire n'est payé qu'après votre validation de mission terminée (J+1).
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <div class="fg"><label class="lbl">Adresse de mission</label><p class="t-body" id="dc3-adresse-confirm" style="padding:10px;background:rgba(255,255,255,.05);border-radius:8px;border:1px solid rgba(255,255,255,.1);">—</p></div>
+  </div>
+
+  <button class="btn btn-y btn-full" style="margin-top:20px;" onclick="dPasserAuPaiement()">
+    🔒 Payer et lancer ma commande →
+  </button>
+  <p class="t-cap" style="text-align:center;margin-top:8px;">Paiement 100% Mobile Money · Remboursement si aucun prestataire disponible</p>
 </div>
 
-<!-- ── C5 PAIEMENT ── -->
+<!-- ── C5 PAIEMENT ESCROW ── -->
 <div class="dscr" id="dc5">
-  <div class="pg-hdr"><div class="pg-t">Paiement</div><button class="btn btn-out btn-sm" onclick="dShow('dc4')">← Retour</button></div>
+  <div class="pg-hdr"><div class="pg-t">Paiement sécurisé</div><button class="btn btn-out btn-sm" onclick="dShow('dc3')">← Retour</button></div>
   <div style="max-width:520px;margin:0 auto;">
-    <div class="g cp" style="text-align:center;padding:24px;">
-      <p class="sec">Montant total</p>
-      <p style="font-size:36px;font-weight:900;color:var(--cy);margin:10px 0;" id="dc5-montant">—</p>
-      <p class="t-body"><span id="dc5-presta">—</span> · <span id="dc5-date">—</span></p>
+    <div class="g cp" style="text-align:center;padding:24px;background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.18);">
+      <p class="sec" style="color:var(--cy);">Montant total à payer</p>
+      <p style="font-size:40px;font-weight:900;color:var(--cy);margin:10px 0;" id="dc5-montant">—</p>
+      <p class="t-body" id="dc5-resume">—</p>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(76,175,80,.1);border:1px solid rgba(76,175,80,.25);border-radius:50px;padding:5px 14px;margin-top:8px;">
+        <span style="font-size:12px;color:#4CAF50;">🔒 Fonds en escrow — libérés après validation mission</span>
+      </div>
     </div>
-    <p class="sec" style="margin-top:18px;">Méthode de paiement</p>
-    <div class="g" style="padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;border-left:3px solid #ff9800;" onclick="toast2('📱 Envoyez '+window._dtotal+' FCFA au +237 691 234 567 (Orange Money)')">
+
+    <p class="sec" style="margin-top:18px;margin-bottom:12px;">Choisir votre méthode</p>
+    <div class="g" style="padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;border-left:3px solid #ff9800;" onclick="dSelectPaiement('orange')">
       <div style="width:42px;height:42px;border-radius:10px;background:rgba(255,152,0,.15);display:flex;align-items:center;justify-content:center;font-size:22px;">🟠</div>
-      <div><p style="font-size:14px;font-weight:700;color:#fff;">Orange Money</p><p class="t-cap">+237 691 234 567</p></div>
+      <div><p style="font-size:14px;font-weight:700;color:#fff;">Orange Money</p><p class="t-cap">Paiement instantané</p></div>
       <span style="margin-left:auto;color:rgba(255,255,255,.3);">›</span>
     </div>
-    <div class="g" style="padding:16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;cursor:pointer;border-left:3px solid var(--cy);" onclick="toast2('📱 Envoyez '+window._dtotal+' FCFA au +237 679 890 123 (MTN MoMo)')">
+    <div class="g" style="padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;cursor:pointer;border-left:3px solid var(--cy);" onclick="dSelectPaiement('mtn')">
       <div style="width:42px;height:42px;border-radius:10px;background:rgba(255,193,7,.15);display:flex;align-items:center;justify-content:center;font-size:22px;">🟡</div>
-      <div><p style="font-size:14px;font-weight:700;color:#fff;">MTN Mobile Money</p><p class="t-cap">+237 679 890 123</p></div>
+      <div><p style="font-size:14px;font-weight:700;color:#fff;">MTN Mobile Money</p><p class="t-cap">Paiement instantané</p></div>
       <span style="margin-left:auto;color:rgba(255,255,255,.3);">›</span>
     </div>
-    <div class="g cp"><p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;">Confirmer le paiement</p><p class="t-body" style="margin-bottom:10px;">Collez le numéro de transaction reçu par SMS.</p><div class="fg"><label class="lbl">Numéro de transaction</label><input class="inp" id="dc5-txn" type="text" placeholder="Ex: TXN20241105XXXXX"></div><button class="btn btn-g btn-full" onclick="dConfirmerPaiement()">✅ Confirmer le paiement</button></div>
+
+    <div class="g" id="dc5-confirm-bloc" style="display:none;">
+      <p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;" id="dc5-instruction">—</p>
+      <p class="t-cap" style="margin-bottom:12px;">Effectuez le virement puis collez le numéro de transaction SMS ci-dessous.</p>
+      <div class="fg"><label class="lbl">Numéro de transaction (TXN)</label>
+        <input class="inp" id="dc5-txn" type="text" placeholder="Ex: TXN20260601XXXXX" oninput="dc5CheckTxn()">
+      </div>
+      <button id="dc5-btn-confirm" class="btn btn-g btn-full" style="opacity:.4;pointer-events:none;" onclick="dConfirmerPaiement()">✅ Confirmer le paiement</button>
+    </div>
   </div>
+</div>
+
+<!-- ── C6 ATTENTE MATCHING ── -->
+<div class="dscr" id="dc6">
+  <div style="text-align:center;padding:40px 20px;">
+    <div style="font-size:52px;margin-bottom:16px;animation:pulse 1.5s infinite;">🔍</div>
+    <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;">Recherche en cours…</div>
+    <div class="t-body" style="margin-bottom:24px;" id="dc6-type-msg">Nous cherchons votre prestataire</div>
+
+    <div style="background:rgba(255,193,7,.07);border:1px solid rgba(255,193,7,.18);border-radius:16px;padding:20px;margin-bottom:24px;">
+      <div class="t-cap" style="margin-bottom:6px;">Temps restant</div>
+      <div style="font-size:48px;font-weight:900;color:var(--cy);" id="dc6-countdown">--:--</div>
+      <div class="t-cap" style="margin-top:6px;" id="dc6-pool-msg">Analyse des prestataires disponibles…</div>
+    </div>
+
+    <div style="text-align:left;background:rgba(255,255,255,.04);border-radius:12px;padding:16px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;">Notre algorithme vérifie :</div>
+      <div class="t-body" style="margin-bottom:6px;">✓ Disponibilité en temps réel</div>
+      <div class="t-body" style="margin-bottom:6px;">✓ Zone d'intervention compatible</div>
+      <div class="t-body" style="margin-bottom:6px;">✓ Services proposés correspondants</div>
+      <div class="t-body">✓ Note moyenne et équité de distribution</div>
+    </div>
+
+    <button class="btn btn-out btn-sm" onclick="dAnnulerRecherche()" style="color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.15);">
+      Annuler la recherche
+    </button>
+  </div>
+</div>
+
+<!-- ── C7 PRESTATAIRE ASSIGNÉ ── -->
+<div class="dscr" id="dc7">
+  <div class="pg-hdr"><div class="pg-t">Votre prestataire arrive !</div></div>
+  <div class="g cp" style="display:flex;gap:14px;align-items:center;background:rgba(76,175,80,.07);border-color:rgba(76,175,80,.25);margin-bottom:16px;">
+    <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(76,175,80,.4);display:flex;align-items:center;justify-content:center;font-size:32px;" id="dc7-emoji">👩🏾</div>
+    <div style="flex:1;">
+      <div style="font-size:16px;font-weight:800;color:#fff;" id="dc7-nom">—</div>
+      <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
+        <span class="bdg bdg-v">✅ Certifiée KYC</span>
+        <span class="spill s-on"><span class="sdot"></span>En route</span>
+      </div>
+      <div style="font-size:13px;color:var(--cy);margin-top:5px;">⭐ <span id="dc7-note">—</span> · <span id="dc7-missions">—</span> missions</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+    <div class="kpi-c"><div class="kpi-v t-y" id="dc7-eta">—</div><div class="kpi-l">Arrivée estimée</div></div>
+    <div class="kpi-c"><div class="kpi-v t-g" id="dc7-statut">En route</div><div class="kpi-l">Statut</div></div>
+  </div>
+
+  <div class="g" style="padding:14px 16px;margin-bottom:16px;">
+    <p class="sec" style="margin-bottom:10px;">Votre commande</p>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span class="t-cap">Service</span><span class="t-body" id="dc7-service">—</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span class="t-cap">Date & heure</span><span class="t-body" id="dc7-datetime">—</span></div>
+    <div style="display:flex;justify-content:space-between;"><span class="t-cap">Total réglé</span><span class="t-body t-y" id="dc7-total">—</span></div>
+  </div>
+
+  <div class="g" style="padding:14px 16px;margin-bottom:16px;">
+    <p class="sec" style="margin-bottom:10px;">💬 Messagerie</p>
+    <div id="dc7-messages" style="max-height:160px;overflow-y:auto;margin-bottom:10px;">
+      <p class="t-cap" style="text-align:center;padding:10px;">Aucun message pour l'instant</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input class="inp" id="dc7-msg-input" type="text" placeholder="Écrire un message..." style="flex:1;" onkeydown="if(event.key==='Enter')dEnvoyerMessage()">
+      <button class="btn btn-y" onclick="dEnvoyerMessage()" style="padding:0 16px;">→</button>
+    </div>
+  </div>
+
+  <button class="btn btn-g btn-full" onclick="dValiderMissionTerminee()" id="dc7-btn-valider" style="display:none;">
+    ✅ Mission terminée — Libérer le paiement
+  </button>
+  <button class="btn btn-full" style="margin-top:10px;background:rgba(244,67,54,.1);color:#F44336;border:1px solid rgba(244,67,54,.25);" onclick="dOuvrirLitige()">
+    ⚠️ Signaler un problème
+  </button>
 </div>
 
 <!-- ── MISSIONS CLIENT ── -->
@@ -764,7 +1037,7 @@ textarea.inp{resize:none;}
       </div>
       <div class="kpi-row" style="grid-template-columns:repeat(2,1fr);">
         <div class="kpi-c"><div class="kpi-v" id="dc8-nb">0</div><div class="kpi-l">Missions</div></div>
-        <div class="kpi-c"><div class="kpi-v t-y">4.8⭐</div><div class="kpi-l">Ma note</div></div>
+        <div class="kpi-c"><div class="kpi-v t-y" id="dc8-note">—</div><div class="kpi-l">Ma note</div></div>
       </div>
     </div>
     <div>
@@ -784,111 +1057,215 @@ textarea.inp{resize:none;}
   <div class="pg-hdr"><div><div class="pg-t">Devenir Agent certifié</div><div class="pg-s">KYC 5 étapes · Photo ID + MoMo au même nom obligatoires</div></div><button class="btn btn-out btn-sm" onclick="dShow('d-login')">← Retour</button></div>
   <div class="split">
     <div>
+      <!-- ÉTAPE 1 : Identité -->
       <div class="g cp">
+        <p class="sec" style="color:#93b4ff;margin-bottom:12px;">① Identité</p>
         <div class="row2">
-          <div class="fg"><label class="lbl">Nom complet (identique à votre pièce d'identité)</label><input class="inp" id="dm-nom" type="text" placeholder="Aïcha Ngo Biyong"></div>
-          <div class="fg"><label class="lbl">Téléphone Mobile Money</label><input class="inp" id="dm-tel" type="tel" placeholder="6XX XXX XXX"><p class="t-cap" style="margin-top:4px;color:rgba(255,193,7,.85);">⚠️ Doit correspondre à votre nom sur votre CNI</p></div>
+          <div class="fg"><label class="lbl">Nom complet (identique CNI)</label><input class="inp" id="dm-nom" type="text" placeholder="Aïcha Ngo Biyong"></div>
+          <div class="fg"><label class="lbl">Téléphone Mobile Money</label><input class="inp" id="dm-tel" type="tel" placeholder="6XX XXX XXX" oninput="dmCheckTel()"><p class="t-cap" style="margin-top:4px;color:rgba(255,193,7,.85);">⚠️ Doit correspondre exactement au nom sur votre CNI</p></div>
         </div>
-        <div class="row3">
-          <div class="fg"><label class="lbl">Quartier</label><select class="inp" id="dm-quartier"><option value="">Sélectionner...</option></select></div>
-          <div class="fg"><label class="lbl">Spécialité</label><select class="inp" id="dm-specialite"><option value="">Choisir...</option><option>Ménage résidentiel</option><option>Ménage de bureau</option><option>Cuisine africaine</option><option>Repassage Pro</option><option>Garde enfants</option></select></div>
-          <div class="fg"><label class="lbl">Expérience</label><select class="inp" id="dm-exp"><option value="debutante">Débutante (&lt;2 ans)</option><option value="confirmee">Confirmée (2-5 ans)</option><option value="experte">Experte (5+ ans)</option></select></div>
-        </div>
-        <div class="fg"><label class="lbl">📍 Coordonnées GPS de votre zone de travail (auto)</label>
-          <div style="display:flex;gap:8px;">
-            <input class="inp" id="dm-gps" type="text" placeholder="—, —" readonly style="flex:1;background:rgba(255,255,255,.04);">
-            <button type="button" class="btn btn-out" id="gps-btn-dm-gps" onclick="dCaptureGPS('dm-gps')" style="padding:0 16px;white-space:nowrap;">📍 Capturer</button>
+        <div class="row2">
+          <div class="fg"><label class="lbl">Quartier de résidence</label>
+            <select class="inp" id="dm-quartier">
+              <option value="">Sélectionner...</option>
+              <optgroup label="Centre"><option>Akwa Centre</option><option>Akwa Nord</option><option>Bonanjo</option><option>Bonapriso</option><option>Bali</option><option>Deido</option><option>New Deido</option><option>Mboppi</option></optgroup>
+              <optgroup label="Ouest"><option>Bonaberi</option><option>Bassa</option><option>Ndokotti</option></optgroup>
+              <optgroup label="Nord"><option>Nkongmondo</option><option>Bépanda</option><option>Logpom</option><option>Makepe</option><option>Bonamoussadi</option><option>Logbessou</option></optgroup>
+              <optgroup label="Est"><option>Kotto</option><option>Cité des Palmiers</option><option>PK 8</option><option>PK 10</option><option>PK 12</option><option>PK 17</option></optgroup>
+              <optgroup label="Sud"><option>Bessengue</option><option>Yassa</option><option>Nyalla</option><option>Logbaba</option><option>Nylon</option><option>Japoma</option></optgroup>
+              <optgroup label="Périphérie"><option>Kilomètre 5</option><option>Borne 10</option><option>Bilongué</option><option>Messa Presso</option><option>Village</option></optgroup>
+            </select>
           </div>
-          <p class="t-cap" style="margin-top:4px;">Permet le calcul automatique du transport pour vos missions.</p>
-        </div>
-        <div class="fg"><label class="lbl">Services proposés</label>
-          <div class="stags" id="dm-services"><span class="stag on" onclick="this.classList.toggle('on')">🏠 Ménage général</span><span class="stag" onclick="this.classList.toggle('on')">👔 Repassage</span><span class="stag" onclick="this.classList.toggle('on')">🍽️ Cuisine</span><span class="stag" onclick="this.classList.toggle('on')">🧺 Lessive</span><span class="stag" onclick="this.classList.toggle('on')">👶 Garde enfants</span><span class="stag" onclick="this.classList.toggle('on')">🪟 Vitres</span></div>
-        </div>
-
-        <!-- SAVOIR-FAIRE -->
-        <div class="g" style="margin-top:14px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <label class="lbl" style="margin:0;">⭐ Savoir-faire & compétences supplémentaires</label>
-            <span class="t-cap" style="font-size:10px;">Optionnel</span>
+          <div class="fg"><label class="lbl">Expérience</label>
+            <select class="inp" id="dm-exp">
+              <option value="debutante">Débutante (&lt;2 ans)</option>
+              <option value="confirmee">Confirmée (2-5 ans)</option>
+              <option value="experte">Experte (5+ ans)</option>
+            </select>
           </div>
-          <div class="stags" id="dm-savoir" style="margin-bottom:12px;">
-            <span class="stag" onclick="this.classList.toggle('on')">🌿 Cuisine bio / diététique</span>
-            <span class="stag" onclick="this.classList.toggle('on')">👗 Couture légère</span>
-            <span class="stag" onclick="this.classList.toggle('on')">🌺 Jardinage</span>
-            <span class="stag" onclick="this.classList.toggle('on')">🐾 Garde animaux</span>
-            <span class="stag" onclick="this.classList.toggle('on')">💊 Aide personne âgée</span>
-            <span class="stag" onclick="this.classList.toggle('on')">🎓 Aide aux devoirs</span>
-            <span class="stag" onclick="this.classList.toggle('on')">🧴 Soins esthétiques basiques</span>
-            <span class="stag" onclick="this.classList.toggle('on')">🚗 Accompagnement courses</span>
-          </div>
-          <textarea class="inp" id="dm-autres" rows="2" placeholder="Autres compétences non listées ci-dessus..." style="resize:none;font-size:13px;"></textarea>
-        
         </div>
       </div>
+
+      <!-- ÉTAPE 1b : Photos d'identité KYC -->
       <div class="g cp">
-        <div class="row2">
-          <div><p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;">Photo de profil</p>
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;overflow:hidden;cursor:pointer;"><img id="dm-photo-preview" style="display:none;width:100%;height:100%;object-fit:cover;"><span id="dm-photo-icon">📷</span><input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;" onchange="dPreviewCircle(this,'dm-photo-preview','dm-photo-icon')"></div>
-              <div><p class="t-body">Photo de profil</p><p class="t-cap" style="margin-top:2px;">Visible par tous les usagers</p></div>
+        <p class="sec" style="color:#93b4ff;margin-bottom:12px;">① Photos d'identité (obligatoires)</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+          <div>
+            <p style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;">📷 Photo profil</p>
+            <div class="photo-up" style="aspect-ratio:1;border-radius:50%;overflow:hidden;">
+              <input type="file" id="dm-photo-file" accept="image/*" onchange="dPreviewCircle(this,'dm-photo-preview','dm-photo-icon')">
+              <div id="dm-photo-icon" style="text-align:center;"><span style="font-size:20px;">📷</span><p class="t-cap" style="font-size:10px;margin-top:3px;">Profil</p></div>
+              <img id="dm-photo-preview" style="display:none;width:100%;height:100%;object-fit:cover;">
             </div>
           </div>
-          <div><p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;">Pièce d'identité (obligatoire)</p>
-            <div class="photo-up"><input type="file" id="dm-id-file" accept="image/*" onchange="dPreviewPhoto(this,'dm-id-preview','dm-id-icon')"><div id="dm-id-icon"><div style="font-size:20px;margin-bottom:4px;">🪪</div><p class="t-body" style="font-size:12px;">Photographier votre CNI</p></div><img id="dm-id-preview" style="display:none;max-height:80px;object-fit:contain;border-radius:6px;margin-top:6px;"></div>
+          <div>
+            <p style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;">🪪 CNI recto</p>
+            <div class="photo-up">
+              <input type="file" id="dm-id-file" accept="image/*" onchange="dPreviewPhoto(this,'dm-id-preview','dm-id-icon')">
+              <div id="dm-id-icon"><span style="font-size:20px;">🪪</span><p class="t-cap" style="font-size:10px;margin-top:3px;">Face avant</p></div>
+              <img id="dm-id-preview" style="display:none;max-height:70px;object-fit:contain;border-radius:4px;margin-top:4px;">
+            </div>
+          </div>
+          <div>
+            <p style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;">🪪 CNI verso</p>
+            <div class="photo-up">
+              <input type="file" id="dm-id-verso" accept="image/*" onchange="dPreviewPhoto(this,'dm-id-verso-preview','dm-id-verso-icon')">
+              <div id="dm-id-verso-icon"><span style="font-size:20px;">🪪</span><p class="t-cap" style="font-size:10px;margin-top:3px;">Face arrière</p></div>
+              <img id="dm-id-verso-preview" style="display:none;max-height:70px;object-fit:contain;border-radius:4px;margin-top:4px;">
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:11px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px;">🤳 Selfie en tenant votre CNI</p>
+          <div class="photo-up" style="height:80px;">
+            <input type="file" id="dm-selfie" accept="image/*" onchange="dPreviewPhoto(this,'dm-selfie-preview','dm-selfie-icon')">
+            <div id="dm-selfie-icon"><span style="font-size:22px;">🤳</span><p class="t-cap" style="font-size:10px;margin-top:3px;">Photo avec CNI visible devant votre visage</p></div>
+            <img id="dm-selfie-preview" style="display:none;max-height:60px;object-fit:contain;border-radius:4px;margin-top:4px;">
+          </div>
+        </div>
+        <div class="gd" style="margin-top:10px;padding:10px 12px;font-size:11px;color:rgba(255,255,255,.45);line-height:1.6;">
+          🔒 Photos transmises chiffrées. Le hash de votre CNI est stocké pour prévenir les usurpations. Vos données ne sont jamais partagées à des tiers.
+        </div>
+      </div>
+
+      <!-- ÉTAPE 2 : Services et spécialités -->
+      <div class="g cp">
+        <p class="sec" style="color:#93b4ff;margin-bottom:12px;">② Spécialités proposées</p>
+        <p class="t-cap" style="margin-bottom:10px;">Sélectionnez tous les services que vous pouvez offrir</p>
+        <div class="stags" id="dm-specialites" style="margin-bottom:14px;">
+          <span class="stag on" onclick="this.classList.toggle('on')">🍳 Cuisine</span>
+          <span class="stag" onclick="this.classList.toggle('on')">👶 Garde enfants</span>
+          <span class="stag on" onclick="this.classList.toggle('on')">🧹 Nettoyage simple</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🎉 Nettoyage après fête</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🛒 Courses</span>
+          <span class="stag" onclick="this.classList.toggle('on')">👔 Repassage</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🧺 Lessive</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🪟 Vitres</span>
+        </div>
+        <p class="sec" style="margin-bottom:8px;font-size:12px;">Savoir-faire additionnels</p>
+        <div class="stags" id="dm-savoir" style="margin-bottom:12px;">
+          <span class="stag" onclick="this.classList.toggle('on')">🌿 Cuisine bio</span>
+          <span class="stag" onclick="this.classList.toggle('on')">👗 Couture légère</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🌺 Jardinage</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🐾 Garde animaux</span>
+          <span class="stag" onclick="this.classList.toggle('on')">💊 Aide personne âgée</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🎓 Aide devoirs</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🧴 Soins esthétiques</span>
+          <span class="stag" onclick="this.classList.toggle('on')">🚗 Accompagnement courses</span>
+        </div>
+        <div class="fg"><label class="lbl">Autres compétences</label><textarea class="inp" id="dm-autres" rows="2" placeholder="Compétences non listées ci-dessus..." style="resize:none;font-size:13px;"></textarea></div>
+      </div>
+
+      <!-- ÉTAPE 3 : Tarification -->
+      <div class="g cp">
+        <p class="sec" style="color:#93b4ff;margin-bottom:12px;">③ Tarification</p>
+        <div class="row2">
+          <div class="fg">
+            <label class="lbl">Tarif journée 8h (FCFA)</label>
+            <input class="inp" id="dm-tarif" type="number" min="3000" max="50000" step="500" placeholder="Ex: 8000" oninput="dmCalcDemiJournee()">
+            <p class="t-cap" style="margin-top:4px;">Prix de base que vous souhaitez recevoir net</p>
+          </div>
+          <div class="fg">
+            <label class="lbl">Tarif demi-journée 4h (auto)</label>
+            <input class="inp" id="dm-tarif-demi" type="text" readonly style="background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);" placeholder="Calculé automatiquement (×0,6)">
+            <p class="t-cap" style="margin-top:4px;">Calculé automatiquement = journée × 0,6</p>
+          </div>
+        </div>
+        <div class="fg"><label class="lbl">📍 Zone GPS de travail (optionnel)</label>
+          <div style="display:flex;gap:8px;">
+            <input class="inp" id="dm-gps" type="text" placeholder="—, —" readonly style="flex:1;background:rgba(255,255,255,.04);">
+            <button type="button" class="btn btn-out" onclick="dCaptureGPS('dm-gps')" style="padding:0 14px;white-space:nowrap;">📍</button>
           </div>
         </div>
       </div>
+
+      <!-- ÉTAPE 4 : Zones d'intervention -->
       <div class="g cp">
+        <p class="sec" style="color:#93b4ff;margin-bottom:12px;">④ Zones d'intervention</p>
+        <p class="t-cap" style="margin-bottom:10px;">Cochez tous les quartiers où vous pouvez intervenir</p>
+        <div class="stags" id="dm-zones-signup">
+          <span class="stag" onclick="this.classList.toggle('on')">Akwa Centre</span><span class="stag" onclick="this.classList.toggle('on')">Akwa Nord</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Bonanjo</span><span class="stag" onclick="this.classList.toggle('on')">Bonapriso</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Bali</span><span class="stag" onclick="this.classList.toggle('on')">Deido</span>
+          <span class="stag" onclick="this.classList.toggle('on')">New Deido</span><span class="stag" onclick="this.classList.toggle('on')">Mboppi</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Bonaberi</span><span class="stag" onclick="this.classList.toggle('on')">Bassa</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Ndokotti</span><span class="stag" onclick="this.classList.toggle('on')">Nkongmondo</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Bépanda</span><span class="stag" onclick="this.classList.toggle('on')">Logpom</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Makepe</span><span class="stag" onclick="this.classList.toggle('on')">Bonamoussadi</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Logbessou</span><span class="stag" onclick="this.classList.toggle('on')">Kotto</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Cité des Palmiers</span><span class="stag" onclick="this.classList.toggle('on')">PK 8</span>
+          <span class="stag" onclick="this.classList.toggle('on')">PK 10</span><span class="stag" onclick="this.classList.toggle('on')">PK 12</span>
+          <span class="stag" onclick="this.classList.toggle('on')">PK 17</span><span class="stag" onclick="this.classList.toggle('on')">Bessengue</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Yassa</span><span class="stag" onclick="this.classList.toggle('on')">Nyalla</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Logbaba</span><span class="stag" onclick="this.classList.toggle('on')">Nylon</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Japoma</span><span class="stag" onclick="this.classList.toggle('on')">Kilomètre 5</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Borne 10</span><span class="stag" onclick="this.classList.toggle('on')">Bilongué</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Messa Presso</span><span class="stag" onclick="this.classList.toggle('on')">Village</span>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 5 : Garants -->
+      <div class="g cp">
+        <p class="sec" style="color:#93b4ff;margin-bottom:12px;">⑤ Garants (obligatoires)</p>
+        <p class="t-cap" style="margin-bottom:12px;">Deux personnes que nous pouvons appeler pour confirmer votre identité et votre sérieux.</p>
         <div class="row2">
           <div class="fg"><label class="lbl">Garant 1 — Nom + téléphone</label><input class="inp" id="dm-g1" type="text" placeholder="Jean Kamga · 677 XXX XXX"></div>
           <div class="fg"><label class="lbl">Garant 2 — Nom + téléphone</label><input class="inp" id="dm-g2" type="text" placeholder="Marie Bello · 699 XXX XXX"></div>
         </div>
       </div>
+
       <button class="btn btn-b btn-full" onclick="dSignupMenagere()">Soumettre ma candidature →</button>
       <div class="sep"><div class="sep-l"></div><span class="sep-t">Déjà inscrite ?</span><div class="sep-l"></div></div>
       <button class="btn btn-out btn-full" onclick="dLoginMenagere()">Se connecter</button>
     </div>
     <div>
-      <div class="g cp" style="background:rgba(15,38,140,.08);border-color:rgba(15,38,140,.3);">
+      <div class="g cp" style="background:rgba(15,38,140,.08);border-color:rgba(15,38,140,.3);position:sticky;top:20px;">
         <p class="sec" style="color:#93b4ff;">Processus KYC — 5 étapes</p>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-done">1</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Formulaire en ligne</p><p class="t-cap">CNI, garants, Mobile Money</p></div></div>
+          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-done">1</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Formulaire + photos en ligne</p><p class="t-cap">CNI recto/verso, selfie, garants</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">2</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Vérification MoMo = Nom CNI</p><p class="t-cap">Automatique après soumission</p></div></div>
-          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">3</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p><p class="t-cap">Douala, sur rendez-vous</p></div></div>
+          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">3</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique Douala</p><p class="t-cap">Sur rendez-vous</p></div></div>
           <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">4</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Appels 2 garants</p><p class="t-cap">Vérification téléphonique</p></div></div>
-          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">5</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge</p><p class="t-cap">Profil visible aux usagers</p></div></div>
+          <div style="display:flex;gap:10px;align-items:center;"><div class="kyc-n kyc-todo">5</div><div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge HappyHome</p><p class="t-cap">Profil visible, missions ouvertes</p></div></div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<!-- ── M1 DASHBOARD PRESTA ── -->
 <div class="dscr" id="dm1">
-  <div class="pg-hdr"><div><div class="pg-t" id="dm1-hello">Tableau de bord</div><div class="pg-s">Bienvenue sur votre espace agent</div></div><span class="bdg bdg-v">✅ Vérifiée HappyHome</span></div>
+  <div class="pg-hdr"><div><div class="pg-t" id="dm1-hello">Tableau de bord</div><div class="pg-s">Bienvenue sur votre espace agent</div></div><span class="bdg bdg-v">✅ Certifiée HappyHome</span></div>
   <div class="kpi-row">
     <div class="kpi-c"><div class="kpi-v t-y" id="dm1-rev">0</div><div class="kpi-l">FCFA ce mois</div></div>
     <div class="kpi-c"><div class="kpi-v" id="dm1-nb">0</div><div class="kpi-l">Missions</div></div>
-    <div class="kpi-c"><div class="kpi-v t-g">4.9⭐</div><div class="kpi-l">Note moyenne</div></div>
-    <div class="kpi-c"><div class="kpi-v">97%</div><div class="kpi-l">Satisfaction</div></div>
+    <div class="kpi-c"><div class="kpi-v t-g" id="dm1-note">—</div><div class="kpi-l">Note moyenne</div></div>
+    <div class="kpi-c"><div class="kpi-v" id="dm1-accept">—</div><div class="kpi-l">Taux acceptation</div></div>
   </div>
   <div class="split">
     <div>
-      <div class="g cp" style="display:flex;align-items:center;justify-content:space-between;">
-        <div><p style="font-size:13px;font-weight:700;color:#fff;">Mon statut</p><p class="t-cap">Visible aux usagers</p></div>
+      <!-- Toggle en ligne / hors ligne -->
+      <div class="g cp" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+          <p style="font-size:14px;font-weight:800;color:#fff;">Statut de disponibilité</p>
+          <p class="t-cap" id="dm1-statut-label">Hors ligne — Vous ne recevrez pas de missions</p>
+        </div>
         <div style="display:flex;align-items:center;gap:10px;">
-          <span class="spill s-on" id="dm1-pill"><span class="sdot"></span>Disponible</span>
-          <div onclick="dToggleStatus()" id="dm1-toggle" style="width:46px;height:26px;border-radius:13px;background:#4CAF50;cursor:pointer;position:relative;transition:.3s;flex-shrink:0;">
-            <div style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.3s;"></div>
+          <span class="spill" id="dm1-pill"><span class="sdot"></span><span id="dm1-pill-t">Hors ligne</span></span>
+          <div onclick="dToggleStatus()" id="dm1-toggle" style="width:52px;height:28px;border-radius:14px;background:rgba(255,255,255,.15);cursor:pointer;position:relative;transition:.3s;flex-shrink:0;">
+            <div id="dm1-knob" style="position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.3s;"></div>
           </div>
         </div>
       </div>
+
+      <!-- Mission entrante (si en attente) -->
+      <div id="dm1-mission-entrant" style="display:none;"></div>
+
       <p class="sec" style="margin-top:4px;">Mission aujourd'hui</p>
       <div id="dm1-mission"></div>
       <p class="sec" style="margin-top:14px;">Actions rapides</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="g cp" style="text-align:center;cursor:pointer;" onclick="dShow('dm2');sbActive('sbi-m2')"><div style="font-size:28px;margin-bottom:6px;">📅</div><p style="font-size:13px;font-weight:700;color:#fff;">Disponibilités</p></div>
-        <div class="g cp" style="text-align:center;cursor:pointer;" onclick="dShow('dm4');sbActive('sbi-m4')"><div style="font-size:28px;margin-bottom:6px;">👤</div><p style="font-size:13px;font-weight:700;color:#fff;">Mon profil</p></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+        <div class="g cp" style="text-align:center;cursor:pointer;" onclick="dShow('dm2');sbActive('sbi-m2')"><div style="font-size:24px;margin-bottom:4px;">📅</div><p style="font-size:12px;font-weight:700;color:#fff;">Disponibilités</p></div>
+        <div class="g cp" style="text-align:center;cursor:pointer;" onclick="dShow('dm3');sbActive('sbi-m3');dLoadMissionActive()"><div style="font-size:24px;margin-bottom:4px;">⚡</div><p style="font-size:12px;font-weight:700;color:#fff;">Mission active</p></div>
+        <div class="g cp" style="text-align:center;cursor:pointer;" onclick="dShow('dm4');sbActive('sbi-m4')"><div style="font-size:24px;margin-bottom:4px;">👤</div><p style="font-size:12px;font-weight:700;color:#fff;">Mon profil</p></div>
       </div>
     </div>
     <div>
@@ -896,69 +1273,138 @@ textarea.inp{resize:none;}
     </div>
   </div>
 </div>
-
-<!-- ── M2 DISPO ── -->
+<!-- ── M2 DISPONIBILITÉS ── -->
 <div class="dscr" id="dm2">
   <div class="pg-hdr"><div class="pg-t">Mes disponibilités</div><button class="btn btn-b btn-sm" onclick="dSaveDispo()">💾 Sauvegarder</button></div>
   <div class="row2">
     <div>
-      <div class="g cp"><p class="sec">Semaine en cours</p>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;"><div class="cal-d hdr2">Lun</div><div class="cal-d hdr2">Mar</div><div class="cal-d hdr2">Mer</div><div class="cal-d hdr2">Jeu</div><div class="cal-d hdr2">Ven</div><div class="cal-d hdr2">Sam</div><div class="cal-d hdr2">Dim</div></div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"><div class="cal-d on" onclick="this.classList.toggle('on')">4</div><div class="cal-d" onclick="this.classList.toggle('on')">5</div><div class="cal-d on" onclick="this.classList.toggle('on')">6</div><div class="cal-d on" onclick="this.classList.toggle('on')">7</div><div class="cal-d" onclick="this.classList.toggle('on')">8</div><div class="cal-d on" onclick="this.classList.toggle('on')">9</div><div class="cal-d" style="opacity:.3;cursor:default;">10</div></div>
-      </div>
-      <div class="g cp"><p class="sec">Créneaux horaires</p>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div class="tslot on" onclick="this.classList.toggle('on')">07h–12h</div><div class="tslot on" onclick="this.classList.toggle('on')">08h–17h</div><div class="tslot" onclick="this.classList.toggle('on')">12h–17h</div><div class="tslot on" onclick="this.classList.toggle('on')">Journée</div><div class="tslot" onclick="this.classList.toggle('on')">Demi-J.</div><div class="tslot" onclick="this.classList.toggle('on')">Soir</div></div>
+      <div class="g cp" style="margin-bottom:14px;">
+        <p class="sec" style="margin-bottom:10px;">Créneaux récurrents</p>
+        <p class="t-cap" style="margin-bottom:10px;">Sélectionnez vos plages horaires habituelles par jour</p>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:11px;">
+            <thead>
+              <tr>
+                <th style="padding:6px;color:rgba(255,255,255,.4);font-weight:600;text-align:left;">Créneau</th>
+                <th style="padding:6px;color:rgba(255,255,255,.5);font-weight:600;text-align:center;">Lun</th>
+                <th style="padding:6px;color:rgba(255,255,255,.5);font-weight:600;text-align:center;">Mar</th>
+                <th style="padding:6px;color:rgba(255,255,255,.5);font-weight:600;text-align:center;">Mer</th>
+                <th style="padding:6px;color:rgba(255,255,255,.5);font-weight:600;text-align:center;">Jeu</th>
+                <th style="padding:6px;color:rgba(255,255,255,.5);font-weight:600;text-align:center;">Ven</th>
+                <th style="padding:6px;color:rgba(255,255,255,.5);font-weight:600;text-align:center;">Sam</th>
+                <th style="padding:6px;color:rgba(255,255,255,.5);font-weight:600;text-align:center;">Dim</th>
+              </tr>
+            </thead>
+            <tbody id="dm2-grille">
+              <!-- Rempli par JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <div>
-      <div class="g cp"><p class="sec">Zones de travail</p>
-        <div class="stags" id="dm2-zones"><span class="stag" onclick="this.classList.toggle('on')">Akwa Centre</span><span class="stag" onclick="this.classList.toggle('on')">Akwa Nord</span><span class="stag" onclick="this.classList.toggle('on')">Bonanjo</span><span class="stag" onclick="this.classList.toggle('on')">Bonapriso</span><span class="stag" onclick="this.classList.toggle('on')">Bali</span><span class="stag" onclick="this.classList.toggle('on')">Deido</span><span class="stag" onclick="this.classList.toggle('on')">Makepe</span></div>
+      <div class="g cp">
+        <p class="sec" style="margin-bottom:10px;">Zones d'intervention</p>
+        <p class="t-cap" style="margin-bottom:10px;">Cochez les quartiers où vous intervenez</p>
+        <div class="stags" id="dm2-zones">
+          <span class="stag" onclick="this.classList.toggle('on')">Akwa Centre</span><span class="stag" onclick="this.classList.toggle('on')">Akwa Nord</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Bonanjo</span><span class="stag" onclick="this.classList.toggle('on')">Bonapriso</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Bali</span><span class="stag" onclick="this.classList.toggle('on')">Deido</span>
+          <span class="stag" onclick="this.classList.toggle('on')">New Deido</span><span class="stag" onclick="this.classList.toggle('on')">Mboppi</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Bonaberi</span><span class="stag" onclick="this.classList.toggle('on')">Bassa</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Ndokotti</span><span class="stag" onclick="this.classList.toggle('on')">Nkongmondo</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Bépanda</span><span class="stag" onclick="this.classList.toggle('on')">Logpom</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Makepe</span><span class="stag" onclick="this.classList.toggle('on')">Bonamoussadi</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Logbessou</span><span class="stag" onclick="this.classList.toggle('on')">Kotto</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Cité des Palmiers</span><span class="stag" onclick="this.classList.toggle('on')">PK 8</span>
+          <span class="stag" onclick="this.classList.toggle('on')">PK 10</span><span class="stag" onclick="this.classList.toggle('on')">PK 12</span>
+          <span class="stag" onclick="this.classList.toggle('on')">PK 17</span><span class="stag" onclick="this.classList.toggle('on')">Bessengue</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Yassa</span><span class="stag" onclick="this.classList.toggle('on')">Nyalla</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Logbaba</span><span class="stag" onclick="this.classList.toggle('on')">Nylon</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Japoma</span><span class="stag" onclick="this.classList.toggle('on')">Kilomètre 5</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Borne 10</span><span class="stag" onclick="this.classList.toggle('on')">Bilongué</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Messa Presso</span><span class="stag" onclick="this.classList.toggle('on')">Village</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
 <!-- ── M3 MISSION ACTIVE ── -->
 <div class="dscr" id="dm3">
-  <div class="pg-hdr"><div class="pg-t">Mission active</div><span class="spill s-on"><span class="sdot"></span>En cours</span></div>
+  <div class="pg-hdr"><div class="pg-t">Mission active</div><span class="spill s-on" id="dm3-statut-pill"><span class="sdot"></span>Confirmée</span></div>
   <div class="split">
     <div>
+      <!-- Info usager -->
       <div class="g cp" style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
         <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:24px;">👩🏽</div>
-        <div><p style="font-size:14px;font-weight:700;color:#fff;" id="dm3-usager">—</p><p class="t-cap" id="dm3-adresse">—</p></div>
-        <span style="font-size:13px;font-weight:800;color:var(--cy);">⭐ 4.8</span>
+        <div style="flex:1;">
+          <p style="font-size:14px;font-weight:700;color:#fff;" id="dm3-usager">—</p>
+          <p class="t-cap" id="dm3-adresse">—</p>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:800;color:#4CAF50;" id="dm3-net">—</div>
+          <div class="t-cap">Votre revenu net</div>
+        </div>
       </div>
-      <div class="g cp"><p class="sec">Détails mission</p>
+
+      <!-- Détails mission -->
+      <div class="g cp" style="margin-bottom:12px;">
+        <p class="sec">Détails mission</p>
         <div class="row2">
           <div><div class="t-cap">Horaire</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:2px;" id="dm3-horaire">—</div></div>
-          <div><div class="t-cap">Services</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:2px;" id="dm3-services">—</div></div>
+          <div><div class="t-cap">Type mission</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:2px;" id="dm3-type">—</div></div>
           <div><div class="t-cap">Exigences</div><div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:2px;" id="dm3-exigences">—</div></div>
-          <div><div class="t-cap">Revenu net</div><div style="font-size:14px;font-weight:800;color:#4CAF50;margin-top:2px;" id="dm3-net">—</div></div>
+          <div><div class="t-cap">Statut escrow</div><div style="font-size:12px;color:var(--cy);margin-top:2px;">🔒 Sécurisé J+1</div></div>
         </div>
       </div>
-      <div class="g cp">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><p class="sec" style="margin:0;">Avancement</p><span class="t-y" style="font-weight:700;">60%</span></div>
-        <div class="prog"><div class="prog-f" style="width:60%;"></div></div>
-      </div>
-      <div class="g cp"><p class="sec">Contrôle présence</p>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <button class="btn btn-s btn-sm" style="flex:1;" id="dbtn-ci" onclick="dCheckIn()">📍 Check-in arrivée</button>
-          <button class="btn btn-out btn-sm" style="flex:1;" id="dbtn-co" onclick="dCheckOut()">🏁 Check-out</button>
+
+      <!-- 3 check-ins -->
+      <div class="g cp" style="margin-bottom:12px;">
+        <p class="sec" style="margin-bottom:12px;">Contrôle de présence</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-out btn-full" id="dbtn-depart" onclick="dCheckInDepart()" style="text-align:left;padding:12px 16px;">
+            <span style="font-size:18px;">🚀</span> <strong>Je pars</strong> <span class="t-cap" style="margin-left:8px;">Déclare ton départ vers la mission</span>
+            <span id="dbtn-depart-t" style="margin-left:auto;font-size:11px;color:rgba(255,255,255,.35);"></span>
+          </button>
+          <button class="btn btn-out btn-full" id="dbtn-arrivee" onclick="dCheckInArrivee()" disabled style="text-align:left;padding:12px 16px;opacity:.4;">
+            <span style="font-size:18px;">📍</span> <strong>Je suis arrivée</strong> <span class="t-cap" style="margin-left:8px;">Confirme ton arrivée chez le client</span>
+            <span id="dbtn-arrivee-t" style="margin-left:auto;font-size:11px;color:rgba(255,255,255,.35);"></span>
+          </button>
+          <button class="btn btn-g btn-full" id="dbtn-fin" onclick="dCheckOut()" disabled style="text-align:left;padding:12px 16px;opacity:.4;">
+            <span style="font-size:18px;">🏁</span> <strong>Mission terminée</strong> <span class="t-cap" style="margin-left:8px;">Clôture la mission</span>
+            <span id="dbtn-fin-t" style="margin-left:auto;font-size:11px;color:rgba(255,255,255,.35);"></span>
+          </button>
         </div>
-        <p class="t-cap" style="margin-top:7px;text-align:center;" id="dm3-ci-status">En attente d'arrivée</p>
+        <!-- Barre avancement dynamique -->
+        <div style="margin-top:12px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><p class="sec" style="margin:0;font-size:12px;">Avancement</p><span class="t-y" style="font-weight:700;font-size:12px;" id="dm3-pct">0%</span></div>
+          <div class="prog"><div class="prog-f" id="dm3-prog" style="width:0%;transition:.5s;"></div></div>
+          <p class="t-cap" style="margin-top:5px;text-align:center;" id="dm3-ci-status">En attente de départ</p>
+        </div>
       </div>
     </div>
     <div>
-      <div class="g cp" style="display:flex;gap:8px;margin-bottom:12px;">
-        <button class="btn btn-b btn-sm" style="flex:1;" onclick="toast2('📞 Appel usager...')">📞 Appeler</button>
-        <button class="btn btn-out btn-sm" style="flex:1;" onclick="toast2('💬 Message envoyé')">💬 Message</button>
+      <!-- Messagerie rapide -->
+      <div class="g cp" style="margin-bottom:12px;">
+        <p class="sec" style="margin-bottom:8px;">💬 Message rapide</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-out btn-sm" onclick="toast2('💬 «Je suis en route !»')">En route</button>
+          <button class="btn btn-out btn-sm" onclick="toast2('💬 «Je serai là dans 10 min»')">10 min</button>
+          <button class="btn btn-out btn-sm" onclick="toast2('💬 «Mission terminée»')">Terminée</button>
+        </div>
       </div>
-      <button class="btn-alert" onclick="toast2('🚨 Alerte sécurité envoyée à l\'admin !')">🚨 ALERTE SÉCURITÉ</button>
-      <p class="t-cap" style="text-align:center;margin-top:6px;">Notifie l'admin immédiatement</p>
+
+      <!-- Bouton SOS -->
+      <div class="g cp" style="background:rgba(244,67,54,.07);border-color:rgba(244,67,54,.3);">
+        <p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">🚨 Sécurité</p>
+        <p class="t-cap" style="margin-bottom:12px;">En cas de danger ou d'urgence, utilisez ce bouton. Déclenche tracking GPS + alerte admin + appel garants.</p>
+        <button onclick="dSOS()" style="width:100%;padding:16px;background:linear-gradient(135deg,#F44336,#b71c1c);color:#fff;font-size:16px;font-weight:900;border:none;border-radius:12px;cursor:pointer;letter-spacing:.5px;">
+          🚨 ALERTE SÉCURITÉ SOS
+        </button>
+      </div>
     </div>
   </div>
 </div>
-
 <!-- ── M4 PROFIL PRESTA ── -->
 <div class="dscr" id="dm4">
   <div class="pg-hdr"><div class="pg-t">Mon profil</div></div>
@@ -966,26 +1412,37 @@ textarea.inp{resize:none;}
     <div>
       <div class="g cp" style="display:flex;align-items:center;gap:14px;">
         <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:32px;" id="dm4-av">👩🏾</div>
-        <div><p style="font-size:17px;font-weight:800;color:#fff;" id="dm4-name">—</p><span class="bdg bdg-v">✅ Vérifiée HappyHome</span><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;"><span class="bdg bdg-p" id="dm4-level">⭐ Experte</span><span class="t-cap" id="dm4-nb">0 missions</span></div></div>
-        <div style="margin-left:auto;text-align:right;"><div style="font-size:20px;font-weight:900;color:var(--cy);">4.9⭐</div><div class="t-cap">Note globale</div></div>
+        <div>
+          <p style="font-size:17px;font-weight:800;color:#fff;" id="dm4-name">—</p>
+          <span class="bdg bdg-v">✅ Certifiée HappyHome</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;">
+            <span class="bdg bdg-p" id="dm4-level">Agent</span>
+            <span class="t-cap" id="dm4-nb">0 missions</span>
+          </div>
+        </div>
+        <div style="margin-left:auto;text-align:right;">
+          <div style="font-size:20px;font-weight:900;color:var(--cy);" id="dm4-note">—</div>
+          <div class="t-cap">Note globale</div>
+        </div>
       </div>
-      <div class="g cp"><p class="sec">Spécialité</p><p style="font-size:14px;font-weight:700;color:var(--cy);" id="dm4-spec">—</p></div>
+      <div class="g cp"><p class="sec">Spécialités</p><div class="stags" id="dm4-spec"></div></div>
       <div class="g cp"><p class="sec">Services</p><div class="stags" id="dm4-svcs"></div></div>
     </div>
     <div>
-      <div class="g cp"><p class="sec">Certifications KYC</p>
+      <div class="g cp">
+        <p class="sec">Certifications KYC</p>
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Formulaire en ligne</p></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Vérif. MoMo = Nom ID</p></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Photo ID vérifiée</p></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Formulaire + photos en ligne</p></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Vérif. MoMo = Nom CNI</p></div>
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Rencontre physique</p></div>
           <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Appels 2 garants</p></div>
-          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Activation et badge délivré</p></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div class="kyc-n kyc-done">✓</div><p style="font-size:12px;font-weight:700;color:#fff;">Activation + Badge</p></div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- ── ADMIN DASHBOARD ── -->
 <div class="dscr" id="da1">
@@ -1031,6 +1488,22 @@ textarea.inp{resize:none;}
 </div>
 
 </main><!-- /main -->
+
+<!-- ── BOTTOM-NAV MOBILE ── -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="bn-item on" id="bn-c1" onclick="bnGoTo('dc1','sbi-c1','bn-c1')">
+    <span class="bn-item-ico">🏠</span><span class="bn-item-label">Accueil</span>
+  </div>
+  <div class="bn-item" id="bn-c2" onclick="bnGoToCommander()">
+    <span class="bn-item-ico">📋</span><span class="bn-item-label">Commander</span>
+  </div>
+  <div class="bn-item" id="bn-cms" onclick="bnGoTo('dc-missions','sbi-cms','bn-cms');loadDMissions();">
+    <span class="bn-item-ico">⚡</span><span class="bn-item-label">Missions</span>
+  </div>
+  <div class="bn-item" id="bn-c8" onclick="bnGoTo('dc8','sbi-c8','bn-c8')">
+    <span class="bn-item-ico">👤</span><span class="bn-item-label">Compte</span>
+  </div>
+</nav>
 </div><!-- /app-shell -->
 </div><!-- /platform -->
 
@@ -1328,7 +1801,332 @@ function initTheme(){
 }
 initTheme();
 
-// ── SUPABASE REST (sans SDK — compatible file://) ──
+// ── SPRINT 3 — LOGIQUE CLIENT V2 (MODÈLE YANGO) ──
+
+// État global commande v2
+let _cmd = {
+  service: null,  // {id, nom, emoji, tarifBase}
+  type: 'NORMALE', // FLASH / NORMALE / PLANIFIÉE
+  duree: 8,
+  date: '', heure: '', adresse: '', quartier: '', exigences: '',
+  lat: null, lng: null
+};
+let _dc6Timer = null;
+
+const MULTI = {FLASH: 1.25, NORMALE: 1.00, 'PLANIFIÉE': 0.90};
+const COMM  = 1.20; // Commission HappyHome 20%
+const FRAIS = 1.03; // Frais Mobile Money 3%
+const TIMEOUT_MIN = {FLASH: 2, NORMALE: 5, 'PLANIFIÉE': 10};
+
+function dCalcPrixV2(base, type, duree) {
+  const b = duree === 4 ? Math.round(base * 0.6) : base;
+  const m = MULTI[type] || 1.00;
+  const apresMulti = Math.round(b * m);
+  const comm = Math.round(apresMulti * 0.20);
+  const mm   = Math.round((apresMulti + comm) * 0.03);
+  const total = apresMulti + comm + mm;
+  return { base: b, apresMulti, comm, mm, total };
+}
+
+// C1 → sélection service
+function dSelectService(id, nom, emoji, tarifBase) {
+  _cmd.service = {id, nom, emoji, tarifBase};
+  setT('dc2-service-label', nom);
+  setT('dc2-nom', nom);
+  const el = S('dc2-emoji'); if(el) el.textContent = emoji;
+  // Init date min = aujourd'hui
+  const inp = S('dc2-date');
+  if(inp){ const t=new Date(); inp.min=t.toISOString().split('T')[0]; if(!_cmd.date) inp.value=t.toISOString().split('T')[0]; }
+  dSetTypologie('NORMALE', S('btn-normale'));
+  dSetDuree(8, S('dur-8'));
+  dShow('dc2'); sbActive('sbi-c2');
+}
+
+// C2 → sélecteur type mission
+function dSetTypologie(type, el) {
+  _cmd.type = type;
+  ['btn-flash','btn-normale','btn-planifiee'].forEach(id => {
+    const b = S(id); if(!b) return;
+    b.style.borderTopWidth = '2px';
+    b.style.borderTopColor = 'rgba(255,255,255,.15)';
+    b.style.background = '';
+  });
+  if(el) {
+    el.style.borderTopWidth = '3px';
+    const colors = {FLASH:'#F44336', NORMALE:'var(--cy)', 'PLANIFIÉE':'#4CAF50'};
+    el.style.borderTopColor = colors[type] || 'var(--cy)';
+    el.style.background = 'rgba(255,255,255,.06)';
+  }
+  dc2CheckForm();
+}
+
+function dSetDuree(h, el) {
+  _cmd.duree = h;
+  ['dur-4','dur-8'].forEach(id => {
+    const b = S(id); if(!b) return;
+    b.style.border = '1px solid rgba(255,255,255,.1)';
+    b.style.background = '';
+    b.querySelector('div').style.color = 'rgba(255,255,255,.6)';
+  });
+  if(el) {
+    el.style.border = '1px solid rgba(255,193,7,.4)';
+    el.style.background = 'rgba(255,193,7,.07)';
+    el.querySelector('div').style.color = 'var(--cy)';
+  }
+  dc2CheckForm();
+}
+
+function dc2QuartierChange(sel) {
+  _cmd.quartier = sel.value;
+  const bloc = S('dc2-autres-bloc');
+  if(bloc) bloc.style.display = sel.value === 'autres' ? 'block' : 'none';
+  dc2CheckForm();
+}
+
+function dAutoDetectType() {
+  if(!_cmd.date || !_cmd.heure) return;
+  const [Y,M,D] = _cmd.date.split('-').map(Number);
+  const [h,m] = _cmd.heure.split(':').map(Number);
+  const dateMission = new Date(Y, M-1, D, h, m, 0);
+  const diffH = (dateMission.getTime() - Date.now()) / 3600000;
+  let type;
+  if(diffH < 6) type = 'FLASH';
+  else if(diffH < 24) type = 'NORMALE';
+  else type = 'PLANIFIÉE';
+  const idMap = {FLASH:'btn-flash', NORMALE:'btn-normale', 'PLANIFIÉE':'btn-planifiee'};
+  dSetTypologie(type, S(idMap[type]));
+}
+
+function dc2CheckForm() {
+  _cmd.date    = (S('dc2-date')?.value||'').trim();
+  _cmd.heure   = (S('dc2-heure')?.value||'').trim();
+  _cmd.adresse = (S('dc2-adresse')?.value||'').trim();
+  if(_cmd.date && _cmd.heure) dAutoDetectType();
+  const ok = _cmd.date && _cmd.heure && _cmd.adresse && _cmd.quartier && _cmd.service;
+  const btn = S('dc2-btn-next');
+  if(btn){ btn.style.opacity = ok ? '1' : '.45'; btn.style.pointerEvents = ok ? 'auto' : 'none'; }
+}
+
+function dCaptureGPS2() {
+  if(!navigator.geolocation){ toast2('⚠️ GPS non disponible'); return; }
+  toast2('📍 Capture GPS...');
+  navigator.geolocation.getCurrentPosition(pos => {
+    _cmd.lat = pos.coords.latitude;
+    _cmd.lng = pos.coords.longitude;
+    const ok = S('dc2-gps-ok'); if(ok) ok.style.display = 'inline';
+    const adr = S('dc2-adresse');
+    if(adr && !adr.value) adr.value = `GPS : ${_cmd.lat.toFixed(5)}, ${_cmd.lng.toFixed(5)}`;
+    dc2CheckForm();
+    toast2('✅ Position capturée');
+  }, () => toast2('❌ GPS refusé'));
+}
+
+// C2 → C3 : validation et calcul prix
+function dValiderCommande() {
+  _cmd.date    = (S('dc2-date')?.value||'').trim();
+  _cmd.heure   = (S('dc2-heure')?.value||'').trim();
+  _cmd.adresse = (S('dc2-adresse')?.value||'').trim();
+  _cmd.exigences = (S('dc2-exigences')?.value||'').trim();
+  if(S('dc2-quartier')?.value === 'autres') {
+    _cmd.quartier = (S('dc2-quartier-autre')?.value||'').trim() || 'Autres';
+  }
+  if(!_cmd.service){ toast2('⚠️ Sélectionnez un service'); return; }
+  if(!_cmd.date)   { toast2('⚠️ Choisissez une date'); return; }
+  if(!_cmd.heure)  { toast2('⚠️ Choisissez une heure'); return; }
+  if(!_cmd.adresse){ toast2('⚠️ Entrez votre adresse'); return; }
+
+  const p = dCalcPrixV2(_cmd.service.tarifBase, _cmd.type, _cmd.duree);
+  window._dtotal = p.total; window._dbase = p.apresMulti;
+  window._dcomm = p.comm;   window._dfrais = p.mm;
+
+  // Remplir dc3
+  const typo = {FLASH:'⚡ FLASH (+25%)', NORMALE:'🟢 NORMALE', 'PLANIFIÉE':'📅 PLANIFIÉE (-10%)'};
+  const multLabel = {FLASH:'+25% urgence', NORMALE:'×1 standard', 'PLANIFIÉE':'-10% planification'};
+  setT('dc3-emoji', _cmd.service.emoji);
+  setT('dc3-service-nom', _cmd.service.nom);
+  setT('dc3-type-badge', typo[_cmd.type]);
+  setT('dc3-duree-label', _cmd.duree === 8 ? 'Journée (8h)' : 'Demi-journée (4h)');
+  setT('dc3-date-label', _cmd.date + ' · ' + _cmd.heure);
+  setT('dc3-base', p.apresMulti.toLocaleString() + ' FCFA');
+  setT('dc3-multi-label', 'Multiplicateur (' + multLabel[_cmd.type] + ')');
+  setT('dc3-multi-val', _cmd.type === 'NORMALE' ? '—' : (p.apresMulti - Math.round(_cmd.service.tarifBase * (_cmd.duree===4?0.6:1))).toLocaleString() + ' FCFA');
+  setT('dc3-comm', p.comm.toLocaleString() + ' FCFA');
+  setT('dc3-mm', p.mm.toLocaleString() + ' FCFA');
+  setT('dc3-total', p.total.toLocaleString() + ' FCFA');
+  setT('dc3-presta-net', p.apresMulti.toLocaleString() + ' FCFA');
+  setT('dc3-adresse-confirm', (_cmd.quartier ? _cmd.quartier + ' · ' : '') + _cmd.adresse);
+
+  dShow('dc3');
+}
+
+// C3 → C5 : passer au paiement
+function dPasserAuPaiement() {
+  setT('dc5-montant', (window._dtotal||0).toLocaleString() + ' FCFA');
+  const resume = (_cmd.service?.nom||'') + ' · ' + (_cmd.type||'') + ' · ' + (_cmd.date||'');
+  setT('dc5-resume', resume);
+  const bloc = S('dc5-confirm-bloc'); if(bloc) bloc.style.display = 'none';
+  dShow('dc5');
+}
+
+// C5 : sélection opérateur
+function dSelectPaiement(op) {
+  const nums = {orange:'📱 Envoyez '+((window._dtotal||0).toLocaleString())+' FCFA au +237 690 384 199 (Orange Money HappyHome)', mtn:'📱 Envoyez '+((window._dtotal||0).toLocaleString())+' FCFA au +237 653 571 659 (MTN MoMo HappyHome)'};
+  setT('dc5-instruction', nums[op]);
+  const bloc = S('dc5-confirm-bloc'); if(bloc) bloc.style.display = 'block';
+}
+
+function dc5CheckTxn() {
+  const v = (S('dc5-txn')?.value||'').trim();
+  const btn = S('dc5-btn-confirm');
+  if(btn){ btn.style.opacity = v.length >= 6 ? '1' : '.4'; btn.style.pointerEvents = v.length >= 6 ? 'auto' : 'none'; }
+}
+
+// C5 → C6 : confirmation paiement + lancement matching
+async function dConfirmerPaiement() {
+  const txn = (S('dc5-txn')?.value||'').trim();
+  if(!txn){ toast2('⚠️ Entrez le numéro de transaction'); return; }
+  if(!dCurrentUser){ toast2('⚠️ Connexion requise'); return; }
+  toast2('⏳ Enregistrement...');
+  const mId = 'M' + Date.now();
+  window._currentMissionId = mId;
+  window._currentMissionEnd = (function(){
+    const [Y,M,D] = (_cmd.date||'').split('-').map(Number);
+    const [h,m] = (_cmd.heure||'').split(':').map(Number);
+    const dur = _cmd.duree || 8;
+    return new Date(Y, M-1, D, h+dur, m, 0).getTime();
+  })();
+  const {error} = await dbPost('missions', {
+    id: mId,
+    usager_id: dCurrentUser?.id||'', usager_nom: esc(dCurrentUser?.nom||''),
+    presta_id: '', presta_nom: '', presta_emoji: '',
+    date: _cmd.date, heure: _cmd.heure,
+    adresse: esc(_cmd.adresse), services: [_cmd.service?.id||''],
+    exigences: esc(_cmd.exigences),
+    montant: window._dtotal||0,
+    prix_base: window._dbase||0, commission_hhome: window._dcomm||0, frais_paiement: window._dfrais||0,
+    txn, statut: 'confirmee'
+  });
+  if(error){ toast2('❌ Erreur enregistrement'); return; }
+  dbPost('admin_logs',{msg:`Mission ${mId} — ${esc(_cmd.service?.nom||'')} ${_cmd.type} → ${esc(dCurrentUser?.nom||'')} · ${(window._dtotal||0).toLocaleString()} FCFA`}).catch(()=>{});
+  // Lancer l'écran d'attente matching
+  dShow('dc6');
+  dLancerMatching(mId);
+}
+
+// C6 : algorithme matching simulé (MVP)
+function dLancerMatching(mId) {
+  const dureeMin = TIMEOUT_MIN[_cmd.type] || 5;
+  const msgs = {FLASH:'Mission urgente — Recherche prioritaire', NORMALE:'Recherche standard en cours', 'PLANIFIÉE':'Optimisation du planning…'};
+  setT('dc6-type-msg', msgs[_cmd.type] || 'Nous cherchons votre prestataire');
+  let secondes = dureeMin * 60;
+  if(_dc6Timer) clearInterval(_dc6Timer);
+  _dc6Timer = setInterval(() => {
+    secondes--;
+    const m = Math.floor(secondes / 60);
+    const s = secondes % 60;
+    setT('dc6-countdown', (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
+    const pct = Math.round((1 - secondes / (dureeMin * 60)) * 100);
+    setT('dc6-pool-msg', pct < 30 ? 'Analyse des prestataires disponibles…' : pct < 60 ? 'Vérification des créneaux et zones…' : 'Finalisation du matching…');
+    if(secondes <= 0) {
+      clearInterval(_dc6Timer);
+      dMatchingFallback(mId);
+    }
+  }, 1000);
+  // Simulation MVP : match après 5s
+  setTimeout(() => { clearInterval(_dc6Timer); dMatchingSucces(mId); }, 5000);
+}
+
+function dMatchingSucces(mId) {
+  const prestas = [{nom:'Adjoa K.', emoji:'👩🏾', note:'4.8', missions:47}, {nom:'Marie-Claire N.', emoji:'👩🏽', note:'4.9', missions:83}, {nom:'Fatoumata D.', emoji:'👩🏿', note:'4.7', missions:29}];
+  const p = prestas[Math.floor(Math.random()*prestas.length)];
+  setT('dc7-emoji', p.emoji); setT('dc7-nom', p.nom);
+  setT('dc7-note', p.note); setT('dc7-missions', p.missions);
+  setT('dc7-eta', Math.floor(15+Math.random()*20) + ' min');
+  setT('dc7-statut', 'En route 🟢');
+  setT('dc7-service', (_cmd.service?.emoji||'') + ' ' + (_cmd.service?.nom||''));
+  setT('dc7-datetime', (_cmd.date||'') + ' · ' + (_cmd.heure||''));
+  setT('dc7-total', ((window._dtotal||0)).toLocaleString() + ' FCFA');
+  const btn = S('dc7-btn-valider'); if(btn) btn.style.display = 'none';
+  if(window._missionEndChecker) clearInterval(window._missionEndChecker);
+  window._missionEndChecker = setInterval(() => {
+    if(window._currentMissionEnd && Date.now() >= window._currentMissionEnd){
+      const b = S('dc7-btn-valider'); if(b) b.style.display = '';
+      clearInterval(window._missionEndChecker);
+    }
+  }, 60000);
+  toast2('🎉 Prestataire trouvée ! ' + p.nom + ' arrive dans ~15 min');
+  dShow('dc7');
+}
+
+function dMatchingFallback(mId) {
+  const msgs = {FLASH:'⚡ Aucun prestataire disponible en urgence. Remboursement + bon -20% sur votre prochaine mission.', NORMALE:'🟢 Aucun prestataire libre maintenant. Souhaitez-vous 2 créneaux alternatifs ?', 'PLANIFIÉE':'📅 Nous vous proposerons 3 dates alternatives dans les 2h.'};
+  toast2(msgs[_cmd.type] || '⚠️ Aucun prestataire disponible. Votre mission est annulée et remboursée.');
+  setTimeout(() => { dShow('dc-missions'); sbActive('sbi-cms'); loadDMissions(); }, 2500);
+}
+
+function dAnnulerRecherche() {
+  if(_dc6Timer) clearInterval(_dc6Timer);
+  toast2('Recherche annulée — Remboursement en cours');
+  setTimeout(() => { dShow('dc1'); sbActive('sbi-c1'); }, 1000);
+}
+
+// C7 messagerie
+async function dEnvoyerMessage() {
+  const inp = S('dc7-msg-input');
+  const msg = (inp?.value||'').trim();
+  if(!msg) return;
+  if(!window._currentMissionId){ toast2('⚠️ Mission introuvable'); return; }
+  const cont = S('dc7-messages');
+  if(cont) {
+    const placeholder = cont.querySelector('p');
+    if(placeholder) placeholder.remove();
+    const d = document.createElement('div');
+    d.innerHTML = '<div style="text-align:right;margin-bottom:6px;"><span style="background:rgba(255,193,7,.15);border-radius:10px 10px 2px 10px;padding:7px 12px;font-size:13px;color:#fff;display:inline-block;">'+esc(msg)+'</span></div>';
+    cont.appendChild(d); cont.scrollTop = cont.scrollHeight;
+  }
+  if(inp) inp.value = '';
+  const {error} = await dbPost('messages', {
+    mission_id: window._currentMissionId,
+    sender: 'usager',
+    content: msg
+  });
+  if(error) toast2('⚠️ Message envoyé localement mais non sauvegardé');
+}
+
+async function dValiderMissionTerminee() {
+  const mId = window._currentMissionId;
+  if(!mId){ toast2('⚠️ Mission introuvable'); return; }
+  const btn = S('dc7-btn-valider');
+  if(btn){ btn.style.opacity = '.5'; btn.style.pointerEvents = 'none'; }
+  toast2('⏳ Validation en cours...');
+  const {error} = await dbPatch('missions', 'id', mId, {statut:'terminee', validated_at: new Date().toISOString()});
+  if(error){
+    toast2('❌ '+error.message);
+    if(btn){ btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+    return;
+  }
+  toast2('✅ Mission validée ! Paiement libéré à J+1');
+  window._currentMissionId = null;
+  if(window._missionEndChecker) clearInterval(window._missionEndChecker);
+  setTimeout(() => { dShow('dc-missions'); sbActive('sbi-cms'); loadDMissions(); }, 1500);
+}
+
+function dOuvrirLitige() {
+  toast2('📝 Signalement envoyé à l\'équipe HappyHome');
+}
+
+// Charger accueil client v2 (plus de liste prestataires)
+async function dLoadClientHome() {
+  if(dCurrentUser) {
+    const nom = esc(dCurrentUser.nom||'');
+    setT('dc1-hello', 'Bonjour ' + nom.split(' ')[0] + ' 👋');
+    setT('dc8-name', nom);
+    const tel = S('dc8-tel'); if(tel && dCurrentUser) tel.textContent = '+237 ' + esc(dCurrentUser.tel||'');
+    loadDMissions();
+  }
+}
+
+
 const SUPABASE_URL='https://bnwlfosmiuctswpaqvcb.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJud2xmb3NtaXVjdHN3cGFxdmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Njk1MjYsImV4cCI6MjA5NDE0NTUyNn0.jF8ubiVhSVw9OSW9dmR8x2wJITCNxLFhphlUj4TFLJU';
 const SB_H={'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
@@ -1384,7 +2182,54 @@ function toast2(msg,dur=3200){
   clearTimeout(dToastTimer);dToastTimer=setTimeout(()=>el.classList.remove('show'),dur);
 }
 function dShow(id){document.querySelectorAll('.dscr').forEach(s=>s.classList.remove('active'));const el=S(id);if(el)el.classList.add('active');}
-function sbActive(id){document.querySelectorAll('.sb-it').forEach(i=>i.classList.remove('on'));const el=S(id);if(el)el.classList.add('on');}
+function dGoToCommander(){
+  if(!_cmd.service){
+    toast2('👉 Choisis d\'abord un service');
+    dShow('dc1');sbActive('sbi-c1');
+    return;
+  }
+  dShow('dc2');sbActive('sbi-c2');
+}
+function sbActive(id){
+  document.querySelectorAll('.sb-it').forEach(i=>i.classList.remove('on'));
+  const el=S(id);if(el)el.classList.add('on');
+  // Synchroniser bottom-nav mobile
+  const bnMap={'sbi-c1':'bn-c1','sbi-c2':'bn-c2','sbi-cms':'bn-cms','sbi-c8':'bn-c8'};
+  document.querySelectorAll('.bn-item').forEach(i=>i.classList.remove('on'));
+  const bnId=bnMap[id];
+  if(bnId){const b=S(bnId);if(b)b.classList.add('on');}
+}
+
+// ── BOTTOM-NAV mobile : navigation + sync sidebar ──
+function bnGoTo(screenId, sbId, bnId){
+  dShow(screenId);
+  sbActive(sbId);
+}
+function bnGoToCommander(){
+  if(!_cmd.service){
+    toast2('👉 Choisis d\'abord un service');
+    dShow('dc1');sbActive('sbi-c1');
+    return;
+  }
+  dShow('dc2');sbActive('sbi-c2');
+}
+
+// ── HAMBURGER landing ──
+function toggleMobileMenu(){
+  const m=S('mobile-menu');if(!m)return;
+  m.classList.toggle('open');
+}
+function closeMobileMenu(){
+  const m=S('mobile-menu');if(m)m.classList.remove('open');
+}
+// Fermer le menu mobile si clic dehors
+document.addEventListener('click',function(e){
+  const m=S('mobile-menu');const b=S('nav-burger');
+  if(!m||!b)return;
+  if(m.classList.contains('open')&&!m.contains(e.target)&&!b.contains(e.target)){
+    m.classList.remove('open');
+  }
+});
 function fillDQuartiers(){
   ['dc-quartier','dc4-quartier','dm-quartier'].forEach(id=>{
     const sel=S(id);if(!sel)return;
@@ -1415,10 +2260,16 @@ async function goToDRole(role){
     dShowLoginSidebar();dShow('d-login');
   }
 }
-function dShowClientSidebar(){S('sb-client').style.display='block';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Espace Usager');S('sb-av').textContent='👤';setT('sb-name',dCurrentUser?.nom||'Usager');setT('sb-role','Usager HappyHome');}
-function dShowPrestaSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='block';S('sb-admin').style.display='none';setT('sb-role-label','Espace Agent');S('sb-av').textContent='👩🏾';setT('sb-name',dCurrentUser?.nom||'Prestataire');setT('sb-role','Agent certifié HappyHome');}
-function dShowAdminSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='block';setT('sb-role-label','Administration');S('sb-av').textContent='⚙️';setT('sb-name','Admin');setT('sb-role','Administrateur');}
-function dShowLoginSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Accueil');setT('sb-name','—');setT('sb-role','—');}
+function dShowClientSidebar(){S('sb-client').style.display='block';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Espace Usager');S('sb-av').textContent='👤';setT('sb-name',dCurrentUser?.nom||'Usager');setT('sb-role','Usager HappyHome');dShowBottomNav(true);}
+function dShowPrestaSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='block';S('sb-admin').style.display='none';setT('sb-role-label','Espace Agent');S('sb-av').textContent='👩🏾';setT('sb-name',dCurrentUser?.nom||'Prestataire');setT('sb-role','Agent certifié HappyHome');dShowBottomNav(false);}
+function dShowAdminSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='block';setT('sb-role-label','Administration');S('sb-av').textContent='⚙️';setT('sb-name','Admin');setT('sb-role','Administrateur');dShowBottomNav(false);}
+function dShowLoginSidebar(){S('sb-client').style.display='none';S('sb-presta').style.display='none';S('sb-admin').style.display='none';setT('sb-role-label','Accueil');setT('sb-name','—');setT('sb-role','—');dShowBottomNav(false);}
+function dShowBottomNav(show){
+  const bn=S('bottom-nav');
+  if(!bn)return;
+  if(show){bn.classList.remove('hide-bn');}
+  else{bn.classList.add('hide-bn');}
+}
 async function dDeconnexion(){
   delSession('hh_usager');delSession('hh_prestataire');delSession('hh_role');
   dCurrentUser=null;dCurrentRole=null;await authSignOut();
@@ -1438,7 +2289,9 @@ async function fetchPrestataires(){
 async function dSignupClient(){
   const nom=(S('dc-nom')?.value||'').trim(),tel=(S('dc-tel')?.value||'').trim(),q=S('dc-quartier')?.value||'';
   if(!nom){toast2('⚠️ Entrez votre nom complet');return;}
-  if(!tel||tel.length<9){toast2('⚠️ Numéro téléphone invalide');return;}
+  if(!tel||!/^(?:\+237)?[6-9][0-9]{8}$/.test(tel.replace(/\s/g,''))){toast2('⚠️ Numéro camerounais invalide (ex: 691234567)');return;}
+  const emailVal=S('dc-email')?.value||'';
+  if(emailVal&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)){toast2('⚠️ Format email invalide');return;}
   if(!q){toast2('⚠️ Sélectionnez votre quartier');return;}
   toast2('⏳ Création du compte...');
   const {data:ex}=await dbGet('usagers',`?select=id&tel=eq.${encodeURIComponent(tel)}&limit=1`);
@@ -1456,7 +2309,7 @@ function openLoginModal(){const m=S('ov-login');if(!m)return;const i=S('login-te
 function closeLoginModal(){const m=S('ov-login');if(m)m.classList.remove('show');}
 async function doLogin(){
   const tel=(S('login-tel-inp')?.value||'').replace(/\s/g,'');
-  if(!tel||tel.length<9){toast2('⚠️ Numéro invalide');return;}
+  if(!tel||!/^(?:\+237)?[6-9][0-9]{8}$/.test(tel.replace(/\s/g,''))){toast2('⚠️ Numéro camerounais invalide (ex: 691234567)');return;}
   toast2('⏳ Connexion...');
   if(dLoginTarget==='client'){
     const {data}=await dbGet('usagers',`?select=*&tel=eq.${encodeURIComponent(tel)}&limit=1`);
@@ -1472,15 +2325,9 @@ async function doLogin(){
 }
 
 // ── CLIENT — HOME ──
-async function dLoadClientHome(){
-  const nom=dCurrentUser?.nom||'';
-  setT('dc1-hello','Bonjour '+nom.split(' ')[0]+' 👋');setT('dc8-name',nom);
-  const tel=S('dc8-tel');if(tel&&dCurrentUser)tel.textContent='+237 '+dCurrentUser.tel;
-  const {data:ms}=await dbGet('missions',`?select=id&usager_id=eq.${dCurrentUser?.id||''}`);
-  setT('dc8-nb',(ms||[]).length);
-  await renderDAccueil();await renderDListe();
-}
-async function renderDAccueil(){
+// (la définition de dLoadClientHome est plus haut dans le fichier)
+async function renderDAccueil(){// v2 : accueil est le catalogue services, pas la liste prestas
+  return;
   const c=S('dc1-list');if(!c)return;
   c.innerHTML='<p class="t-cap" style="padding:10px 0;">Chargement...</p>';
   const list=await fetchPrestataires();
@@ -1541,18 +2388,6 @@ function dConfirmerResa(){
   dCalcPrix();setT('dc5-montant',(window._dtotal||0).toLocaleString()+' FCFA');setT('dc5-date',date+' à '+heure);setT('dc5-presta',dCurrentPresta?.nom||'');
   dShow('dc5');
 }
-async function dConfirmerPaiement(){
-  const txn=(S('dc5-txn')?.value||'').trim();if(!txn||txn.length<6){toast2('⚠️ Numéro de transaction invalide');return;}
-  toast2('⏳ Confirmation en cours...');
-  const {data:last}=await dbGet('missions','?select=id&order=created_at.desc&limit=1');
-  const nextNum=last&&last[0]?parseInt((last[0].id||'M0').replace('M',''))+1:1;
-  const mId='M'+nextNum.toString().padStart(3,'0');
-  const {error}=await dbPost('missions',{id:mId,usager_id:dCurrentUser?.id||'',usager_nom:dCurrentUser?.nom||'',presta_id:dCurrentPresta?.id||'',presta_nom:dCurrentPresta?.nom||'',presta_emoji:dCurrentPresta?.emoji||'',date:window._dresa?.date||'',heure:window._dresa?.heure||'',adresse:window._dresa?.adresse||'',services:window._dresa?.services||[],exigences:window._dresa?.exigences||'',montant:window._dtotal||0,prix_base:window._dbase||0,commission_hhome:window._dcomm||0,frais_paiement:window._dfrais||0,txn,statut:'confirmee'});
-  if(error){toast2('❌ '+error.message);return;}
-  dbPost('admin_logs',{msg:`Mission ${mId} — ${dCurrentPresta?.nom||''} → ${dCurrentUser?.nom||''} · ${(window._dtotal||0).toLocaleString()} FCFA`}).catch(()=>{});
-  toast2('✅ Mission '+mId+' confirmée !');
-  setTimeout(()=>{dShow('dc-missions');sbActive('sbi-cms');loadDMissions();},1200);
-}
 async function loadDMissions(){
   const c=S('d-missions-cours'),h=S('d-missions-histo');
   if(c)c.innerHTML='<p class="t-cap" style="padding:10px 0;">Chargement...</p>';
@@ -1567,7 +2402,7 @@ async function loadDMissions(){
 async function dSignupMenagere(){
   const nom=(S('dm-nom')?.value||'').trim(),tel=(S('dm-tel')?.value||'').trim(),spec=S('dm-specialite')?.value||'',g1=(S('dm-g1')?.value||'').trim(),g2=(S('dm-g2')?.value||'').trim();
   if(!nom){toast2('⚠️ Entrez votre nom complet');return;}
-  if(!tel||tel.length<9){toast2('⚠️ Numéro Mobile Money invalide');return;}
+  if(!tel||!/^(?:\+237)?[6-9][0-9]{8}$/.test(tel.replace(/\s/g,''))){toast2('⚠️ Numéro Mobile Money invalide (ex: 691234567)');return;}
   if(!spec){toast2('⚠️ Choisissez votre spécialité');return;}
   if(!g1){toast2('⚠️ Garant 1 obligatoire');return;}
   toast2('⏳ Soumission...');
@@ -1909,6 +2744,169 @@ function dCaptureGPS(targetInputId, callback){
 }
 
 // ════════════════ INIT ════════════════
+// ── SPRINT 4 — LOGIQUE PRESTATAIRE V2 ──
+
+// Toggle disponibilité
+let _prestaOnline = false;
+function dToggleStatus() {
+  _prestaOnline = !_prestaOnline;
+  const tog = S('dm1-toggle'), knob = S('dm1-knob');
+  const pill = S('dm1-pill'), pillT = S('dm1-pill-t');
+  const lbl = S('dm1-statut-label');
+  if(_prestaOnline) {
+    if(tog) tog.style.background = '#4CAF50';
+    if(knob) knob.style.left = '28px';
+    if(pill) pill.className = 'spill s-on';
+    if(pillT) pillT.textContent = 'En ligne';
+    if(lbl) lbl.textContent = 'En ligne — Vous pouvez recevoir des missions';
+    toast2('🟢 Vous êtes en ligne !');
+    // Simuler notification mission entrante après 3s (MVP démo)
+    if(dCurrentUser) setTimeout(dmSimulerMissionEntrante, 3000);
+  } else {
+    if(tog) tog.style.background = 'rgba(255,255,255,.15)';
+    if(knob) knob.style.left = '4px';
+    if(pill) pill.className = 'spill';
+    if(pillT) pillT.textContent = 'Hors ligne';
+    if(lbl) lbl.textContent = 'Hors ligne — Vous ne recevrez pas de missions';
+    toast2('⚪ Vous êtes hors ligne');
+    // Cacher mission entrante
+    const bloc = S('dm1-mission-entrant'); if(bloc) bloc.style.display = 'none';
+  }
+  if(dCurrentUser) dbPatch('prestataires','id',dCurrentUser.id,{dispo:_prestaOnline}).catch(()=>{});
+}
+
+// Simulation mission entrante (MVP)
+let _missionEntrTimer = null;
+function dmSimulerMissionEntrante() {
+  if(!_prestaOnline) return;
+  const types = ['FLASH','NORMALE','PLANIFIÉE'];
+  const services = ['🧹 Nettoyage simple','🍳 Cuisine','👶 Garde enfants'];
+  const quartiers = ['Akwa Centre','Bonapriso','Makepe','Bépanda'];
+  const t = types[Math.floor(Math.random()*types.length)];
+  const svc = services[Math.floor(Math.random()*services.length)];
+  const qrt = quartiers[Math.floor(Math.random()*quartiers.length)];
+  const tarif = Math.round((6000 + Math.random()*6000) / 500) * 500;
+  const dureeMin = {FLASH:2, NORMALE:5, PLANIFIÉE:10}[t] || 5;
+
+  const bloc = S('dm1-mission-entrant');
+  if(!bloc) return;
+  const colors = {FLASH:'#F44336', NORMALE:'#4CAF50', PLANIFIÉE:'var(--cy)'};
+  bloc.style.display = 'block';
+  bloc.innerHTML = `
+    <div class="g cp" style="border-left:3px solid ${colors[t]};background:rgba(255,255,255,.05);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div><span style="font-size:13px;font-weight:900;color:${colors[t]};">${t==='FLASH'?'⚡':t==='NORMALE'?'🟢':'📅'} Mission ${t}</span><span class="t-cap" style="margin-left:8px;">Nouvelle demande</span></div>
+        <div style="font-size:24px;font-weight:900;color:${colors[t]};" id="dm-entrant-cd">--:--</div>
+      </div>
+      <div class="row2" style="margin-bottom:12px;">
+        <div><div class="t-cap">Service</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:2px;">${svc}</div></div>
+        <div><div class="t-cap">Zone (quartier approx.)</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:2px;">${qrt}</div></div>
+        <div><div class="t-cap">Votre revenu net</div><div style="font-size:14px;font-weight:800;color:#4CAF50;margin-top:2px;">${tarif.toLocaleString()} FCFA</div></div>
+        <div><div class="t-cap">Durée</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:2px;">Journée (8h)</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button class="btn btn-g btn-full" onclick="dmAccepterMission()" style="padding:14px;font-size:14px;font-weight:900;">✅ Accepter</button>
+        <button class="btn btn-full" onclick="dmDeclinerMission()" style="padding:14px;font-size:14px;background:rgba(244,67,54,.1);color:#F44336;border:1px solid rgba(244,67,54,.3);">❌ Décliner</button>
+      </div>
+    </div>`;
+  // Compte à rebours
+  let sec = dureeMin * 60;
+  if(_missionEntrTimer) clearInterval(_missionEntrTimer);
+  _missionEntrTimer = setInterval(() => {
+    sec--;
+    const m = Math.floor(sec/60), s = sec%60;
+    const cdEl = S('dm-entrant-cd');
+    if(cdEl) cdEl.textContent = (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    if(sec <= 0) { clearInterval(_missionEntrTimer); if(bloc) bloc.style.display = 'none'; toast2('⏱️ Délai expiré — Mission passée à la suivante'); }
+  }, 1000);
+}
+
+function dmAccepterMission() {
+  clearInterval(_missionEntrTimer);
+  const bloc = S('dm1-mission-entrant'); if(bloc) bloc.style.display = 'none';
+  toast2('✅ Mission acceptée ! Adresse complète révélée. Bonne mission !');
+  setTimeout(() => { dShow('dm3'); sbActive('sbi-m3'); }, 1500);
+}
+
+function dmDeclinerMission() {
+  clearInterval(_missionEntrTimer);
+  const bloc = S('dm1-mission-entrant'); if(bloc) bloc.style.display = 'none';
+  toast2('Mission déclinée — transmise à la prochaine disponible');
+}
+
+// Calcul auto demi-journée dans le formulaire signup
+function dmCalcDemiJournee() {
+  const val = parseFloat(S('dm-tarif')?.value || '0');
+  const demi = S('dm-tarif-demi');
+  if(demi) demi.value = val > 0 ? Math.round(val * 0.6).toLocaleString() + ' FCFA' : '';
+}
+
+function dmCheckTel() {
+  const tel = (S('dm-tel')?.value||'').replace(/\s/g,'');
+  const ok = /^(?:\+237)?[6-9][0-9]{8}$/.test(tel);
+  const inp = S('dm-tel'); if(inp) inp.style.borderColor = ok ? '#4CAF50' : '';
+}
+
+// 3 check-ins mission active
+let _missionStep = 0; // 0=confirmée, 1=en_route, 2=en_cours, 3=terminée
+function dCheckInDepart() {
+  _missionStep = 1;
+  dmUpdateProgress();
+  const btn = S('dbtn-depart');
+  if(btn){ btn.disabled = true; btn.style.opacity = '.4'; S('dbtn-depart-t').textContent = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+  const btn2 = S('dbtn-arrivee'); if(btn2){ btn2.disabled = false; btn2.style.opacity = '1'; }
+  setT('dm3-ci-status','En route vers le client');
+  setT('dm3-statut-pill','⏳ En route');
+  toast2('🚀 Départ enregistré ! L\'usager est notifié.');
+  if(dCurrentUser) {/* dbPatch missions status */}
+}
+function dCheckInArrivee() {
+  _missionStep = 2;
+  dmUpdateProgress();
+  const btn = S('dbtn-arrivee');
+  if(btn){ btn.disabled = true; btn.style.opacity = '.4'; S('dbtn-arrivee-t').textContent = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+  const btn3 = S('dbtn-fin'); if(btn3){ btn3.disabled = false; btn3.style.opacity = '1'; }
+  setT('dm3-ci-status','Mission en cours');
+  toast2('📍 Arrivée confirmée ! Mission démarrée.');
+}
+function dCheckOut() {
+  _missionStep = 3;
+  dmUpdateProgress();
+  const btn = S('dbtn-fin');
+  if(btn){ btn.disabled = true; btn.style.opacity = '.4'; S('dbtn-fin-t').textContent = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+  setT('dm3-ci-status','Mission terminée — En attente de notation client');
+  toast2('🏁 Mission terminée ! Paiement libéré à J+1.');
+}
+function dmUpdateProgress() {
+  const pcts = [0, 33, 66, 100];
+  const labels = ['En attente de départ','En route','Mission en cours','Terminée ✅'];
+  const pct = pcts[_missionStep] || 0;
+  const prog = S('dm3-prog'); if(prog) prog.style.width = pct + '%';
+  setT('dm3-pct', pct + '%');
+}
+
+// SOS
+function dSOS() {
+  toast2('🚨 ALERTE SOS ENVOYÉE — Admin + Garants notifiés. Tracking GPS activé.');
+  dbPost('admin_logs',{msg:`🚨 SOS PRESTA — ${esc(dCurrentUser?.nom||'?')} · ${new Date().toISOString()}`}).catch(()=>{});
+  dbPost('alertes',{presta_id:dCurrentUser?.id||'',type:'sos',ts:new Date().toISOString()}).catch(()=>{});
+}
+
+// Grille disponibilités
+function dmInitGrille() {
+  const jours = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const creneaux = ['07h–12h','08h–17h','12h–17h','Journée','Demi-J.','Soir'];
+  const tbl = S('dm2-grille'); if(!tbl) return;
+  tbl.innerHTML = creneaux.map(cr => `
+    <tr>
+      <td style="padding:5px 6px;color:rgba(255,255,255,.6);font-size:11px;white-space:nowrap;">${cr}</td>
+      ${jours.map((j,i) => `<td style="text-align:center;padding:4px;">
+        <div onclick="this.classList.toggle('on')" class="cal-d" style="width:28px;height:28px;margin:auto;border-radius:6px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;">
+        </div>
+      </td>`).join('')}
+    </tr>`).join('');
+}
+
 // ── SUPPRESSION COMPTE ──
 function ouvrirSuppressionCompte(){
   if(!dCurrentUser){toast2('⚠️ Connexion requise');return;}
@@ -2058,8 +3056,9 @@ function openCGUFromBandeau(){
 
 document.addEventListener('DOMContentLoaded',async()=>{
   initConsent();
+  dmInitGrille();
   const di=S('dc4-date');if(di){const t=new Date();di.min=t.toISOString().split('T')[0];di.value=t.toISOString().split('T')[0];}
-  fetchPrestataires();
+
   // Compteur et leads
   updateCountdown();
   setInterval(updateCountdown, 60000); // mise à jour chaque minute

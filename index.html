@@ -1002,6 +1002,7 @@ textarea.full{min-height:60px;resize:vertical;}
     <div style="display:flex;gap:6px;min-width:max-content;">
       <button class="admin-tab on" data-tab="dash" onclick="setAdminTab('dash')">Dashboard</button>
       <button class="admin-tab" data-tab="paiements" onclick="setAdminTab('paiements')">Paiements <span class="ad-badge orange" id="ad-badge-paiements" style="display:none;">0</span></button>
+      <button class="admin-tab" data-tab="histopay" onclick="setAdminTab('histopay')">Histo paiements</button>
       <button class="admin-tab" data-tab="presta" onclick="setAdminTab('presta')">Prestataires</button>
       <button class="admin-tab" data-tab="clients" onclick="setAdminTab('clients')">Clients</button>
       <button class="admin-tab" data-tab="gps" onclick="setAdminTab('gps')">GPS Live</button>
@@ -1053,6 +1054,45 @@ textarea.full{min-height:60px;resize:vertical;}
       <div id="paiements-list" style="display:flex;flex-direction:column;gap:12px;">
         <div style="color:var(--t2);font-size:13px;text-align:center;padding:30px;">Chargement…</div>
       </div>
+    </div>
+
+    <!-- HISTORIQUE PAIEMENTS -->
+    <div class="admin-panel" id="ap-histopay">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div id="histopay-title" style="font-size:22px;font-weight:900;">Historique paiements · Chargement…</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <select id="histopay-filter" class="ad-search" style="cursor:pointer;" onchange="loadHistoPayAdmin()">
+            <option value="all">Tous les statuts</option>
+            <option value="verification">En vérification</option>
+            <option value="valide">Validés</option>
+            <option value="rejete">Rejetés</option>
+            <option value="echec">Échecs</option>
+          </select>
+          <select id="histopay-period" class="ad-search" style="cursor:pointer;" onchange="loadHistoPayAdmin()">
+            <option value="7">7 derniers jours</option>
+            <option value="30" selected>30 derniers jours</option>
+            <option value="90">90 derniers jours</option>
+            <option value="all">Tout l'historique</option>
+          </select>
+          <button onclick="loadHistoPayAdmin()" style="padding:8px 16px;border-radius:50px;background:var(--card);color:var(--text);border:1px solid var(--cardb);font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;">↻ Rafraîchir</button>
+        </div>
+      </div>
+      <table class="ad-table">
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Date</th>
+            <th>Montant</th>
+            <th>Provider</th>
+            <th>N° Client</th>
+            <th>Mission</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="histopay-tbody">
+          <tr><td colspan="7" style="text-align:center;padding:30px;color:var(--t2);">Chargement…</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- PRESTATAIRES -->
@@ -1139,8 +1179,14 @@ textarea.full{min-height:60px;resize:vertical;}
     <!-- PRICING -->
     <div class="admin-panel" id="ap-pricing">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
-        <div style="font-size:22px;font-weight:900;">Configuration Pricing</div>
-        <button class="s5-cta" style="padding:10px 18px;font-size:13px;width:auto;" onclick="alert('✓ Modifications sauvegardées')">Sauvegarder modifications</button>
+        <div id="pricing-title" style="font-size:22px;font-weight:900;">Configuration Pricing · Chargement…</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="loadPricingAdmin()" style="padding:8px 16px;border-radius:50px;background:var(--card);color:var(--text);border:1px solid var(--cardb);font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;">↻ Recharger</button>
+          <button onclick="savePricingAdmin()" class="s5-cta" style="padding:10px 18px;font-size:13px;width:auto;">💾 Sauvegarder</button>
+        </div>
+      </div>
+      <div style="background:rgba(15,38,140,.08);border-left:3px solid #0F268C;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:12px;line-height:1.5;">
+        <strong>⚠️ IMPORTANT</strong> · Les valeurs Multiplicateurs et Commission/Frais ci-dessous sont la <strong>source de vérité unique</strong>. Elles sont utilisées par le frontend (affichage prix) ET le backend (RPC create_mission). Modifier ici = changer le prix réel facturé.
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;">
         <div class="s7-card">
@@ -1157,20 +1203,20 @@ textarea.full{min-height:60px;resize:vertical;}
           </div>
         </div>
         <div class="s7-card">
-          <div class="s7-card-t">MULTIPLICATEURS TYPE MISSION</div>
+          <div class="s7-card-t" style="color:var(--cr);">⚡ MULTIPLICATEURS TYPE MISSION (CRITIQUE)</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
-            <div class="pric-row"><span>FLASH (&lt;4h)</span><input type="number" class="pric-inp" value="1.25" step="0.05"> ×</div>
-            <div class="pric-row"><span>STANDARD (&lt;48h)</span><input type="number" class="pric-inp" value="1.00" step="0.05"> ×</div>
-            <div class="pric-row"><span>ANTICIPÉ (&gt;48h)</span><input type="number" class="pric-inp" value="0.90" step="0.05"> ×</div>
+            <div class="pric-row"><span>FLASH (&lt;4h)</span><input id="pric-mult-flash" type="number" class="pric-inp" value="1.25" step="0.05"> ×</div>
+            <div class="pric-row"><span>STANDARD (&lt;48h)</span><input id="pric-mult-standard" type="number" class="pric-inp" value="1.00" step="0.05"> ×</div>
+            <div class="pric-row"><span>ANTICIPÉ (&gt;48h)</span><input id="pric-mult-anticipe" type="number" class="pric-inp" value="0.90" step="0.05"> ×</div>
           </div>
-          <div class="s7-card-t" style="margin-top:18px;">FRAIS & COMMISSION</div>
+          <div class="s7-card-t" style="margin-top:18px;color:var(--cr);">⚡ FRAIS & COMMISSION (CRITIQUE)</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
-            <div class="pric-row"><span>Commission HH</span><input type="number" class="pric-inp" value="20"> %</div>
-            <div class="pric-row"><span>Frais CinetPay</span><input type="number" class="pric-inp" value="3"> %</div>
-            <div class="pric-row"><span>Panier minimum</span><input type="number" class="pric-inp" value="5000"> FCFA</div>
+            <div class="pric-row"><span>Commission HH</span><input id="pric-comm-pct" type="number" class="pric-inp" value="20"> %</div>
+            <div class="pric-row"><span>Frais Mobile Money</span><input id="pric-frais-pct" type="number" class="pric-inp" value="3"> %</div>
+            <div class="pric-row"><span>Panier minimum</span><input id="pric-min-cart" type="number" class="pric-inp" value="5000"> FCFA</div>
           </div>
           <div class="s7-card-t" style="margin-top:18px;">FORMULE</div>
-          <div style="background:var(--inp-bg);padding:12px;border-radius:8px;font-family:monospace;font-size:11px;color:var(--cy-text);">Prix = Base × Caractéristique × Type × 1.20 × 1.03</div>
+          <div style="background:var(--inp-bg);padding:12px;border-radius:8px;font-family:monospace;font-size:11px;color:var(--cy-text);">Prix = Base × Caractéristique × Type × (1+Comm/100) × (1+Frais/100)</div>
         </div>
         <div class="s7-card">
           <div class="s7-card-t">PACKS · RÉDUCTIONS</div>
@@ -2395,6 +2441,17 @@ const SERVICES={
 // type aligné sur enum DB Supabase : FLASH | STANDARD | ANTICIPE
 let _cmd={service:'menage',base:3500,carac:0.85,carac_id:1,couverts:1.00,type:'STANDARD',duree:4,quartier_id:'bonapriso',adresse:''};
 
+// ── PRICING DYNAMIQUE (source unique : table hh_config Supabase) ──────
+// Valeurs par défaut si Supabase indisponible. Synchronisées au démarrage par loadHHConfig().
+let _PRICING = {
+  multi_flash: 1.25,
+  multi_standard: 1.00,
+  multi_anticipe: 0.90,
+  comm_pct: 20,       // Commission HappyHome en %
+  frais_pct: 3,       // Frais Mobile Money en %
+  min_cart: 5000
+};
+
 function selectService(id){
   const sv=SERVICES[id];
   _cmd.service=id;_cmd.base=sv.base;_cmd.carac=sv.tiers[0][1];_cmd.carac_id=sv.tiers[0][2]??null;_cmd.couverts=1.00;
@@ -2438,14 +2495,16 @@ function updateType(){
 }
 function recalc(){
   if(typeof refreshMembreBanner==='function')refreshMembreBanner();
-  // Multiplicateurs alignés DB hh_config : FLASH×1.25, STANDARD×1.00, ANTICIPE×0.90
-  const MULTI_TYPE={FLASH:1.25,STANDARD:1.00,ANTICIPE:0.90};
+  // Multiplicateurs et frais lus depuis _PRICING (synchronisé avec hh_config Supabase au démarrage)
+  const MULTI_TYPE={FLASH:_PRICING.multi_flash, STANDARD:_PRICING.multi_standard, ANTICIPE:_PRICING.multi_anticipe};
+  const COMM_FACT = 1 + (_PRICING.comm_pct/100);
+  const FRAIS_FACT = 1 + (_PRICING.frais_pct/100);
   const b=_cmd.duree===2?Math.round(_cmd.base*0.6):_cmd.base;
   const carac=_cmd.carac*_cmd.couverts;
   const m1=Math.round(b*carac);
   const m2=Math.round(m1*MULTI_TYPE[_cmd.type]);
-  const m3=Math.round(m2*1.20);
-  let m4=Math.round(m3*1.03);
+  const m3=Math.round(m2*COMM_FACT);
+  let m4=Math.round(m3*FRAIS_FACT);
   // AVANTAGE MEMBRE AUTOMATIQUE -10%
   let membreDiscount=0;
   if(_membreActif){
@@ -2454,8 +2513,8 @@ function recalc(){
   }
   document.getElementById('prix-live').textContent=m4.toLocaleString('fr-FR')+' FCFA';
   const detail=_membreActif
-    ? b.toLocaleString('fr-FR')+' × '+carac.toFixed(2)+' × '+MULTI_TYPE[_cmd.type].toFixed(2)+' × 1.20 × 1.03 - 10% MEMBRE'
-    : b.toLocaleString('fr-FR')+' × '+carac.toFixed(2)+' × '+MULTI_TYPE[_cmd.type].toFixed(2)+' × 1.20 × 1.03';
+    ? b.toLocaleString('fr-FR')+' × '+carac.toFixed(2)+' × '+MULTI_TYPE[_cmd.type].toFixed(2)+' × '+COMM_FACT.toFixed(2)+' × '+FRAIS_FACT.toFixed(2)+' - 10% MEMBRE'
+    : b.toLocaleString('fr-FR')+' × '+carac.toFixed(2)+' × '+MULTI_TYPE[_cmd.type].toFixed(2)+' × '+COMM_FACT.toFixed(2)+' × '+FRAIS_FACT.toFixed(2);
   document.getElementById('prix-detail').textContent=detail;
   document.getElementById('s3-tot').textContent=m4.toLocaleString('fr-FR')+' FCFA';
 }
@@ -2477,12 +2536,18 @@ let _currentMission=null;
 
 async function loadHHConfig(){
   try{
-    const {data,error}=await _supabaseClient.from('hh_config').select('key,value').in('key',['numero_om_collecte','numero_mtn_collecte']);
+    const {data,error}=await _supabaseClient.from('hh_config').select('key,value').in('key',['numero_om_collecte','numero_mtn_collecte','pricing_multi_flash','pricing_multi_standard','pricing_multi_anticipe','pricing_comm_pct','pricing_frais_pct','pricing_min_cart']);
     if(error)throw error;
     data.forEach(r=>{
       const v=String(r.value).replace(/"/g,'');
       if(r.key==='numero_om_collecte')_hhConfig.numero_om=v;
       if(r.key==='numero_mtn_collecte')_hhConfig.numero_mtn=v;
+      if(r.key==='pricing_multi_flash')_PRICING.multi_flash=parseFloat(v)||1.25;
+      if(r.key==='pricing_multi_standard')_PRICING.multi_standard=parseFloat(v)||1.00;
+      if(r.key==='pricing_multi_anticipe')_PRICING.multi_anticipe=parseFloat(v)||0.90;
+      if(r.key==='pricing_comm_pct')_PRICING.comm_pct=parseFloat(v)||20;
+      if(r.key==='pricing_frais_pct')_PRICING.frais_pct=parseFloat(v)||3;
+      if(r.key==='pricing_min_cart')_PRICING.min_cart=parseFloat(v)||5000;
     });
     // Mettre à jour les affichages dans s3
     const fmt=n=>n.replace(/(\d{3})(?=\d)/g,'$1 ').trim();
@@ -3134,12 +3199,16 @@ function setAdminTab(t){
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('active',p.id==='ap-'+t));
   if(t==='dash')loadDashAdmin();
   if(t==='paiements')loadPaiementsAdmin();
+  if(t==='histopay')loadHistoPayAdmin();
   if(t==='presta')loadPrestaAdmin();
   if(t==='clients')loadClientsAdmin();
   if(t==='compta')loadComptaAdmin();
   if(t==='kyc')loadKycAdmin();
   if(t==='litiges')loadLitigesAdmin();
   if(t==='subs')loadSubsAdmin();
+  if(t==='pricing')loadPricingAdmin();
+  if(t==='gps')loadGpsAdmin();
+  if(t==='medias')loadMediasAdmin();
 }
 
 // ╔══════════════════════════════════════════════════════════════════╗
@@ -4010,6 +4079,157 @@ async function resolveLitigeAdmin(missionId, decision, montant){
   }
 }
 
+// ── HISTORIQUE PAIEMENTS (tous statuts confondus) ───────────────────
+async function loadHistoPayAdmin(){
+  if(!_adminCheckAccess('histopay-tbody')) return;
+  try {
+    const filterEl = document.getElementById('histopay-filter');
+    const periodEl = document.getElementById('histopay-period');
+    const statut = filterEl ? filterEl.value : 'all';
+    const period = periodEl ? periodEl.value : '30';
+
+    let q = _supabaseClient
+      .from('payments')
+      .select('id,reference_paiement,montant,provider,status,numero_client,mission_id,created_at,client_confirme_le,missions(reference,adresse_complete)')
+      .order('created_at',{ascending:false})
+      .limit(200);
+
+    if(statut !== 'all') q = q.eq('status', statut);
+    if(period !== 'all'){
+      const days = parseInt(period,10);
+      const since = new Date(Date.now() - days*24*3600*1000).toISOString();
+      q = q.gte('created_at', since);
+    }
+
+    const {data:rows, error} = await q;
+    if(error) throw error;
+
+    const n = (rows||[]).length;
+    const titleEl = document.getElementById('histopay-title');
+    if(titleEl) titleEl.textContent = `Historique paiements · ${n} résultat${n>1?'s':''}`;
+
+    const tb = document.getElementById('histopay-tbody');
+    if(!n){
+      tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--t2);">Aucun paiement trouvé avec ces filtres.</td></tr>';
+      return;
+    }
+
+    const pillFor = (s) => {
+      const map = {
+        verification: '<span class="ad-pill orange">⏳ Vérif</span>',
+        valide:       '<span class="ad-pill green">✓ Validé</span>',
+        rejete:       '<span class="ad-pill red">✗ Rejeté</span>',
+        echec:        '<span class="ad-pill red">⚠ Échec</span>',
+        annule:       '<span class="ad-pill gray">○ Annulé</span>'
+      };
+      return map[s] || `<span class="ad-pill gray">${_esc(s||'?')}</span>`;
+    };
+
+    tb.innerHTML = rows.map(p=>{
+      const m = p.missions || {};
+      const refMission = m.reference || (p.mission_id ? p.mission_id.slice(0,8) : '—');
+      const adr = m.adresse_complete ? _esc(m.adresse_complete).slice(0,40) : '';
+      return `<tr>
+        <td><code style="font-size:11px;">${_esc(p.reference_paiement||p.id.slice(0,8))}</code></td>
+        <td style="font-size:11px;">${_fmtDateTime(p.created_at)}</td>
+        <td style="font-weight:700;">${_fmt(p.montant)} FCFA</td>
+        <td>${_esc(p.provider||'—').toUpperCase()}</td>
+        <td style="font-family:monospace;font-size:11px;">${_esc(p.numero_client||'—')}</td>
+        <td style="font-size:11px;">${_esc(refMission)}${adr?'<br><span style="color:var(--t2);font-size:10px;">'+adr+'</span>':''}</td>
+        <td>${pillFor(p.status)}</td>
+      </tr>`;
+    }).join('');
+  } catch(e){
+    console.error('loadHistoPayAdmin error:',e);
+    document.getElementById('histopay-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--cr);">Erreur : '+_esc(e.message||e)+'</td></tr>';
+  }
+}
+
+// ── PRICING ADMIN (lecture/sauvegarde hh_config) ────────────────────
+async function loadPricingAdmin(){
+  if(!_adminCheckAccess('pricing-title')) return;
+  try {
+    const {data, error} = await _supabaseClient
+      .from('hh_config')
+      .select('key,value')
+      .in('key',['pricing_multi_flash','pricing_multi_standard','pricing_multi_anticipe','pricing_comm_pct','pricing_frais_pct','pricing_min_cart']);
+    if(error) throw error;
+    const map = {};
+    (data||[]).forEach(r => { map[r.key] = String(r.value).replace(/"/g,''); });
+    const setVal = (id, key, fallback) => {
+      const el = document.getElementById(id);
+      if(el) el.value = map[key] !== undefined ? map[key] : fallback;
+    };
+    setVal('pric-mult-flash','pricing_multi_flash', _PRICING.multi_flash);
+    setVal('pric-mult-standard','pricing_multi_standard', _PRICING.multi_standard);
+    setVal('pric-mult-anticipe','pricing_multi_anticipe', _PRICING.multi_anticipe);
+    setVal('pric-comm-pct','pricing_comm_pct', _PRICING.comm_pct);
+    setVal('pric-frais-pct','pricing_frais_pct', _PRICING.frais_pct);
+    setVal('pric-min-cart','pricing_min_cart', _PRICING.min_cart);
+    const found = Object.keys(map).length;
+    document.getElementById('pricing-title').textContent = found > 0 ? `Configuration Pricing · ${found}/6 clés en base` : 'Configuration Pricing · ⚠️ Initialisation requise (voir SQL fourni)';
+  } catch(e){
+    console.error('loadPricingAdmin:',e);
+    document.getElementById('pricing-title').textContent = 'Configuration Pricing · Erreur : '+(e.message||e);
+  }
+}
+
+async function savePricingAdmin(){
+  if(!_currentProfile || _currentProfile.role !== 'admin'){ alert('Accès refusé'); return; }
+  const get = id => parseFloat(document.getElementById(id).value);
+  const payload = [
+    {key:'pricing_multi_flash', value: String(get('pric-mult-flash'))},
+    {key:'pricing_multi_standard', value: String(get('pric-mult-standard'))},
+    {key:'pricing_multi_anticipe', value: String(get('pric-mult-anticipe'))},
+    {key:'pricing_comm_pct', value: String(get('pric-comm-pct'))},
+    {key:'pricing_frais_pct', value: String(get('pric-frais-pct'))},
+    {key:'pricing_min_cart', value: String(get('pric-min-cart'))}
+  ];
+  if(!confirm('Confirmer la sauvegarde du pricing ?\n\nIMPACT IMMÉDIAT :\n• Tous les nouveaux affichages prix utiliseront ces valeurs\n• Toutes les nouvelles missions seront facturées avec ces valeurs\n• Modifier ces valeurs change le revenu effectif HappyHome.')) return;
+  try {
+    const {error} = await _supabaseClient.from('hh_config').upsert(payload, {onConflict:'key'});
+    if(error) throw error;
+    // Synchronisation immédiate du frontend
+    _PRICING.multi_flash = get('pric-mult-flash');
+    _PRICING.multi_standard = get('pric-mult-standard');
+    _PRICING.multi_anticipe = get('pric-mult-anticipe');
+    _PRICING.comm_pct = get('pric-comm-pct');
+    _PRICING.frais_pct = get('pric-frais-pct');
+    _PRICING.min_cart = get('pric-min-cart');
+    alert('✓ Pricing sauvegardé.\n\n⚠️ Le RPC SQL create_mission doit aussi être mis à jour si vous changez les multiplicateurs. Voir SQL fourni.');
+    if(typeof recalc==='function') recalc();
+  } catch(e){
+    alert('Erreur sauvegarde : '+(e.message||e));
+  }
+}
+
+// ── GPS LIVE (placeholder honnête : connecté Sprint 13) ─────────────
+async function loadGpsAdmin(){
+  const panel = document.getElementById('ap-gps');
+  if(!panel) return;
+  // Affichage honnête : pas de table presta_location encore
+  panel.innerHTML = `<div style="text-align:center;padding:60px 20px;">
+    <div style="font-size:42px;margin-bottom:14px;">📍</div>
+    <div style="font-size:20px;font-weight:900;margin-bottom:10px;">GPS Live · Migration Supabase à venir</div>
+    <div style="color:var(--t2);font-size:13px;max-width:520px;margin:0 auto;line-height:1.6;">
+      Cet onglet nécessite une table <code style="background:var(--inp-bg);padding:2px 6px;border-radius:4px;">presta_location</code> (avec colonnes presta_id, latitude, longitude, statut, updated_at) et un mécanisme de push GPS depuis l'app prestataire.<br><br>
+      <strong>Prévu Sprint 13</strong> : création table + cron 30s + Realtime channel + carte Leaflet.<br><br>
+      En attendant, suivi des prestas via WhatsApp manuel.
+    </div>
+  </div>`;
+}
+
+// ── MÉDIAS (placeholder honnête : connecté Sprint 13) ───────────────
+async function loadMediasAdmin(){
+  const panel = document.getElementById('ap-medias');
+  if(!panel) return;
+  // L'upload Supabase Storage existe mais les images services sont actuellement en base64 dans le CSS
+  const note = document.createElement('div');
+  note.style.cssText = 'background:rgba(255,193,7,.08);border-left:3px solid var(--cy);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:12px;line-height:1.5;';
+  note.innerHTML = '<strong>⚠️ Images actuellement embarquées en base64 dans le CSS du fichier</strong> · Migration vers bucket Supabase Storage <code style="background:var(--inp-bg);padding:2px 6px;border-radius:4px;">services-images</code> prévue Sprint 13. Les boutons "Changer" ci-dessous sont non fonctionnels.';
+  panel.insertBefore(note, panel.firstChild.nextSibling);
+}
+
 function rate(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<n));}
 
 // Init thème depuis localStorage si déjà choisi
@@ -4290,7 +4510,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.13 · Sprint 12 · 16/05/2026
+  v3.1.15 · Sprint 12.2 · Pricing sync + Histo paiements · 16/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

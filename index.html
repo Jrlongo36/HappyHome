@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --cb:#0F268C;--cb2:#1a35b8;--cy:#FFC107;--co:#ff9800;--cg:#4CAF50;--cr:#F44336;
+  --cb:#0F268C;--cb2:#1a35b8;--cy:#FFC107;--cy-text:#FFC107;--co:#ff9800;--cg:#4CAF50;--cr:#F44336;
   --bg:#030a1f;--text:#fff;--t2:rgba(255,255,255,.72);--t3:rgba(255,255,255,.42);
   --card:rgba(255,255,255,.07);--cardb:rgba(255,255,255,.13);
   --inp-bg:rgba(255,255,255,.07);--inp-b:rgba(255,255,255,.14);
@@ -24,7 +24,7 @@
 }
 [data-theme="light"]{
   --bg:#F4F5F7;--text:#1A1A2E;--t2:rgba(26,26,46,.68);--t3:rgba(26,26,46,.38);
-  --card:#FFFFFF;--cardb:#E4E7EC;
+  --card:#FFFFFF;--cardb:#E0E0E0;--cy-text:#0F268C;
   --inp-bg:#F8F9FA;--inp-b:#D0D5DD;
   --divider:#E4E7EC;--sticky:rgba(255,255,255,.98);
   --logo-happy:#0F268C;--logo-arc-end:#0F268C;
@@ -116,16 +116,16 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)
 .s1-action-btn.member{background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;border:none;}
 .s1-already{font-size:13px;color:var(--t2);text-decoration:none;font-weight:600;opacity:.8;}
 .s1-hero{text-align:center;padding:32px 24px 24px;}
-.s1-badge{display:inline-flex;gap:6px;background:rgba(255,193,7,.12);border:1px solid rgba(255,193,7,.25);padding:6px 14px;border-radius:50px;font-size:11px;font-weight:700;color:var(--cy);margin-bottom:18px;letter-spacing:.5px;}
+.s1-badge{display:inline-flex;gap:6px;background:rgba(255,193,7,.12);border:1px solid rgba(255,193,7,.25);padding:6px 14px;border-radius:50px;font-size:11px;font-weight:700;color:var(--cy-text);margin-bottom:18px;letter-spacing:.5px;}
 .s1-h1{font-size:clamp(30px,5.5vw,48px);font-weight:900;letter-spacing:-1.5px;line-height:1.05;color:var(--text);max-width:680px;margin:0 auto 14px;}
-.s1-h1 .hl{color:var(--cy);}
+.s1-h1 .hl{color:var(--cy-text);}
 .s1-sub{font-size:15px;color:var(--t2);max-width:480px;margin:0 auto;line-height:1.55;}
-.s1-section-title{max-width:1080px;margin:32px auto 14px;padding:0 24px;font-size:13px;font-weight:800;color:var(--cy);text-transform:uppercase;letter-spacing:1px;}
+.s1-section-title{max-width:1080px;margin:32px auto 14px;padding:0 24px;font-size:13px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:1px;}
 
 /* Cartes services photoréalistes */
 .s1-services{max-width:1080px;margin:0 auto 32px;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
 .s1-card{background:var(--card);border:1px solid var(--cardb);border-radius:18px;overflow:hidden;cursor:pointer;transition:.25s;display:flex;flex-direction:column;}
-.s1-card:hover{transform:translateY(-4px);border-color:var(--cy);box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.s1-card:hover{transform:translateY(-4px);border-color:var(--cy-text);box-shadow:0 10px 30px rgba(0,0,0,.3);}
 .s1-card-img{aspect-ratio:4/3;background-size:cover;background-position:center;background-color:#0F268C;position:relative;}
 .s1-card-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.5) 100%);}
 .s1-card-body{padding:14px 16px;}
@@ -135,7 +135,7 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)
 /* Packs */
 .s1-packs{max-width:1080px;margin:0 auto 32px;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
 .pack-card{background:linear-gradient(135deg,rgba(255,193,7,.08),rgba(15,38,140,.15));border:1px solid var(--cardb);border-radius:18px;padding:20px;cursor:pointer;transition:.25s;position:relative;overflow:hidden;}
-.pack-card:hover{border-color:var(--cy);}
+.pack-card:hover{border-color:var(--cy-text);}
 .pack-badge{position:absolute;top:14px;right:14px;background:var(--cy);color:#1a1a1a;font-size:11px;font-weight:900;padding:4px 10px;border-radius:50px;letter-spacing:.5px;}
 .pack-name{font-size:18px;font-weight:900;margin-bottom:6px;}
 .pack-desc{font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.4;}
@@ -143,7 +143,7 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)
 .pack-tag{padding:4px 10px;border-radius:50px;background:var(--inp-bg);border:1px solid var(--inp-b);font-size:11px;font-weight:700;}
 
 .s1-footer{text-align:center;padding:24px;font-size:12px;color:var(--t3);border-top:1px solid var(--divider);}
-.s1-footer-presta{display:inline-block;margin-left:10px;color:var(--cy);text-decoration:underline;cursor:pointer;font-weight:700;}
+.s1-footer-presta{display:inline-block;margin-left:10px;color:var(--cy-text);text-decoration:underline;cursor:pointer;font-weight:700;}
 
 /* ═══ MEMBRE ═══ */
 #s5{padding:32px 20px 50px;}
@@ -159,15 +159,15 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)
 .benefit-d{font-size:12px;color:var(--t2);margin-top:3px;line-height:1.45;}
 .s5-tiers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
 .tier-mb{background:var(--card);border:2px solid var(--cardb);border-radius:18px;padding:20px;text-align:center;cursor:pointer;transition:.2s;position:relative;}
-.tier-mb.best{border-color:var(--cy);background:rgba(255,193,7,.06);}
+.tier-mb.best{border-color:var(--cy-text);background:rgba(255,193,7,.06);}
 .tier-mb-best{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--cy);color:#1a1a1a;font-size:10px;font-weight:900;padding:4px 12px;border-radius:50px;letter-spacing:.5px;}
 .tier-mb-name{font-size:13px;font-weight:700;color:var(--t2);}
-.tier-mb-price{font-size:28px;font-weight:900;color:var(--cy);margin:6px 0 2px;}
+.tier-mb-price{font-size:28px;font-weight:900;color:var(--cy-text);margin:6px 0 2px;}
 .tier-mb-period{font-size:11px;color:var(--t3);}
 .tier-mb-save{font-size:11px;color:var(--cg);font-weight:700;margin-top:6px;}
 .s5-cta{width:100%;padding:16px;border-radius:50px;background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;border:none;font-family:inherit;font-weight:900;font-size:15px;cursor:pointer;}
 .s5-alt{text-align:center;color:var(--t2);font-size:12px;margin-top:14px;}
-.s5-alt strong{color:var(--cy);}
+.s5-alt strong{color:var(--cy-text);}
 
 /* ═══ COMMANDER ═══ */
 #s2{padding-bottom:120px;}
@@ -202,14 +202,14 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)
 .tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 .tier{padding:12px 6px;text-align:center;background:var(--inp-bg);border:1.5px solid transparent;border-radius:10px;cursor:pointer;transition:.2s;}
 .tier:hover{border-color:var(--cardb);}
-.tier.on{border-color:var(--cy);background:rgba(255,193,7,.1);}
+.tier.on{border-color:var(--cy-text);background:rgba(255,193,7,.1);}
 .tier-l{font-size:13px;font-weight:800;}
 .tier-m{font-size:10px;color:var(--t3);margin-top:2px;}
 
 .dual-slider{padding:8px 0;}
 .dual-slider label{font-size:12px;font-weight:700;color:var(--t2);display:block;margin-bottom:8px;}
-.dual-slider input[type=range]{width:100%;accent-color:var(--cy);}
-.dual-slider .val{font-size:13px;font-weight:800;color:var(--cy);margin-top:4px;}
+.dual-slider input[type=range]{width:100%;accent-color:var(--cy-text);}
+.dual-slider .val{font-size:13px;font-weight:800;color:var(--cy-text);margin-top:4px;}
 
 .date-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;}
 .date-row > div label{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;}
@@ -218,7 +218,7 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)
 .type-badge{padding:10px 14px;border-radius:50px;font-size:11px;font-weight:900;letter-spacing:.5px;white-space:nowrap;}
 .type-flash{background:rgba(244,67,54,.15);color:var(--cr);border:1px solid rgba(244,67,54,.3);}
 .type-std{background:rgba(76,175,80,.15);color:var(--cg);border:1px solid rgba(76,175,80,.3);}
-.type-ant{background:rgba(255,193,7,.15);color:var(--cy);border:1px solid rgba(255,193,7,.3);}
+.type-ant{background:rgba(255,193,7,.15);color:var(--cy-text);border:1px solid rgba(255,193,7,.3);}
 
 .full{width:100%;padding:10px 12px;background:var(--inp-bg);border:1px solid var(--inp-b);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;}
 textarea.full{min-height:60px;resize:vertical;}
@@ -226,7 +226,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .sticky-bot{position:fixed;bottom:0;left:0;right:0;background:var(--sticky);backdrop-filter:blur(20px);border-top:1px solid var(--cardb);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.3);}
 .sticky-price{display:flex;flex-direction:column;}
 .sticky-price-l{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;}
-.sticky-price-v{font-size:22px;font-weight:900;color:var(--cy);line-height:1.1;}
+.sticky-price-v{font-size:22px;font-weight:900;color:var(--cy-text);line-height:1.1;}
 .sticky-price-d{font-size:10px;color:var(--t3);}
 .sticky-cta{padding:14px 24px;border-radius:50px;background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;border:none;font-family:inherit;font-weight:900;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 18px rgba(255,193,7,.4);transition:.2s;}
 .sticky-cta:hover{transform:translateY(-2px);}
@@ -238,15 +238,15 @@ textarea.full{min-height:60px;resize:vertical;}
 .s3-sub{text-align:center;color:var(--t2);font-size:13px;margin-bottom:24px;}
 .s3-recap{background:var(--card);border:1px solid var(--cardb);border-radius:14px;padding:16px;margin-bottom:20px;}
 .s3-recap-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;}
-.s3-recap-row.tot{border-top:1px solid var(--divider);margin-top:8px;padding-top:12px;font-size:18px;font-weight:900;color:var(--cy);}
+.s3-recap-row.tot{border-top:1px solid var(--divider);margin-top:8px;padding-top:12px;font-size:18px;font-weight:900;color:var(--cy-text);}
 .s3-method{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
 .s3-mbtn{padding:16px;border:2px solid var(--cardb);background:var(--card);border-radius:12px;cursor:pointer;text-align:center;transition:.2s;}
-.s3-mbtn.on{border-color:var(--cy);background:rgba(255,193,7,.08);}
+.s3-mbtn.on{border-color:var(--cy-text);background:rgba(255,193,7,.08);}
 .s3-mbtn-lab{font-size:13px;font-weight:800;margin-top:8px;}
-.s3-mbtn-num{font-size:11px;color:var(--cy);font-weight:700;margin-top:4px;}
+.s3-mbtn-num{font-size:11px;color:var(--cy-text);font-weight:700;margin-top:4px;}
 .s3-info{background:rgba(255,193,7,.08);border:1px solid rgba(255,193,7,.2);border-radius:10px;padding:12px;font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:16px;}
 .s3-cgu{font-size:11px;color:var(--t3);text-align:center;margin:14px 0;line-height:1.5;}
-.s3-cgu a{color:var(--cy);}
+.s3-cgu a{color:var(--cy-text);}
 .s3-confirm{width:100%;padding:16px;border-radius:50px;background:linear-gradient(135deg,var(--cg),#3a8a3f);color:#fff;border:none;font-family:inherit;font-weight:900;font-size:15px;cursor:pointer;}
 
 /* ═══ SUIVI ═══ */
@@ -254,20 +254,20 @@ textarea.full{min-height:60px;resize:vertical;}
 .s4-wrap{max-width:560px;margin:0 auto;}
 .s4-states{display:flex;justify-content:center;gap:6px;margin-bottom:24px;flex-wrap:wrap;}
 .s4-state-btn{padding:6px 12px;border-radius:50px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;}
-.s4-state-btn.on{background:var(--cy);color:#1a1a1a;border-color:var(--cy);}
+.s4-state-btn.on{background:var(--cy);color:#1a1a1a;border-color:var(--cy-text);}
 .s4-card{background:var(--card);border:1px solid var(--cardb);border-radius:18px;padding:24px;margin-bottom:14px;}
 .s4-step{display:none;}
 .s4-step.active{display:block;}
-.spinner{width:60px;height:60px;border:4px solid var(--cardb);border-top-color:var(--cy);border-radius:50%;animation:spin 1s linear infinite;margin:24px auto;}
+.spinner{width:60px;height:60px;border:4px solid var(--cardb);border-top-color:var(--cy-text);border-radius:50%;animation:spin 1s linear infinite;margin:24px auto;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .s4-h{font-size:18px;font-weight:800;text-align:center;margin-bottom:8px;}
 .s4-s{font-size:13px;color:var(--t2);text-align:center;margin-bottom:16px;}
-.s4-timer{font-size:32px;font-weight:900;color:var(--cy);text-align:center;font-variant-numeric:tabular-nums;}
+.s4-timer{font-size:32px;font-weight:900;color:var(--cy-text);text-align:center;font-variant-numeric:tabular-nums;}
 .presta-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--inp-bg);border-radius:12px;margin:16px 0;}
 .presta-av{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--cb),var(--cb2));display:flex;align-items:center;justify-content:center;font-size:24px;}
 .presta-info{flex:1;}
 .presta-n{font-weight:800;font-size:14px;}
-.presta-r{font-size:11px;color:var(--cy);font-weight:700;margin-top:2px;}
+.presta-r{font-size:11px;color:var(--cy-text);font-weight:700;margin-top:2px;}
 .presta-eta{font-size:11px;color:var(--t2);margin-top:2px;}
 .check-rows{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
 .check-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--inp-bg);border-radius:10px;font-size:13px;}
@@ -276,7 +276,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .sos-btn{width:100%;padding:12px;border-radius:50px;background:rgba(244,67,54,.15);color:var(--cr);border:1px solid rgba(244,67,54,.3);font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;margin-top:8px;}
 .rating{display:flex;justify-content:center;gap:8px;margin:20px 0;}
 .star{font-size:36px;cursor:pointer;color:var(--cardb);transition:.15s;}
-.star.on{color:var(--cy);}
+.star.on{color:var(--cy-text);}
 .s4-validate{width:100%;padding:16px;border-radius:50px;background:linear-gradient(135deg,var(--cg),#3a8a3f);color:#fff;border:none;font-family:inherit;font-weight:900;font-size:15px;cursor:pointer;margin-top:8px;}
 
 /* ═══ DEVENIR PRESTATAIRE ═══ */
@@ -285,10 +285,10 @@ textarea.full{min-height:60px;resize:vertical;}
 .s6-hero{padding:48px 24px 32px;text-align:center;color:var(--text);}
 .s6-badge{display:inline-flex;gap:6px;background:rgba(76,175,80,.15);border:1px solid rgba(76,175,80,.3);padding:6px 14px;border-radius:50px;font-size:11px;font-weight:700;color:var(--cg);margin-bottom:18px;letter-spacing:.5px;}
 .s6-h1{font-size:clamp(28px,5vw,42px);font-weight:900;letter-spacing:-1px;line-height:1.05;max-width:620px;margin:0 auto 14px;}
-.s6-h1 .hl{color:var(--cy);}
+.s6-h1 .hl{color:var(--cy-text);}
 .s6-stats{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin:24px 0;}
 .s6-stat{text-align:center;}
-.s6-stat-v{font-size:26px;font-weight:900;color:var(--cy);}
+.s6-stat-v{font-size:26px;font-weight:900;color:var(--cy-text);}
 .s6-stat-l{font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
 .s6-cta{padding:14px 28px;border-radius:50px;background:linear-gradient(135deg,var(--cy),var(--co));color:#1a1a1a;border:none;font-family:inherit;font-weight:900;font-size:14px;cursor:pointer;margin-top:14px;box-shadow:0 4px 18px rgba(255,193,7,.4);}
 .s6-advantages{max-width:920px;margin:0 auto;padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
@@ -298,7 +298,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .adv-d{font-size:12px;color:var(--t2);line-height:1.5;}
 
 .s6-steps{max-width:920px;margin:0 auto;padding:24px;}
-.s6-steps-t{font-size:13px;font-weight:800;color:var(--cy);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:18px;}
+.s6-steps-t{font-size:13px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:18px;}
 .s6-steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
 .step-card{background:var(--card);border:1px solid var(--cardb);border-radius:16px;padding:20px;text-align:center;}
 .step-num{width:36px;height:36px;border-radius:50%;background:var(--cy);color:#1a1a1a;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
@@ -321,7 +321,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .s7-mission-row .v{font-weight:700;}
 .s7-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .s7-stat{padding:12px;background:var(--inp-bg);border-radius:10px;text-align:center;}
-.s7-stat-v{font-size:22px;font-weight:900;color:var(--cy);}
+.s7-stat-v{font-size:22px;font-weight:900;color:var(--cy-text);}
 .s7-stat-l{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
 .s7-dispo{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .dispo-toggle{width:48px;height:26px;border-radius:50px;background:var(--cg);position:relative;cursor:pointer;transition:.2s;}
@@ -336,7 +336,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .s7-specs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
 .s7-spec{padding:3px 8px;background:var(--inp-bg);border-radius:50px;font-size:10px;font-weight:700;color:var(--t2);}
 
-.prem-card:hover{transform:translateY(-4px);border-color:var(--cy)!important;box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.prem-card:hover{transform:translateY(-4px);border-color:var(--cy-text)!important;box-shadow:0 10px 30px rgba(0,0,0,.3);}
 
 @media(max-width:600px){
   .s1-services,.s1-packs,.s1-premium{grid-template-columns:1fr;}
@@ -353,7 +353,7 @@ textarea.full{min-height:60px;resize:vertical;}
 /* === ADMIN PANEL === */
 .admin-tab{padding:8px 14px;border-radius:50px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;transition:.2s;}
 .admin-tab:hover{background:var(--cardb);}
-.admin-tab.on{background:var(--cy);color:#1a1a1a;border-color:var(--cy);}
+.admin-tab.on{background:var(--cy);color:#1a1a1a;border-color:var(--cy-text);}
 .ad-badge{padding:2px 6px;border-radius:50px;font-size:10px;margin-left:4px;font-weight:900;}
 .ad-badge.orange{background:var(--co);color:#1a1a1a;}
 .ad-badge.red{background:var(--cr);color:#fff;}
@@ -365,7 +365,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .adbar{height:6px;background:var(--inp-bg);border-radius:3px;overflow:hidden;}
 .adbar-f{height:100%;background:linear-gradient(90deg,var(--cy),var(--co));border-radius:3px;}
 .ad-filter{padding:6px 12px;border-radius:50px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:11px;cursor:pointer;}
-.ad-filter.on{background:var(--cy);color:#1a1a1a;border-color:var(--cy);}
+.ad-filter.on{background:var(--cy);color:#1a1a1a;border-color:var(--cy-text);}
 .ad-search{padding:6px 14px;border-radius:50px;background:var(--inp-bg);border:1px solid var(--inp-b);color:var(--text);font-family:inherit;font-size:12px;min-width:180px;}
 .ad-table{width:100%;border-collapse:collapse;font-size:12px;}
 .ad-table th{background:var(--inp-bg);padding:12px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2);font-weight:800;}
@@ -377,7 +377,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .ad-pill.green{background:rgba(76,175,80,.15);color:var(--cg);border:1px solid rgba(76,175,80,.3);}
 .ad-pill.orange{background:rgba(255,152,0,.15);color:var(--co);border:1px solid rgba(255,152,0,.3);}
 .ad-pill.red{background:rgba(244,67,54,.15);color:var(--cr);border:1px solid rgba(244,67,54,.3);}
-.ad-pill.yellow{background:rgba(255,193,7,.15);color:var(--cy);border:1px solid rgba(255,193,7,.3);}
+.ad-pill.yellow{background:rgba(255,193,7,.15);color:var(--cy-text);border:1px solid rgba(255,193,7,.3);}
 .ad-pill.gray{background:var(--inp-bg);color:var(--t2);border:1px solid var(--cardb);}
 .ad-btn{padding:6px 12px;border-radius:50px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:11px;cursor:pointer;white-space:nowrap;}
 .ad-btn:hover{background:var(--cardb);}
@@ -395,7 +395,7 @@ textarea.full{min-height:60px;resize:vertical;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body data-theme="dark">
+<body data-theme="light">
 
 <!-- ═══════════════════════ ÉCRAN 1 — LANDING CLIENT ═══════════════════════ -->
 <section class="screen active" id="s1">
@@ -584,9 +584,30 @@ textarea.full{min-height:60px;resize:vertical;}
   </div>
   <div class="s2-wrap">
 
-        <div id="membre-banner" style="display:none;background:linear-gradient(135deg,rgba(255,193,7,.12),rgba(255,152,0,.08));border:1px solid var(--cy);border-radius:12px;padding:10px 14px;margin-bottom:14px;align-items:center;gap:10px;font-size:12px;">
-      <span style="font-size:18px;">⭐</span>
-      <div style="flex:1;"><strong style="color:var(--cy);">-10% Membre appliqué automatiquement</strong></div>
+        <div id="membre-banner" style="display:none;background:linear-gradient(135deg,rgba(255,193,7,.12),rgba(255,152,0,.08));border:1px solid var(--cy);border-radius:12px;padding:12px 14px;margin-bottom:14px;align-items:center;gap:10px;font-size:12px;">
+      <span style="font-size:22px;">⭐</span>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <strong style="color:var(--cy-text);">Membre Actif</strong>
+          <span id="mb-plan" style="font-size:10px;padding:2px 8px;background:var(--cy);color:#1a1a1a;border-radius:50px;font-weight:700;text-transform:uppercase;"></span>
+        </div>
+        <div style="font-size:11px;color:var(--t2);margin-top:2px;">
+          <span id="mb-jours"></span> · Économie ce mois : <strong id="mb-economie">0</strong> FCFA
+        </div>
+      </div>
+      <button onclick="showMembreModal()" style="padding:6px 12px;background:transparent;border:1px solid var(--cy);color:var(--cy-text);border-radius:50px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">Gérer</button>
+    </div>
+
+    <!-- CTA Devenir Membre (visible si non membre) -->
+    <div id="membre-cta" style="display:none;background:linear-gradient(135deg,#0F268C,#1a35b8);color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:14px;cursor:pointer;" onclick="showMembreModal()">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:28px;">💎</span>
+        <div style="flex:1;">
+          <div style="font-weight:800;font-size:14px;margin-bottom:2px;">Devenez Membre Actif</div>
+          <div style="font-size:11px;opacity:.85;">2 000 FCFA/mois · -10% missions + 4 bonus exclusifs</div>
+        </div>
+        <span style="font-size:18px;opacity:.7;">›</span>
+      </div>
     </div>
 
     <div class="kyc-band" id="kyc-band">
@@ -703,7 +724,7 @@ textarea.full{min-height:60px;resize:vertical;}
     <div class="s3-title">Paiement sécurisé</div>
     <div class="s3-sub">Escrow protégé · Libération après mission validée</div>
     <div class="s3-recap">
-      <div class="s3-recap-row"><span>Référence</span><span id="s3-ref" style="font-weight:700;font-family:monospace;color:var(--cy);">—</span></div>
+      <div class="s3-recap-row"><span>Référence</span><span id="s3-ref" style="font-weight:700;font-family:monospace;color:var(--cy-text);">—</span></div>
       <div class="s3-recap-row"><span>Service</span><span id="s3-service" style="font-weight:700;">—</span></div>
       <div class="s3-recap-row"><span>Quartier</span><span id="s3-quartier" style="font-weight:700;">—</span></div>
       <div class="s3-recap-row"><span>Date</span><span id="s3-date" style="font-weight:700;">—</span></div>
@@ -723,7 +744,7 @@ textarea.full{min-height:60px;resize:vertical;}
         <div class="s3-mbtn-num" id="s3-num-mtn">653 571 659</div>
       </div>
     </div>
-    <div class="s3-info">📱 Envoyez <strong style="color:var(--cy);" id="s3-info-montant">—</strong> au numéro <strong id="s3-info-num">—</strong> en indiquant la référence <strong style="font-family:monospace;color:var(--cy);" id="s3-info-ref">—</strong>.<br>Saisissez ensuite l'identifiant TXN ci-dessous.</div>
+    <div class="s3-info">📱 Envoyez <strong style="color:var(--cy-text);" id="s3-info-montant">—</strong> au numéro <strong id="s3-info-num">—</strong> en indiquant la référence <strong style="font-family:monospace;color:var(--cy-text);" id="s3-info-ref">—</strong>.<br>Saisissez ensuite l'identifiant TXN ci-dessous.</div>
     <input type="text" class="full" id="cmd-txn-id" placeholder="Identifiant TXN (ex : MP240516.1408.E12345)" style="margin-bottom:14px;">
     <input type="tel" class="full" id="cmd-numero-client" placeholder="Votre numéro MoMo (inscription automatique)" style="margin-bottom:14px;">
     <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;">Preuve de paiement (capture SMS) · optionnel mais recommandé</div>
@@ -910,7 +931,7 @@ textarea.full{min-height:60px;resize:vertical;}
           <div class="s7-mission-row"><span class="lbl">Service</span><span class="v">Ménage · 4h</span></div>
           <div class="s7-mission-row"><span class="lbl">Quartier</span><span class="v">Bonapriso</span></div>
           <div class="s7-mission-row"><span class="lbl">Démarre</span><span class="v" style="color:var(--cg);">14h00 (dans 12 min)</span></div>
-          <div class="s7-mission-row"><span class="lbl">Vous toucherez</span><span class="v" style="color:var(--cy);">9 600 FCFA</span></div>
+          <div class="s7-mission-row"><span class="lbl">Vous toucherez</span><span class="v" style="color:var(--cy-text);">9 600 FCFA</span></div>
         </div>
         <button class="s5-cta" style="margin-top:14px;padding:12px;font-size:13px;" onclick="goto(12)">Voir le détail · Chat</button>
       </div>
@@ -969,6 +990,7 @@ textarea.full{min-height:60px;resize:vertical;}
       <button class="admin-tab" data-tab="pricing" onclick="setAdminTab('pricing')">Pricing</button>
       <button class="admin-tab" data-tab="compta" onclick="setAdminTab('compta')">Compta</button>
       <button class="admin-tab" data-tab="kyc" onclick="setAdminTab('kyc')">KYC <span class="ad-badge orange">12</span></button>
+      <button class="admin-tab" data-tab="subs" onclick="setAdminTab('subs')">Abonnements <span class="ad-badge orange" id="ad-badge-subs" style="display:none;">0</span></button>
       <button class="admin-tab" data-tab="medias" onclick="setAdminTab('medias')">Médias</button>
       <button class="admin-tab" data-tab="litiges" onclick="setAdminTab('litiges')">Litiges <span class="ad-badge red">2</span></button>
     </div>
@@ -980,12 +1002,12 @@ textarea.full{min-height:60px;resize:vertical;}
     <div class="admin-panel active" id="ap-dash">
       <div style="font-size:22px;font-weight:900;margin-bottom:18px;">Vue d'ensemble · Vendredi 15 mai 2026</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px;">
-        <div class="adkpi"><div class="s7-card-t">Missions actives</div><div class="adkpi-v" style="color:var(--cy);">7</div><div class="adkpi-d">3 FLASH · 4 STANDARD</div></div>
+        <div class="adkpi"><div class="s7-card-t">Missions actives</div><div class="adkpi-v" style="color:var(--cy-text);">7</div><div class="adkpi-d">3 FLASH · 4 STANDARD</div></div>
         <div class="adkpi"><div class="s7-card-t">KYC en attente</div><div class="adkpi-v" style="color:var(--co);">12</div><div class="adkpi-d">8 presta · 4 clients</div></div>
         <div class="adkpi"><div class="s7-card-t">Litiges ouverts</div><div class="adkpi-v" style="color:var(--cr);">2</div><div class="adkpi-d">À traiter sous 24h</div></div>
         <div class="adkpi"><div class="s7-card-t">CA jour</div><div class="adkpi-v" style="color:var(--cg);">186k</div><div class="adkpi-d">FCFA · 14 missions</div></div>
         <div class="adkpi"><div class="s7-card-t">CA mois</div><div class="adkpi-v" style="color:var(--cg);">3.2M</div><div class="adkpi-d">FCFA · +18%</div></div>
-        <div class="adkpi"><div class="s7-card-t">Membres actifs</div><div class="adkpi-v" style="color:var(--cy);">147</div><div class="adkpi-d">+23 cette semaine</div></div>
+        <div class="adkpi"><div class="s7-card-t">Membres actifs</div><div class="adkpi-v" style="color:var(--cy-text);">147</div><div class="adkpi-d">+23 cette semaine</div></div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;">
         <div class="s7-card">
@@ -1155,7 +1177,7 @@ textarea.full{min-height:60px;resize:vertical;}
             <div class="pric-row"><span>Panier minimum</span><input type="number" class="pric-inp" value="5000"> FCFA</div>
           </div>
           <div class="s7-card-t" style="margin-top:18px;">FORMULE</div>
-          <div style="background:var(--inp-bg);padding:12px;border-radius:8px;font-family:monospace;font-size:11px;color:var(--cy);">Prix = Base × Caractéristique × Type × 1.20 × 1.03</div>
+          <div style="background:var(--inp-bg);padding:12px;border-radius:8px;font-family:monospace;font-size:11px;color:var(--cy-text);">Prix = Base × Caractéristique × Type × 1.20 × 1.03</div>
         </div>
         <div class="s7-card">
           <div class="s7-card-t">PACKS · RÉDUCTIONS</div>
@@ -1208,7 +1230,7 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
         <div class="adkpi"><div class="s7-card-t">CA brut mois</div><div class="adkpi-v" style="color:var(--cg);">3.2M</div><div class="adkpi-d">FCFA · 247 missions</div></div>
-        <div class="adkpi"><div class="s7-card-t">Commission HH (20%)</div><div class="adkpi-v" style="color:var(--cy);">640k</div><div class="adkpi-d">FCFA · revenu net</div></div>
+        <div class="adkpi"><div class="s7-card-t">Commission HH (20%)</div><div class="adkpi-v" style="color:var(--cy-text);">640k</div><div class="adkpi-d">FCFA · revenu net</div></div>
         <div class="adkpi"><div class="s7-card-t">À payer prestataires</div><div class="adkpi-v" style="color:var(--co);">2.4M</div><div class="adkpi-d">FCFA · escrow J+1</div></div>
         <div class="adkpi"><div class="s7-card-t">Frais CinetPay</div><div class="adkpi-v" style="color:var(--t2);">96k</div><div class="adkpi-d">FCFA · 3% volume</div></div>
         <div class="adkpi"><div class="s7-card-t">Charges fixes</div><div class="adkpi-v" style="color:var(--t2);">85k</div><div class="adkpi-d">Hébergement, outils</div></div>
@@ -1265,8 +1287,8 @@ textarea.full{min-height:60px;resize:vertical;}
         <button class="s5-cta" style="padding:10px 18px;font-size:13px;width:auto;" onclick="alert('✓ Médias sauvegardés')">Sauvegarder</button>
       </div>
       <!-- Spécifications obligatoires -->
-      <div class="s7-card" style="margin-bottom:14px;background:rgba(255,193,7,.08);border-color:var(--cy);">
-        <div style="font-size:11px;font-weight:800;color:var(--cy);letter-spacing:.5px;margin-bottom:8px;">SPÉCIFICATIONS OBLIGATOIRES</div>
+      <div class="s7-card" style="margin-bottom:14px;background:rgba(255,193,7,.08);border-color:var(--cy-text);">
+        <div style="font-size:11px;font-weight:800;color:var(--cy-text);letter-spacing:.5px;margin-bottom:8px;">SPÉCIFICATIONS OBLIGATOIRES</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;font-size:12px;">
           <div><strong>Format</strong><br><span style="color:var(--t2);">JPEG ou WebP</span></div>
           <div><strong>Dimensions</strong><br><span style="color:var(--t2);">400 × 260 pixels (ratio ~3:2)</span></div>
@@ -1410,6 +1432,43 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
     </div>
 
+    <!-- ═══════════════════════ AP-SUBS — Sprint 10 Abonnements ═══════════════════════ -->
+    <div class="admin-panel" id="ap-subs">
+      <div style="font-size:22px;font-weight:900;margin-bottom:6px;">Abonnements Membre Actif</div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:18px;">Validation des paiements OM/MTN — activation manuelle phase 1.</div>
+
+      <!-- KPIs -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px;">
+        <div style="padding:14px;background:var(--card);border-radius:10px;border:1px solid var(--cardb);">
+          <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;">En attente</div>
+          <div id="sub-kpi-pending" style="font-size:24px;font-weight:900;color:var(--co);margin-top:4px;">0</div>
+        </div>
+        <div style="padding:14px;background:var(--card);border-radius:10px;border:1px solid var(--cardb);">
+          <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;">Actifs</div>
+          <div id="sub-kpi-active" style="font-size:24px;font-weight:900;color:var(--cg);margin-top:4px;">0</div>
+        </div>
+        <div style="padding:14px;background:var(--card);border-radius:10px;border:1px solid var(--cardb);">
+          <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;">Revenu mensuel</div>
+          <div id="sub-kpi-rev" style="font-size:24px;font-weight:900;color:var(--cy-text);margin-top:4px;">0 FCFA</div>
+        </div>
+        <div style="padding:14px;background:var(--card);border-radius:10px;border:1px solid var(--cardb);">
+          <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;">Expirent 7j</div>
+          <div id="sub-kpi-expire" style="font-size:24px;font-weight:900;color:var(--cr);margin-top:4px;">0</div>
+        </div>
+      </div>
+
+      <!-- Tableau pending -->
+      <div style="font-size:14px;font-weight:800;margin-bottom:10px;">En attente de validation</div>
+      <div id="sub-pending-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+        <div style="padding:20px;text-align:center;color:var(--t2);font-size:12px;">Chargement…</div>
+      </div>
+
+      <div style="font-size:14px;font-weight:800;margin-bottom:10px;margin-top:24px;">Abonnements actifs</div>
+      <div id="sub-active-list" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="padding:20px;text-align:center;color:var(--t2);font-size:12px;">Chargement…</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1470,7 +1529,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
     <label style="display:flex;gap:10px;font-size:12px;color:var(--t2);margin-bottom:18px;line-height:1.5;cursor:pointer;">
       <input type="checkbox" style="margin-top:2px;flex-shrink:0;">
-      J'accepte les <a href="#" style="color:var(--cy);">CGU</a> et la <a href="#" style="color:var(--cy);">Politique de confidentialité</a>.
+      J'accepte les <a href="#" style="color:var(--cy-text);">CGU</a> et la <a href="#" style="color:var(--cy-text);">Politique de confidentialité</a>.
     </label>
 
     <button class="s5-cta" onclick="goto(11)">Soumettre pour validation</button>
@@ -1581,7 +1640,7 @@ textarea.full{min-height:60px;resize:vertical;}
         Choisissez des personnes qui vous connaissent bien et qui pourront être contactées en cas de litige (parent, ancien employeur, pasteur/imam, responsable de communauté).
       </div>
       <div style="background:var(--inp-bg);border-radius:10px;padding:14px;margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:800;color:var(--cy);margin-bottom:10px;letter-spacing:.5px;">GARANT N°1 *</div>
+        <div style="font-size:11px;font-weight:800;color:var(--cy-text);margin-bottom:10px;letter-spacing:.5px;">GARANT N°1 *</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
           <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Nom complet</label><input type="text" class="full" placeholder="Pierre Mbarga"></div>
           <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Téléphone</label><input type="tel" class="full" placeholder="6XX XXX XXX"></div>
@@ -1592,7 +1651,7 @@ textarea.full{min-height:60px;resize:vertical;}
         </div>
       </div>
       <div style="background:var(--inp-bg);border-radius:10px;padding:14px;margin-bottom:10px;">
-        <div style="font-size:11px;font-weight:800;color:var(--cy);margin-bottom:10px;letter-spacing:.5px;">GARANT N°2 *</div>
+        <div style="font-size:11px;font-weight:800;color:var(--cy-text);margin-bottom:10px;letter-spacing:.5px;">GARANT N°2 *</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
           <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Nom complet</label><input type="text" class="full" placeholder="Marie Tchoutou"></div>
           <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Téléphone</label><input type="tel" class="full" placeholder="6XX XXX XXX"></div>
@@ -1612,7 +1671,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
     <label style="display:flex;gap:10px;font-size:12px;color:var(--t2);margin-bottom:18px;line-height:1.5;cursor:pointer;">
       <input type="checkbox" style="margin-top:2px;flex-shrink:0;">
-      J'accepte les <a href="#" style="color:var(--cy);">CGU prestataire</a>, le <a href="#" style="color:var(--cy);">code de conduite</a> et autorise les vérifications.
+      J'accepte les <a href="#" style="color:var(--cy-text);">CGU prestataire</a>, le <a href="#" style="color:var(--cy-text);">code de conduite</a> et autorise les vérifications.
     </label>
 
     <button class="s5-cta" id="kyc-submit-btn" onclick="submitKycPresta()">Soumettre pour validation</button>
@@ -1626,7 +1685,7 @@ textarea.full{min-height:60px;resize:vertical;}
     <button class="s2-back" onclick="goto(1)">← Accueil</button>
     <div style="display:flex;align-items:center;gap:10px;">
       <div class="ad-av" style="background:linear-gradient(135deg,var(--cb),var(--cb2));width:36px;height:36px;font-size:14px;">A</div>
-      <div><div style="font-weight:800;font-size:13px;">Aïcha Kamga</div><div style="font-size:10px;color:var(--cy);font-weight:700;">MEMBRE · -10% auto</div></div>
+      <div><div style="font-weight:800;font-size:13px;">Aïcha Kamga</div><div style="font-size:10px;color:var(--cy-text);font-weight:700;">MEMBRE · -10% auto</div></div>
     </div>
     <button class="s2-back" onclick="alert('Paramètres compte')">⚙</button>
   </div>
@@ -1634,7 +1693,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
     <!-- Stats utilisateur -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px;">
-      <div class="adkpi" style="text-align:center;padding:14px;"><div class="s7-card-t" style="margin-bottom:4px;">Missions ce mois</div><div class="adkpi-v" style="color:var(--cy);font-size:24px;">3</div></div>
+      <div class="adkpi" style="text-align:center;padding:14px;"><div class="s7-card-t" style="margin-bottom:4px;">Missions ce mois</div><div class="adkpi-v" style="color:var(--cy-text);font-size:24px;">3</div></div>
       <div class="adkpi" style="text-align:center;padding:14px;"><div class="s7-card-t" style="margin-bottom:4px;">Total dépensé</div><div class="adkpi-v" style="color:var(--cg);font-size:24px;">42k</div></div>
       <div class="adkpi" style="text-align:center;padding:14px;"><div class="s7-card-t" style="margin-bottom:4px;">Crédit parrainage</div><div class="adkpi-v" style="color:var(--co);font-size:24px;">5k</div></div>
     </div>
@@ -1654,7 +1713,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
     <!-- CTA accès permanent -->
     <div class="s7-card" style="margin-bottom:14px;background:linear-gradient(135deg,rgba(255,193,7,.12),rgba(255,152,0,.08));border:1px solid var(--cy);">
-      <div style="font-size:11px;font-weight:800;color:var(--cy);letter-spacing:.5px;margin-bottom:6px;">AVANTAGE MEMBRE EXCLUSIF</div>
+      <div style="font-size:11px;font-weight:800;color:var(--cy-text);letter-spacing:.5px;margin-bottom:6px;">AVANTAGE MEMBRE EXCLUSIF</div>
       <div style="font-size:15px;font-weight:800;margin-bottom:6px;">Prestataires permanents disponibles</div>
       <div style="font-size:12px;color:var(--t2);line-height:1.55;margin-bottom:12px;">Engagez une nounou résidente, une cuisinière hebdomadaire ou une ménagère permanente. Accès réservé aux membres.</div>
       <button class="s5-cta" style="padding:10px;font-size:13px;" onclick="goto(13)">Explorer le catalogue →</button>
@@ -1664,10 +1723,10 @@ textarea.full{min-height:60px;resize:vertical;}
     <!-- Parrainage -->
     <div class="s7-card" style="margin-bottom:14px;background:linear-gradient(135deg,rgba(76,175,80,.08),rgba(33,150,243,.05));border:1px solid rgba(76,175,80,.3);">
       <div style="font-size:11px;font-weight:800;color:var(--cg);letter-spacing:.5px;margin-bottom:6px;">PARRAINAGE · GAGNEZ DES CRÉDITS</div>
-      <div style="font-size:13px;color:var(--t2);line-height:1.5;margin-bottom:14px;">Invitez vos proches. Chaque ami inscrit qui valide sa 1ère mission vous rapporte <strong style="color:var(--cy);">2 500 FCFA</strong>. À 3 amis = 1 mois d'abonnement offert.</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.5;margin-bottom:14px;">Invitez vos proches. Chaque ami inscrit qui valide sa 1ère mission vous rapporte <strong style="color:var(--cy-text);">2 500 FCFA</strong>. À 3 amis = 1 mois d'abonnement offert.</div>
       <!-- Code parrainage -->
       <div style="background:var(--inp-bg);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Mon code</div><div style="font-size:18px;font-weight:900;color:var(--cy);letter-spacing:2px;font-family:monospace;">AICHA-K-2026</div></div>
+        <div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Mon code</div><div style="font-size:18px;font-weight:900;color:var(--cy-text);letter-spacing:2px;font-family:monospace;">AICHA-K-2026</div></div>
         <div style="display:flex;gap:6px;">
           <button onclick="alert('Code copié !')" style="padding:8px 14px;border-radius:50px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:11px;cursor:pointer;">Copier</button>
           <button onclick="alert('Partage WhatsApp ouvert')" style="padding:8px 14px;border-radius:50px;background:var(--cg);color:#fff;border:none;font-family:inherit;font-weight:700;font-size:11px;cursor:pointer;">Partager</button>
@@ -1675,7 +1734,7 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
       <!-- Stats parrainage -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
-        <div style="text-align:center;padding:10px;background:var(--inp-bg);border-radius:8px;"><div style="font-size:22px;font-weight:900;color:var(--cy);">2</div><div style="font-size:10px;color:var(--t2);">Filleuls inscrits</div></div>
+        <div style="text-align:center;padding:10px;background:var(--inp-bg);border-radius:8px;"><div style="font-size:22px;font-weight:900;color:var(--cy-text);">2</div><div style="font-size:10px;color:var(--t2);">Filleuls inscrits</div></div>
         <div style="text-align:center;padding:10px;background:var(--inp-bg);border-radius:8px;"><div style="font-size:22px;font-weight:900;color:var(--cg);">5k</div><div style="font-size:10px;color:var(--t2);">FCFA gagnés</div></div>
         <div style="text-align:center;padding:10px;background:var(--inp-bg);border-radius:8px;"><div style="font-size:22px;font-weight:900;color:var(--co);">1</div><div style="font-size:10px;color:var(--t2);">Pour mois gratuit</div></div>
       </div>
@@ -1699,15 +1758,15 @@ textarea.full{min-height:60px;resize:vertical;}
       <div style="display:flex;flex-direction:column;gap:8px;">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--inp-bg);border-radius:8px;">
           <div><div style="font-size:13px;font-weight:700;">Ménage · 4h</div><div style="font-size:11px;color:var(--t2);">12 mai · Pauline E. · ⭐⭐⭐⭐⭐</div></div>
-          <div style="font-weight:800;color:var(--cy);font-size:13px;">11 884 FCFA</div>
+          <div style="font-weight:800;color:var(--cy-text);font-size:13px;">11 884 FCFA</div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--inp-bg);border-radius:8px;">
           <div><div style="font-size:13px;font-weight:700;">Cuisine · 2h</div><div style="font-size:11px;color:var(--t2);">8 mai · Marie K. · ⭐⭐⭐⭐⭐</div></div>
-          <div style="font-weight:800;color:var(--cy);font-size:13px;">14 832 FCFA</div>
+          <div style="font-weight:800;color:var(--cy-text);font-size:13px;">14 832 FCFA</div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--inp-bg);border-radius:8px;">
           <div><div style="font-size:13px;font-weight:700;">Courses · 1h</div><div style="font-size:11px;color:var(--t2);">3 mai · Joseph T. · ⭐⭐⭐⭐</div></div>
-          <div style="font-weight:800;color:var(--cy);font-size:13px;">7 416 FCFA</div>
+          <div style="font-weight:800;color:var(--cy-text);font-size:13px;">7 416 FCFA</div>
         </div>
       </div>
       <button style="width:100%;padding:8px;margin-top:10px;border-radius:8px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:12px;cursor:pointer;">Voir toutes mes missions →</button>
@@ -1724,10 +1783,10 @@ textarea.full{min-height:60px;resize:vertical;}
       <div class="s7-card-t">Mon profil</div>
       <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;">
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--divider);"><span style="color:var(--t2);">KYC</span><span style="color:var(--cg);font-weight:700;">✓ Validé</span></div>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--divider);"><span style="color:var(--t2);">Statut</span><span style="color:var(--cy);font-weight:700;">Membre · Annuel</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--divider);"><span style="color:var(--t2);">Statut</span><span style="color:var(--cy-text);font-weight:700;">Membre · Annuel</span></div>
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--divider);"><span style="color:var(--t2);">Téléphone</span><span style="font-weight:700;">6XX XXX 384</span></div>
         <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--divider);"><span style="color:var(--t2);">Adresse principale</span><span style="font-weight:700;">Bonapriso</span></div>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;"><span style="color:var(--t2);">Préférences</span><span style="font-weight:700;color:var(--cy);cursor:pointer;">Modifier →</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;"><span style="color:var(--t2);">Préférences</span><span style="font-weight:700;color:var(--cy-text);cursor:pointer;">Modifier →</span></div>
       </div>
     </div>
 
@@ -1870,9 +1929,9 @@ textarea.full{min-height:60px;resize:vertical;}
             <span class="ad-pill green">4.95</span>
           </div>
           <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Nounou résidente · 12 ans d'expérience · Anglais courant · Permis B</div>
-          <div style="font-size:10px;color:var(--cy);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · CASIER JUDICIAIRE OK · CDD VALIDÉ</div>
+          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · CASIER JUDICIAIRE OK · CDD VALIDÉ</div>
           <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy);font-size:18px;">180 000 FCFA</div></div>
+            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">180 000 FCFA</div></div>
             <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
           </div>
         </div>
@@ -1886,9 +1945,9 @@ textarea.full{min-height:60px;resize:vertical;}
             <span class="ad-pill green">4.92</span>
           </div>
           <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Cuisinière + Ménagère résidente · Cuisine camerounaise et continentale · 18 ans d'expérience</div>
-          <div style="font-size:10px;color:var(--cy);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · RÉFÉRENCES VÉRIFIÉES</div>
+          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · RÉFÉRENCES VÉRIFIÉES</div>
           <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy);font-size:18px;">220 000 FCFA</div></div>
+            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">220 000 FCFA</div></div>
             <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
           </div>
         </div>
@@ -1902,9 +1961,9 @@ textarea.full{min-height:60px;resize:vertical;}
             <span class="ad-pill green">5.0</span>
           </div>
           <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Infirmière diplômée d'État · Garde-malade résidente · Soins post-op et palliatifs</div>
-          <div style="font-size:10px;color:var(--cy);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ DIPLÔME IDE · 3 GARANTS · RÉFÉRENCES HÔPITAUX</div>
+          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ DIPLÔME IDE · 3 GARANTS · RÉFÉRENCES HÔPITAUX</div>
           <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy);font-size:18px;">300 000 FCFA</div></div>
+            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">300 000 FCFA</div></div>
             <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
           </div>
         </div>
@@ -1921,9 +1980,9 @@ textarea.full{min-height:60px;resize:vertical;}
             <span class="ad-pill green">4.7</span>
           </div>
           <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Ménagère hebdomadaire · 3 visites/semaine (lundi, mercredi, vendredi) · 6h/jour</div>
-          <div style="font-size:10px;color:var(--cy);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 2 GARANTS · CDD VALIDÉ</div>
+          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 2 GARANTS · CDD VALIDÉ</div>
           <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy);font-size:18px;">95 000 FCFA</div></div>
+            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">95 000 FCFA</div></div>
             <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
           </div>
         </div>
@@ -1937,9 +1996,9 @@ textarea.full{min-height:60px;resize:vertical;}
             <span class="ad-pill green">4.8</span>
           </div>
           <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Lessive + Repassage · 1 visite/semaine (samedi) · 8h</div>
-          <div style="font-size:10px;color:var(--cy);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 2 GARANTS · RÉFÉRENCES</div>
+          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 2 GARANTS · RÉFÉRENCES</div>
           <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy);font-size:18px;">65 000 FCFA</div></div>
+            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">65 000 FCFA</div></div>
             <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
           </div>
         </div>
@@ -1953,9 +2012,9 @@ textarea.full{min-height:60px;resize:vertical;}
             <span class="ad-pill green">4.85</span>
           </div>
           <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Cuisinière journalière · 6 jours/semaine (lundi-samedi) · 4h/jour</div>
-          <div style="font-size:10px;color:var(--cy);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · 8 ANS EXPÉRIENCE</div>
+          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · 8 ANS EXPÉRIENCE</div>
           <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy);font-size:18px;">110 000 FCFA</div></div>
+            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">110 000 FCFA</div></div>
             <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
           </div>
         </div>
@@ -2043,6 +2102,10 @@ async function loadProfile(){
   if(typeof recalc==='function')recalc();
   if(data.role==='prestataire')startPrestaListener();
   loadKycClientStatus();
+  loadMembreStatus();
+  // Bouton admin visible uniquement si role=admin
+  const adminFab = document.getElementById('admin-fab');
+  if(adminFab) adminFab.style.display = (data.role === 'admin') ? 'flex' : 'none';
   console.log('[HH] Profile chargé:', data.prenom, data.nom, 'role:', data.role);
 }
 
@@ -2149,9 +2212,17 @@ function registerSW(){
 
 let cur=1;
 function goto(n){
-  // Protection admin : exiger hash secret
-  if(n===8 && location.hash !== '#'+ADMIN_HASH){
-    if(!prompt('Code admin :')?.includes('hh2026')){return;}
+  // Protection admin : vérif role DB (pas juste un hash)
+  if(n===8){
+    if(!_currentUser || !_currentProfile){
+      alert('Connectez-vous d\'abord');
+      showAuthModal('signin');
+      return;
+    }
+    if(_currentProfile.role !== 'admin'){
+      console.warn('[HH] Accès admin refusé : role =', _currentProfile.role);
+      return; // silencieux, pas de message qui révèle l'existence de l'admin
+    }
   }
   
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -2170,7 +2241,9 @@ function toggleTheme(){
   const cur=document.body.getAttribute('data-theme');
   const next=cur==='dark'?'light':'dark';
   document.body.setAttribute('data-theme',next);
-  document.querySelector('.mockbar-btn.theme').textContent=next==='dark'?'':'';
+  const icon=document.getElementById('theme-icon');
+  if(icon) icon.textContent = next==='dark'?'☀️':'🌙';
+  try { localStorage.setItem('hh-theme', next); } catch(e) {}
 }
 
 function toggleKyc(){document.getElementById('kyc-band').classList.toggle('open');}
@@ -2990,10 +3063,10 @@ function updateMembreUI(){
   const banner=document.querySelector('#s2 [style*="rgba(255,193,7,.12)"]');
   if(banner){
     if(_membreActif){
-      banner.innerHTML='<span style="font-size:18px;">⭐</span><div style="flex:1;"><strong style="color:var(--cy);">-10% Membre appliqué automatiquement</strong></div>';
+      banner.innerHTML='<span style="font-size:18px;">⭐</span><div style="flex:1;"><strong style="color:var(--cy-text);">-10% Membre appliqué automatiquement</strong></div>';
       banner.style.borderColor='var(--cy)';
     } else {
-      banner.innerHTML='<span style="font-size:18px;"></span><div style="flex:1;"><strong style="color:var(--co);">Devenez membre et économisez -10% sur cette commande !</strong> <a href="#" onclick="goto(5);return false;" style="color:var(--cy);font-weight:700;">Voir les avantages →</a></div>';
+      banner.innerHTML='<span style="font-size:18px;"></span><div style="flex:1;"><strong style="color:var(--co);">Devenez membre et économisez -10% sur cette commande !</strong> <a href="#" onclick="goto(5);return false;" style="color:var(--cy-text);font-weight:700;">Voir les avantages →</a></div>';
       banner.style.borderColor='var(--co)';
     }
   }
@@ -3034,6 +3107,288 @@ function setAdminTab(t){
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('active',p.id==='ap-'+t));
   if(t==='paiements')loadPaiementsAdmin();
   if(t==='kyc')loadKycAdmin();
+  if(t==='subs')loadSubsAdmin();
+}
+
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║ SPRINT 10 — Membre Actif (souscription + parrainage)             ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+let _selectedPlan = 'annuel';
+let _currentSub = null;
+
+async function loadMembreStatus(){
+  if(!_supabaseClient || !_currentUser) return;
+  try {
+    const { data, error } = await _supabaseClient.rpc('subscription_status_get');
+    if(error) throw error;
+    if(!data || !data.ok) return;
+
+    _currentSub = data.membre ? data : null;
+    _membreActif = !!data.membre;
+
+    const banner = document.getElementById('membre-banner');
+    const cta = document.getElementById('membre-cta');
+    if(!banner || !cta) return;
+
+    if(data.membre){
+      banner.style.display = 'flex';
+      cta.style.display = 'none';
+      const planEl = document.getElementById('mb-plan');
+      const joursEl = document.getElementById('mb-jours');
+      const ecoEl = document.getElementById('mb-economie');
+      if(planEl) planEl.textContent = data.plan;
+      if(joursEl) joursEl.textContent = data.jours_restants + ' jours restants';
+      if(ecoEl) ecoEl.textContent = (data.economie_mois_fcfa || 0).toLocaleString('fr-FR');
+    } else {
+      banner.style.display = 'none';
+      cta.style.display = 'block';
+    }
+    if(typeof recalc==='function') recalc();
+  } catch(e) {
+    console.warn('[HH] loadMembreStatus:', e.message);
+  }
+}
+
+async function showMembreModal(){
+  const m = document.getElementById('membre-modal');
+  if(!m) return;
+  m.style.display = 'flex';
+
+  if(!_supabaseClient || !_currentUser){
+    closeMembreModal();
+    alert('Connectez-vous pour devenir membre');
+    showAuthModal('signin');
+    return;
+  }
+
+  // Check pending
+  const { data: pending } = await _supabaseClient
+    .from('subscriptions').select('*')
+    .eq('user_id', _currentUser.id).eq('status', 'pending')
+    .order('created_at', { ascending: false }).limit(1).maybeSingle();
+
+  document.getElementById('mm-souscrire').style.display = 'none';
+  document.getElementById('mm-gerer').style.display = 'none';
+  document.getElementById('mm-pending').style.display = 'none';
+
+  if(pending){
+    document.getElementById('mm-pending').style.display = 'block';
+    document.getElementById('mp-plan').textContent = pending.plan;
+    document.getElementById('mp-montant').textContent = pending.prix_paye.toLocaleString('fr-FR');
+    document.getElementById('mp-ref').textContent = pending.paiement_ref || pending.id.substring(0,8).toUpperCase();
+    return;
+  }
+
+  if(_membreActif && _currentSub){
+    document.getElementById('mm-gerer').style.display = 'block';
+    document.getElementById('mg-plan').textContent = _currentSub.plan;
+    document.getElementById('mg-fin').textContent = new Date(_currentSub.fin_le).toLocaleDateString('fr-FR');
+    document.getElementById('mg-jours').textContent = _currentSub.jours_restants + ' jours restants';
+    document.getElementById('mg-auto').textContent = _currentSub.renouvellement_auto ? 'Activé' : 'Désactivé';
+    document.getElementById('mg-economie').textContent = (_currentSub.economie_mois_fcfa || 0).toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('mg-credit').textContent = (_currentProfile?.credit_balance || 0).toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('mg-ref-code').textContent = _currentProfile?.referral_code || 'HH' + _currentUser.id.substring(0,6).toUpperCase();
+    loadParrainagesCount();
+    return;
+  }
+
+  document.getElementById('mm-souscrire').style.display = 'block';
+  selectPlan('annuel');
+}
+
+function closeMembreModal(){
+  document.getElementById('membre-modal').style.display = 'none';
+}
+
+function selectPlan(plan){
+  _selectedPlan = plan;
+  document.getElementById('plan-annuel').style.borderColor = plan==='annuel' ? 'var(--cy)' : 'var(--cardb)';
+  document.getElementById('plan-annuel').style.background = plan==='annuel' ? 'rgba(255,193,7,.06)' : 'transparent';
+  document.getElementById('plan-mensuel').style.borderColor = plan==='mensuel' ? 'var(--cy)' : 'var(--cardb)';
+  document.getElementById('plan-mensuel').style.background = plan==='mensuel' ? 'rgba(255,193,7,.06)' : 'transparent';
+  const inst = document.getElementById('mm-paiement-instructions');
+  if(inst) inst.style.display = 'none';
+  const btn = document.getElementById('mm-btn-submit');
+  if(btn){ btn.disabled = false; btn.textContent = 'Confirmer la souscription'; }
+}
+
+async function submitMembreSouscription(){
+  if(!_supabaseClient || !_currentUser) return;
+  const btn = document.getElementById('mm-btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Création en cours…';
+
+  try {
+    const { data, error } = await _supabaseClient.rpc('subscription_souscrire', {
+      p_plan: _selectedPlan,
+      p_paiement_ref: null
+    });
+    if(error) throw error;
+    if(!data.ok) throw new Error(data.error);
+
+    // Affiche instructions paiement OM
+    const ref = data.subscription_id.substring(0,8).toUpperCase();
+    document.getElementById('mm-montant').textContent = data.prix.toLocaleString('fr-FR');
+    document.getElementById('mm-ref').textContent = ref;
+    document.getElementById('mm-paiement-instructions').style.display = 'block';
+    btn.textContent = '✓ Souscription créée — Effectuez le paiement OM';
+  } catch(e) {
+    alert('Erreur : ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Confirmer la souscription';
+  }
+}
+
+async function toggleAutoRenew(){
+  if(!_currentSub) return;
+  const newVal = !_currentSub.renouvellement_auto;
+  if(!newVal && !confirm('Désactiver le renouvellement automatique ?\n\nVotre abonnement se terminera le ' + new Date(_currentSub.fin_le).toLocaleDateString('fr-FR') + '.')) return;
+
+  const { error } = await _supabaseClient.from('subscriptions')
+    .update({ renouvellement_auto: newVal }).eq('id', _currentSub.subscription_id);
+  if(error){ alert('Erreur : '+error.message); return; }
+  _currentSub.renouvellement_auto = newVal;
+  document.getElementById('mg-auto').textContent = newVal ? 'Activé' : 'Désactivé';
+}
+
+async function annulerAbonnement(){
+  if(!_currentSub) return;
+  if(!confirm('Annuler votre abonnement ?\n\nVous gardez vos avantages jusqu\'au ' + new Date(_currentSub.fin_le).toLocaleDateString('fr-FR') + '. Pas de remboursement.')) return;
+
+  const { data, error } = await _supabaseClient.rpc('subscription_annuler', {
+    p_sub_id: _currentSub.subscription_id
+  });
+  if(error){ alert('Erreur : '+error.message); return; }
+  alert(data.message || 'Abonnement annulé');
+  closeMembreModal();
+  loadMembreStatus();
+}
+
+function copyRefCode(){
+  const code = document.getElementById('mg-ref-code').textContent;
+  navigator.clipboard.writeText(code).then(
+    () => alert('Code copié : ' + code),
+    () => prompt('Copiez votre code :', code)
+  );
+}
+
+function partagerParrainage(){
+  const code = document.getElementById('mg-ref-code').textContent;
+  const url = 'https://happyhome.pages.dev?ref=' + code;
+  const text = `Salut ! Je te recommande HappyHome pour tes services à domicile à Douala (ménage, cuisine, courses, nounou...). Utilise mon code ${code} et profite. ${url}`;
+  const waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+  window.open(waUrl, '_blank');
+}
+
+async function loadParrainagesCount(){
+  if(!_supabaseClient || !_currentUser) return;
+  const { count } = await _supabaseClient.from('parrainages')
+    .select('*', { count: 'exact', head: true })
+    .eq('parrain_id', _currentUser.id)
+    .in('status', ['active','credited']);
+  const el = document.getElementById('mg-filleuls');
+  if(el) el.textContent = count || 0;
+}
+
+// ─────── ADMIN : gestion abonnements ───────
+async function loadSubsAdmin(){
+  if(!_supabaseClient) return;
+
+  // Pending
+  const { data: pending } = await _supabaseClient.from('subscriptions')
+    .select('*, profiles!inner(nom, prenom, telephone)')
+    .eq('status', 'pending').order('created_at', { ascending: false });
+
+  // Active
+  const { data: active } = await _supabaseClient.from('subscriptions')
+    .select('*, profiles!inner(nom, prenom, telephone)')
+    .eq('status', 'active').gt('fin_le', new Date().toISOString())
+    .order('fin_le', { ascending: true });
+
+  // KPIs
+  const kpiPending = pending?.length || 0;
+  const kpiActive = active?.length || 0;
+  const kpiRev = (active||[]).reduce((s, a) => s + (a.plan==='mensuel' ? 2000 : 1500), 0);
+  const now = new Date();
+  const in7 = new Date(now.getTime() + 7*24*60*60*1000);
+  const kpiExpire = (active||[]).filter(a => new Date(a.fin_le) <= in7).length;
+
+  document.getElementById('sub-kpi-pending').textContent = kpiPending;
+  document.getElementById('sub-kpi-active').textContent = kpiActive;
+  document.getElementById('sub-kpi-rev').textContent = kpiRev.toLocaleString('fr-FR') + ' FCFA';
+  document.getElementById('sub-kpi-expire').textContent = kpiExpire;
+
+  const badge = document.getElementById('ad-badge-subs');
+  if(badge){
+    if(kpiPending > 0){ badge.style.display = 'inline-block'; badge.textContent = kpiPending; }
+    else badge.style.display = 'none';
+  }
+
+  // Render pending
+  const pList = document.getElementById('sub-pending-list');
+  if(!pending || pending.length === 0){
+    pList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--t2);font-size:12px;">Aucun paiement en attente</div>';
+  } else {
+    pList.innerHTML = pending.map(s => `
+      <div class="s7-card" style="border-left:4px solid var(--co);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-weight:900;font-size:14px;">${(s.profiles.prenom||'')+' '+(s.profiles.nom||'')}</div>
+            <div style="font-size:11px;color:var(--t2);">Tél : ${s.profiles.telephone||'?'} · Soumis le ${new Date(s.created_at).toLocaleDateString('fr-FR')}</div>
+          </div>
+          <span class="ad-pill orange">${s.plan.toUpperCase()} · ${s.prix_paye.toLocaleString('fr-FR')} FCFA</span>
+        </div>
+        <div style="font-size:11px;color:var(--t2);margin-bottom:10px;">Réf : <code style="background:var(--card);padding:2px 6px;border-radius:3px;">${s.id.substring(0,8).toUpperCase()}</code></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="ad-btn" style="background:var(--cg);color:#fff;border:none;" onclick="activerSub('${s.id}','${(s.profiles.prenom||'').replace(/'/g,'')}')">✓ Activer (OM reçu)</button>
+          <button class="ad-btn" style="background:var(--cr);color:#fff;border:none;" onclick="rejeterSub('${s.id}')">Rejeter</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render active
+  const aList = document.getElementById('sub-active-list');
+  if(!active || active.length === 0){
+    aList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--t2);font-size:12px;">Aucun abonnement actif</div>';
+  } else {
+    aList.innerHTML = active.map(s => {
+      const jours = Math.ceil((new Date(s.fin_le) - now) / 86400000);
+      const cls = jours <= 7 ? 'red' : (jours <= 30 ? 'orange' : 'green');
+      return `
+      <div class="s7-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-weight:900;font-size:13px;">${(s.profiles.prenom||'')+' '+(s.profiles.nom||'')}</div>
+            <div style="font-size:11px;color:var(--t2);">${s.plan} · Expire ${new Date(s.fin_le).toLocaleDateString('fr-FR')} (${jours}j)</div>
+          </div>
+          <span class="ad-pill ${cls}">${s.renouvellement_auto?'AUTO':'MANUEL'}</span>
+        </div>
+      </div>
+    `;
+    }).join('');
+  }
+}
+
+async function activerSub(subId, nom){
+  if(!confirm('Confirmer la réception du paiement OM et activer l\'abonnement de ' + nom + ' ?')) return;
+  const { data, error } = await _supabaseClient.rpc('subscription_activer', { p_sub_id: subId });
+  if(error){ alert('Erreur : '+error.message); return; }
+  if(!data.ok){ alert('Échec : '+data.error); return; }
+  alert('✓ Activé jusqu\'au ' + new Date(data.fin_le).toLocaleDateString('fr-FR'));
+  loadSubsAdmin();
+}
+
+async function rejeterSub(subId){
+  const motif = prompt('Motif du rejet (paiement non reçu, etc.) :');
+  if(!motif) return;
+  const { error } = await _supabaseClient.from('subscriptions')
+    .update({ status: 'cancelled', cancelled_le: new Date().toISOString() })
+    .eq('id', subId);
+  if(error){ alert('Erreur : '+error.message); return; }
+  await _supabaseClient.from('admin_logs').insert({ msg: '[SUB] Rejet ' + subId + ' motif: ' + motif });
+  loadSubsAdmin();
 }
 
 // ╔══════════════════════════════════════════════════════════════════╗
@@ -3062,7 +3417,7 @@ async function loadPaiementsAdmin(){
     return `<div style="background:var(--card);border:1px solid var(--cardb);border-radius:12px;padding:14px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
         <div>
-          <div style="font-size:16px;font-weight:900;font-family:monospace;color:var(--cy);">${p.reference_paiement}</div>
+          <div style="font-size:16px;font-weight:900;font-family:monospace;color:var(--cy-text);">${p.reference_paiement}</div>
           <div style="font-size:11px;color:var(--t2);">Mission ${mr.reference||'—'} · ${mr.adresse_complete||''}</div>
         </div>
         <div style="font-size:18px;font-weight:900;color:var(--cg);">${p.montant.toLocaleString('fr-FR')} FCFA</div>
@@ -3196,10 +3551,18 @@ async function rejectKycAdmin(prestaId,nom){
 
 function rate(n){document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<n));}
 
-if(window.matchMedia('(prefers-color-scheme: light)').matches){
-  document.body.setAttribute('data-theme','light');
-  document.querySelector('.mockbar-btn.theme').textContent='';
-}
+// Init thème depuis localStorage si déjà choisi
+try {
+  const saved = localStorage.getItem('hh-theme');
+  if(saved === 'dark' || saved === 'light'){
+    document.body.setAttribute('data-theme', saved);
+  }
+  // Sync icône FAB
+  setTimeout(() => {
+    const icon = document.getElementById('theme-icon');
+    if(icon) icon.textContent = document.body.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+  }, 100);
+} catch(e) {}
 recalc();
 </script>
 
@@ -3224,7 +3587,7 @@ recalc();
 <div id="assign-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:300;align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--card);border:1px solid var(--cardb);border-radius:18px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;">
     <div style="font-size:18px;font-weight:900;margin-bottom:6px;">Assigner un prestataire</div>
-    <div style="font-size:12px;color:var(--t2);margin-bottom:16px;">Pour le client : <strong id="assign-client" style="color:var(--cy);"></strong></div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:16px;">Pour le client : <strong id="assign-client" style="color:var(--cy-text);"></strong></div>
     <input type="text" placeholder="Rechercher un prestataire..." class="full" style="margin-bottom:14px;">
     <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Service souhaité</div>
     <select class="full" style="margin-bottom:14px;">
@@ -3263,6 +3626,16 @@ recalc();
 
 
 <!-- Bouton flottant WhatsApp Support -->
+<!-- Bouton flottant admin (visible uniquement si role=admin) -->
+<button onclick="goto(8)" id="admin-fab" title="Console admin" style="display:none;position:fixed;bottom:150px;right:24px;width:44px;height:44px;border-radius:50%;background:#0F268C;border:none;color:#fff;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(15,38,140,.35);cursor:pointer;z-index:999;font-size:18px;font-family:inherit;">
+  ⚙
+</button>
+
+<!-- Bouton flottant : toggle thème dark/light -->
+<button onclick="toggleTheme()" id="theme-fab" title="Basculer le mode" style="position:fixed;bottom:94px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--cardb);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.15);cursor:pointer;z-index:999;transition:.2s;font-size:20px;font-family:inherit;color:var(--text);">
+  <span id="theme-icon">🌙</span>
+</button>
+
 <a href="https://wa.me/237690384199?text=Bonjour%20Happy%20Home%2C%20j%27ai%20besoin%20d%27aide%20concernant..." target="_blank" id="wa-fab" style="position:fixed;bottom:24px;right:24px;width:60px;height:60px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,211,102,.45),0 2px 8px rgba(0,0,0,.2);cursor:pointer;z-index:999;transition:.2s;text-decoration:none;">
   <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
 </a>
@@ -3275,6 +3648,117 @@ recalc();
 
 
 <!-- Modal Authentification Supabase -->
+<!-- ═══════════════════════ MODAL MEMBRE ACTIF (Sprint 10) ═══════════════════════ -->
+<div id="membre-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(12px);z-index:9998;align-items:center;justify-content:center;padding:20px;overflow-y:auto;">
+  <div style="background:var(--bg);border-radius:18px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;padding:0;">
+    <!-- Header dégradé -->
+    <div style="background:linear-gradient(135deg,#0F268C,#1a35b8);color:#fff;padding:24px 24px 20px;border-radius:18px 18px 0 0;position:relative;">
+      <button onclick="closeMembreModal()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.18);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;">×</button>
+      <div style="font-size:32px;margin-bottom:6px;">💎</div>
+      <div style="font-size:22px;font-weight:900;letter-spacing:-.5px;">Membre Actif HappyHome</div>
+      <div style="font-size:13px;opacity:.85;margin-top:4px;">Économisez plus · Servi en priorité · Avantages exclusifs</div>
+    </div>
+
+    <!-- Contenu dynamique selon état -->
+    <div id="membre-modal-body" style="padding:20px 24px;">
+      <!-- Cas 1 : Non membre — formulaire souscription -->
+      <div id="mm-souscrire" style="display:none;">
+        <div style="font-size:13px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Choisissez votre formule</div>
+
+        <div onclick="selectPlan('annuel')" id="plan-annuel" class="plan-card" style="border:2px solid var(--cy);background:rgba(255,193,7,.06);padding:16px;border-radius:12px;cursor:pointer;margin-bottom:10px;position:relative;">
+          <div style="position:absolute;top:-10px;right:14px;background:var(--cy);color:#1a1a1a;font-size:10px;font-weight:800;padding:3px 10px;border-radius:50px;text-transform:uppercase;letter-spacing:.5px;">Économie 25%</div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+            <div style="font-weight:900;font-size:16px;">Annuel</div>
+            <div style="font-size:22px;font-weight:900;color:var(--cy-text);">18 000 FCFA</div>
+          </div>
+          <div style="font-size:11px;color:var(--t2);">1 500 FCFA/mois · économie 6 000 FCFA vs mensuel · 12 mois d'avantages</div>
+        </div>
+
+        <div onclick="selectPlan('mensuel')" id="plan-mensuel" class="plan-card" style="border:2px solid var(--cardb);padding:16px;border-radius:12px;cursor:pointer;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+            <div style="font-weight:900;font-size:16px;">Mensuel</div>
+            <div style="font-size:22px;font-weight:900;">2 000 FCFA</div>
+          </div>
+          <div style="font-size:11px;color:var(--t2);">Sans engagement · annulable à tout moment</div>
+        </div>
+
+        <div style="background:var(--card);border-radius:10px;padding:14px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:800;margin-bottom:8px;">Vos 5 avantages exclusifs</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+            <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>-10%</strong> sur chaque mission, automatique</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>Priorité matching</strong> — servi avant les non-membres</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>Annulation flexible</strong> jusqu'à 1h avant (vs 2h)</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>1 mission FLASH offerte</strong> par an (valeur 6 000 FCFA)</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>Parrainage premium</strong> — 1 000 FCFA crédités par filleul actif</span></div>
+          </div>
+        </div>
+
+        <div id="mm-paiement-instructions" style="display:none;background:rgba(255,193,7,.08);border:1px solid var(--cy);border-radius:10px;padding:14px;margin-bottom:14px;font-size:12px;line-height:1.6;">
+          <div style="font-weight:800;color:var(--cy-text);margin-bottom:6px;">Paiement Mobile Money</div>
+          Envoyez <strong id="mm-montant"></strong> FCFA via Orange Money au <strong>690 384 199</strong>
+          <div style="margin-top:8px;font-size:11px;color:var(--t2);">Référence à mentionner : <code id="mm-ref" style="background:var(--card);padding:2px 6px;border-radius:4px;font-family:monospace;"></code></div>
+          <div style="margin-top:8px;font-size:11px;">Activation sous 1-2h après réception (validation manuelle phase 1).</div>
+        </div>
+
+        <button id="mm-btn-submit" onclick="submitMembreSouscription()" style="width:100%;padding:14px;background:var(--cy);color:#1a1a1a;border:none;border-radius:50px;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;">Confirmer la souscription</button>
+      </div>
+
+      <!-- Cas 2 : Membre actif — gestion -->
+      <div id="mm-gerer" style="display:none;">
+        <div style="background:linear-gradient(135deg,rgba(76,175,80,.1),rgba(76,175,80,.04));border:1px solid var(--cg);border-radius:10px;padding:14px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="font-size:20px;">✓</span>
+            <div style="flex:1;">
+              <div style="font-weight:900;color:var(--cg);">Membre Actif</div>
+              <div style="font-size:11px;color:var(--t2);">Plan <span id="mg-plan"></span> · expire le <span id="mg-fin"></span></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--t2);"><span id="mg-jours"></span> · Renouvellement auto : <span id="mg-auto"></span></div>
+        </div>
+
+        <div style="background:var(--card);border-radius:10px;padding:14px;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:12px;color:var(--t2);">Économie réalisée ce mois</span>
+            <span id="mg-economie" style="font-weight:900;color:var(--cg);">0 FCFA</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="font-size:12px;color:var(--t2);">Crédit parrainage cumulé</span>
+            <span id="mg-credit" style="font-weight:900;color:var(--cy-text);">0 FCFA</span>
+          </div>
+        </div>
+
+        <!-- Section parrainage -->
+        <div style="border:1px dashed var(--cardb);border-radius:10px;padding:14px;margin-bottom:14px;">
+          <div style="font-weight:800;font-size:13px;margin-bottom:8px;">Votre code parrainage</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+            <code id="mg-ref-code" style="flex:1;padding:8px 10px;background:var(--card);border-radius:6px;font-family:monospace;font-size:14px;font-weight:700;text-align:center;letter-spacing:1px;">…</code>
+            <button onclick="copyRefCode()" style="padding:8px 14px;background:var(--card);border:1px solid var(--cardb);border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;">Copier</button>
+          </div>
+          <div style="font-size:11px;color:var(--t2);margin-bottom:10px;line-height:1.5;">Gagnez 1 000 FCFA dès que votre filleul effectue sa 1ère mission. Filleuls actifs : <strong id="mg-filleuls">0</strong></div>
+          <button onclick="partagerParrainage()" style="width:100%;padding:10px;background:#25D366;color:#fff;border:none;border-radius:50px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;">Partager via WhatsApp</button>
+        </div>
+
+        <div style="display:flex;gap:8px;">
+          <button id="mg-btn-auto" onclick="toggleAutoRenew()" style="flex:1;padding:10px;background:transparent;border:1px solid var(--cardb);color:var(--text);border-radius:50px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;">Renouvellement auto</button>
+          <button onclick="annulerAbonnement()" style="flex:1;padding:10px;background:transparent;border:1px solid var(--cr);color:var(--cr);border-radius:50px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;">Annuler</button>
+        </div>
+      </div>
+
+      <!-- Cas 3 : Pending — en attente validation -->
+      <div id="mm-pending" style="display:none;text-align:center;padding:20px 0;">
+        <div style="font-size:42px;margin-bottom:10px;">⏳</div>
+        <div style="font-weight:900;font-size:16px;margin-bottom:8px;">Paiement en cours de validation</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:14px;">Nous vérifions la réception de votre paiement Mobile Money. Activation sous 1-2h.</div>
+        <div style="background:var(--card);border-radius:10px;padding:12px;font-size:12px;color:var(--t2);text-align:left;">
+          <div>Plan : <strong id="mp-plan"></strong></div>
+          <div>Montant : <strong id="mp-montant"></strong> FCFA</div>
+          <div>Référence : <code id="mp-ref" style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px;"></code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(12px);z-index:9998;align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--card,#1a1a1a);border:1px solid var(--cardb,#333);border-radius:18px;padding:24px;max-width:420px;width:100%;color:var(--t1,#fff);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
@@ -3318,7 +3802,7 @@ recalc();
 <div id="incoming-mission-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(14px);z-index:400;align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--card);border:2px solid var(--cy);border-radius:18px;padding:24px;max-width:440px;width:100%;box-shadow:0 0 40px rgba(255,193,7,.3);">
     <div style="text-align:center;margin-bottom:18px;">
-      <div style="font-size:11px;font-weight:900;letter-spacing:1px;color:var(--cy);text-transform:uppercase;margin-bottom:4px;">⚡ NOUVELLE MISSION</div>
+      <div style="font-size:11px;font-weight:900;letter-spacing:1px;color:var(--cy-text);text-transform:uppercase;margin-bottom:4px;">⚡ NOUVELLE MISSION</div>
       <div id="im-type" style="font-size:13px;font-weight:800;color:var(--text);">FLASH</div>
     </div>
     <div style="text-align:center;margin-bottom:18px;">

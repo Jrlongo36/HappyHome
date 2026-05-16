@@ -3615,8 +3615,8 @@ async function loadDashAdmin(){
       _supabaseClient.from('missions').select('id',{count:'exact',head:true}).in('statut',['recherche_presta','attribuee','en_route','en_cours']),
       _supabaseClient.from('kyc_presta').select('presta_id',{count:'exact',head:true}).in('status',['en_attente','en_cours']),
       _supabaseClient.from('missions').select('id',{count:'exact',head:true}).eq('statut','litige'),
-      _supabaseClient.from('missions').select('id,montant_total').eq('statut','terminee').gte('cree_le',startToday),
-      _supabaseClient.from('missions').select('id,montant_total').eq('statut','terminee').gte('cree_le',startMonth),
+      _supabaseClient.from('missions').select('id,montant_total').eq('statut','terminee').gte('created_at',startToday),
+      _supabaseClient.from('missions').select('id,montant_total').eq('statut','terminee').gte('created_at',startMonth),
       _supabaseClient.from('subscriptions').select('id',{count:'exact',head:true}).eq('statut','actif')
     ]);
     const missionsActives = r1.count || 0;
@@ -3640,15 +3640,15 @@ async function loadDashAdmin(){
     // Dernières actions (5 dernières missions tous statuts)
     const {data:recent} = await _supabaseClient
       .from('missions')
-      .select('id,reference,statut,cree_le,montant_total')
-      .order('cree_le',{ascending:false})
+      .select('id,reference,statut,created_at,montant_total')
+      .order('created_at',{ascending:false})
       .limit(6);
     const actEl = document.getElementById('dash-actions');
     if(!recent || !recent.length){
       actEl.innerHTML = '<div style="color:var(--t2);">Aucune activité récente.</div>';
     } else {
       actEl.innerHTML = recent.map(m=>{
-        const t = new Date(m.cree_le).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+        const t = new Date(m.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
         return `• ${t} · Mission <strong>${_esc(m.reference||m.id.slice(0,8))}</strong> · ${_esc(m.statut)} · ${_fmt(m.montant_total)} FCFA`;
       }).join('<br>');
     }
@@ -3658,7 +3658,7 @@ async function loadDashAdmin(){
     const {data:svcRows} = await _supabaseClient
       .from('missions')
       .select('service_id,services(nom)')
-      .gte('cree_le',start30);
+      .gte('created_at',start30);
     const svcEl = document.getElementById('dash-services');
     if(!svcRows || !svcRows.length){
       svcEl.innerHTML = '<div style="color:var(--t2);font-size:12px;">Aucune mission ces 30 derniers jours.</div>';
@@ -3691,9 +3691,9 @@ async function loadPrestaAdmin(){
     // Profiles role=prestataire + KYC status + stats missions
     const {data:profiles, error} = await _supabaseClient
       .from('profiles')
-      .select('id,prenom,nom,telephone,email,quartier,actif,cree_le')
+      .select('id,prenom,nom,telephone,email,quartier,created_at')
       .eq('role','prestataire')
-      .order('cree_le',{ascending:false});
+      .order('created_at',{ascending:false});
     if(error) throw error;
 
     const ids = (profiles||[]).map(p=>p.id);
@@ -3740,7 +3740,7 @@ function _renderPrestaTable(rows){
       : (p.kyc==='en_attente' || p.kyc==='en_cours') ? '<span class="ad-pill orange">⏳ Attente</span>'
       : p.kyc==='refuse' ? '<span class="ad-pill red">✗ Refusé</span>'
       : '<span class="ad-pill gray">— Non soumis</span>';
-    const statutPill = p.actif===false ? '<span class="ad-pill red">🚫 Bloqué</span>' : '<span class="ad-pill gray">○ Inactif</span>';
+    const statutPill = '<span class="ad-pill green">● Actif</span>';
     const nom = `${_esc(p.prenom||'')} ${_esc(p.nom||'')}`.trim() || '(sans nom)';
     return `<tr>
       <td><div class="ad-user"><div class="ad-av" style="background:var(--cardb);color:var(--text);font-weight:800;">${(_esc(p.prenom||p.nom||'?').charAt(0)||'?').toUpperCase()}</div>${nom}</div></td>
@@ -3750,7 +3750,7 @@ function _renderPrestaTable(rows){
       <td>—</td>
       <td>${_fmt(Math.round(p.gains))} FCFA</td>
       <td>${statutPill}</td>
-      <td><button class="ad-btn" onclick="alert('ID : ${_esc(p.id)}\\nEmail : ${_esc(p.email||'—')}\\nQuartier : ${_esc(p.quartier||'—')}\\nInscrit le ${_fmtDate(p.cree_le)}')">Voir</button></td>
+      <td><button class="ad-btn" onclick="alert('ID : ${_esc(p.id)}\\nEmail : ${_esc(p.email||'—')}\\nQuartier : ${_esc(p.quartier||'—')}\\nInscrit le ${_fmtDate(p.created_at)}')">Voir</button></td>
     </tr>`;
   }).join('');
 }
@@ -3772,9 +3772,9 @@ async function loadClientsAdmin(){
   try {
     const {data:profiles, error} = await _supabaseClient
       .from('profiles')
-      .select('id,prenom,nom,telephone,email,role,quartier,cree_le')
+      .select('id,prenom,nom,telephone,email,role,quartier,created_at')
       .in('role',['client','membre'])
-      .order('cree_le',{ascending:false});
+      .order('created_at',{ascending:false});
     if(error) throw error;
 
     const ids = (profiles||[]).map(p=>p.id);
@@ -3826,7 +3826,7 @@ function _renderClientsTable(rows){
       <td>${c.missions}</td>
       <td>${_fmt(c.depenses)} FCFA</td>
       <td>${_esc(c.telephone||'—')}</td>
-      <td>${_fmtDate(c.cree_le)}</td>
+      <td>${_fmtDate(c.created_at)}</td>
       <td><button class="ad-btn" onclick="alert('ID : ${_esc(c.id)}\\nEmail : ${_esc(c.email||'—')}\\nQuartier : ${_esc(c.quartier||'—')}')">Voir</button></td>
     </tr>`;
   }).join('');
@@ -3853,7 +3853,7 @@ async function loadComptaAdmin(){
     document.getElementById('compta-title').textContent = `Comptabilité · ${moisLabel.charAt(0).toUpperCase()+moisLabel.slice(1)}`;
 
     const [{data:terminees},{data:payments},{data:litiges}] = await Promise.all([
-      _supabaseClient.from('missions').select('id,statut,montant_total,provider,cree_le').gte('cree_le',startMonth),
+      _supabaseClient.from('missions').select('id,statut,montant_total,provider,created_at').gte('created_at',startMonth),
       _supabaseClient.from('payments').select('status,montant,provider,client_confirme_le').gte('client_confirme_le',startToday),
       _supabaseClient.from('missions').select('id,montant_total').eq('statut','litige')
     ]);
@@ -3928,11 +3928,12 @@ async function loadComptaAdmin(){
 async function loadLitigesAdmin(){
   if(!_adminCheckAccess('litiges-list')) return;
   try {
+    // Étape 1 : missions en litige (sans embed FK qui peut échouer)
     const {data:litiges, error} = await _supabaseClient
       .from('missions')
-      .select('id,reference,montant_total,adresse_complete,cree_le,client_id,presta_id,motif_litige,profiles!missions_client_id_fkey(prenom,nom,telephone),presta:profiles!missions_presta_id_fkey(prenom,nom,telephone)')
+      .select('id,reference,montant_total,adresse_complete,created_at,client_id,presta_id,motif_litige')
       .eq('statut','litige')
-      .order('cree_le',{ascending:true});
+      .order('created_at',{ascending:true});
     if(error) throw error;
 
     const n = (litiges||[]).length;
@@ -3945,9 +3946,23 @@ async function loadLitigesAdmin(){
     const el = document.getElementById('litiges-list');
     if(!n){ el.innerHTML = '<div style="color:var(--cg);font-size:14px;text-align:center;padding:40px;">✓ Aucun litige ouvert.</div>'; return; }
 
+    // Étape 2 : lookup manuel des profils client + presta (évite la dépendance FK)
+    const userIds = [...new Set([
+      ...litiges.map(m=>m.client_id).filter(Boolean),
+      ...litiges.map(m=>m.presta_id).filter(Boolean)
+    ])];
+    let profMap = {};
+    if(userIds.length){
+      const {data:profs} = await _supabaseClient
+        .from('profiles')
+        .select('id,prenom,nom,telephone')
+        .in('id',userIds);
+      (profs||[]).forEach(p=>{ profMap[p.id]=p; });
+    }
+
     el.innerHTML = litiges.map(m=>{
-      const cl = m.profiles || {};
-      const pr = m.presta || {};
+      const cl = profMap[m.client_id] || {};
+      const pr = profMap[m.presta_id] || {};
       const clNom = `${_esc(cl.prenom||'')} ${_esc(cl.nom||'')}`.trim() || '(client inconnu)';
       const prNom = `${_esc(pr.prenom||'')} ${_esc(pr.nom||'')}`.trim() || '(presta inconnu)';
       return `<div class="s7-card" style="border-color:rgba(244,67,54,.3);background:rgba(244,67,54,.04);border-left:4px solid var(--cr);">
@@ -3959,7 +3974,7 @@ async function loadLitigesAdmin(){
           <strong>Motif</strong> : ${_esc(m.motif_litige||'Non précisé')}<br>
           <strong>Adresse</strong> : ${_esc(m.adresse_complete||'—')}<br>
           <strong>Montant escrow bloqué</strong> : ${_fmt(m.montant_total)} FCFA<br>
-          <strong>Ouvert le</strong> : ${_fmtDateTime(m.cree_le)}
+          <strong>Ouvert le</strong> : ${_fmtDateTime(m.created_at)}
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="ad-btn" style="background:var(--cg);color:#fff;border:none;" onclick="resolveLitigeAdmin('${m.id}','presta',${m.montant_total||0})">Libérer presta (${_fmt(m.montant_total)})</button>
@@ -4272,6 +4287,14 @@ recalc();
     </div>
   </div>
 </div>
+
+<!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
+<div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
+  v3.1.13 · Sprint 12 · 16/05/2026
+</div>
+<style>
+[data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }
+</style>
 
 </body>
 </html>

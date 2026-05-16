@@ -42,7 +42,7 @@ Toutes les requêtes Supabase passent par l'API REST native (`fetch`).
 
 | Table | Description |
 |---|---|
-| `prestataires` | Catalogue des ménagères certifiées |
+| `prestataires` | Catalogue des ménagères et autres certifiées |
 | `usagers` | Comptes clients |
 | `prestataire_users` | Candidatures & comptes prestataires |
 | `missions` | Réservations et missions |

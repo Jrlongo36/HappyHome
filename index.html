@@ -2967,21 +2967,33 @@ async function uploadProof(paymentId){
 }
 
 async function confirmPaymentFlow(){
-  // 1. Pré-checks
-  if(!_currentUser){showAuthModal('signin');showAuthMsg('warn','Connecte-toi.');return;}
   if(!_currentMission||!_currentMission.mission_id){alert('Aucune mission en cours. Recommence la commande.');goto(2);return;}
   const txnId=(document.getElementById('cmd-txn-id').value||'').trim();
   const numClient=(document.getElementById('cmd-numero-client').value||'').trim();
   if(numClient.length<9){alert('Saisis ton numéro MoMo complet (9 chiffres min).');document.getElementById('cmd-numero-client').focus();return;}
   if(txnId.length<5){alert('Saisis l\'identifiant TXN reçu après envoi MoMo (min 5 caractères).');document.getElementById('cmd-txn-id').focus();return;}
-  const provider=_cmd.provider||'manual_om';
 
-  // 2. UI loading
   const btn=document.getElementById('btn-confirm-payment');const oldTxt=btn.textContent;
   btn.textContent='Vérification...';btn.disabled=true;
 
   try{
-    // 3. submit_payment (création row payments status=en_attente)
+    // ── FLOW INVITÉ (sans compte) ──────────────────────────────
+    if(!_currentUser && _currentMission.guest_token){
+      const {data,error}=await _supabaseClient.rpc('guest_confirm_payment',{
+        p_token:_currentMission.guest_token,
+        p_transaction_id:txnId,
+        p_screenshot_url:null
+      });
+      if(error)throw new Error(error.message);
+      alert('Paiement enregistré. Vérification en cours (<30 min).\nVous recevrez un message WhatsApp dès validation.');
+      goto(4);
+      return;
+    }
+
+    // ── FLOW CONNECTÉ (presta / membre) ───────────────────────
+    if(!_currentUser){showAuthModal('signin');return;}
+    const provider=_cmd.provider||'manual_om';
+
     const sp=await _supabaseClient.rpc('submit_payment',{
       p_mission_id:_currentMission.mission_id,
       p_provider:provider
@@ -2991,15 +3003,13 @@ async function confirmPaymentFlow(){
     if(!payRow||!payRow.payment_id)throw new Error('Réponse invalide submit_payment');
     _currentPayment=payRow;
 
-    // 4. Upload preuve (optionnel, mais best effort)
     let proofPath=null;
     if(_proofFile){
       btn.textContent='Envoi preuve...';
       try{ proofPath=await uploadProof(payRow.payment_id); }
-      catch(upErr){ console.warn('upload preuve échec, on continue sans :',upErr.message); }
+      catch(upErr){ console.warn('upload preuve échec:',upErr.message); }
     }
 
-    // 5. client_confirm_payment_sent (status → verification + notif admin WhatsApp créée)
     btn.textContent='Confirmation...';
     const cc=await _supabaseClient.rpc('client_confirm_payment_sent',{
       p_payment_id:payRow.payment_id,
@@ -3009,25 +3019,15 @@ async function confirmPaymentFlow(){
     });
     if(cc.error)throw new Error('client_confirm: '+cc.error.message);
 
-    // 6. Récupérer notification WhatsApp admin pour invoquer Edge Function
     const {data:notifs}=await _supabaseClient
-      .from('notifications')
-      .select('id')
-      .eq('type','paiement_a_valider')
-      .eq('canal','whatsapp')
-      .eq('envoyee',false)
-      .order('created_at',{ascending:false})
-      .limit(1);
+      .from('notifications').select('id')
+      .eq('type','paiement_a_valider').eq('canal','whatsapp').eq('envoyee',false)
+      .order('created_at',{ascending:false}).limit(1);
     if(notifs&&notifs[0]){
-      _supabaseClient.functions.invoke('send_whatsapp_notif',{
-        body:{notification_id:notifs[0].id}
-      }).catch(e=>console.warn('Edge Fn warn:',e.message));
+      _supabaseClient.functions.invoke('send_whatsapp_notif',{body:{notification_id:notifs[0].id}})
+        .catch(e=>console.warn('Edge Fn:',e.message));
     }
-
-    // 7. Abonnement Realtime sur ce paiement
     subscribePaymentStatus(payRow.payment_id);
-
-    // 8. UX : passer en écran 4
     alert('Paiement en cours de vérification (généralement <30 min).\nTu recevras une notification dès validation.');
     goto(4);
 

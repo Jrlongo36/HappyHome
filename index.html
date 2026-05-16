@@ -909,6 +909,16 @@ textarea.full{min-height:60px;resize:vertical;}
   </div>
 </div>
 
+<!-- ═══════════════════════ MODAL SUCCÈS GÉNÉRIQUE (Sprint 12.6 - fix BUG#7) ═══════════════════════ -->
+<div id="success-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:350;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--card);border:2px solid var(--cg);border-radius:18px;padding:28px;max-width:420px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);">
+    <div style="font-size:56px;margin-bottom:10px;line-height:1;" id="success-icon">✓</div>
+    <div style="font-size:20px;font-weight:900;margin-bottom:10px;color:var(--cg);" id="success-title">Succès</div>
+    <div style="font-size:14px;color:var(--t2);line-height:1.55;margin-bottom:22px;white-space:pre-line;text-align:left;" id="success-msg"></div>
+    <button id="success-ok-btn" onclick="closeSuccessModal()" style="width:100%;padding:14px;border:none;background:var(--cg);color:white;font-family:inherit;font-size:14px;font-weight:800;border-radius:10px;cursor:pointer;letter-spacing:.5px;">D'ACCORD</button>
+  </div>
+</div>
+
 <!-- ═══════════════════════ ÉCRAN 6 — DEVENIR PRESTATAIRE ═══════════════════════ -->
 <section class="screen" id="s6">
   <div class="s2-hdr" style="background:rgba(0,0,0,.3);"><button class="s2-back" onclick="goto(1)">← Retour</button><div class="s2-title" style="color:white;">Devenir Prestataire</div><div class="s2-spacer"></div></div>
@@ -2050,6 +2060,24 @@ function refreshMembreBanner(){
   if(b)b.style.display=_membreActif?'flex':'none';
 }
 
+// ═══ Modal succès générique (Sprint 12.6 - fix BUG#7) ═══
+// Remplace alert() natif pour les confirmations de succès brandées HappyHome.
+// Usage : showSuccessModal('Titre', 'Message multi-ligne\nLigne 2', function(){ goto(4); }, 'OK');
+let _successModalCallback = null;
+function showSuccessModal(title, msg, callback, btnLabel){
+  document.getElementById('success-title').textContent = title || 'Succès';
+  document.getElementById('success-msg').textContent = msg || '';
+  document.getElementById('success-ok-btn').textContent = btnLabel || "D'ACCORD";
+  _successModalCallback = (typeof callback === 'function') ? callback : null;
+  document.getElementById('success-modal').style.display = 'flex';
+}
+function closeSuccessModal(){
+  document.getElementById('success-modal').style.display = 'none';
+  const cb = _successModalCallback;
+  _successModalCallback = null;
+  if(cb) try{ cb(); } catch(e){ console.warn('[HH] success modal callback err:', e); }
+}
+
 function showAuthModal(mode){
   const m = document.getElementById('auth-modal');
   if(!m){ alert('Modal auth non chargé'); return; }
@@ -3032,8 +3060,12 @@ async function confirmPaymentFlow(){
       if(error)throw new Error(error.message);
       console.log('[HH] guest_confirm_payment OK', data);
       _clearPendingPaymentStorage();
-      alert('✓ Paiement enregistré.\nVérification en cours (généralement <30 min).\nTu seras prévenu(e) sur WhatsApp.');
-      goto(4);
+      // FIX BUG#7 (Sprint 12.6) : modal succès brandée + redirection s1 (s4 vide pour invité, suivi via WhatsApp)
+      showSuccessModal(
+        'Paiement enregistré',
+        "Recherche d'un prestataire en cours (max 5 min).\nTu seras prévenu(e) sur WhatsApp dès qu'un prestataire accepte ta mission.\n\nGarde le lien de suivi reçu par WhatsApp pour suivre l'état de ta commande.",
+        function(){ goto(1); }
+      );
       return;
     }
 
@@ -3114,8 +3146,12 @@ async function confirmPaymentFlow(){
     subscribePaymentStatus(payRow.payment_id);
     
     _clearPendingPaymentStorage();
-    alert('✓ Paiement enregistré.\nVérification admin en cours (généralement <30 min).\nTu seras prévenu(e) dès validation.');
-    goto(4);
+    // FIX BUG#7 (Sprint 12.6) : modal succès brandée + goto(4) en callback (timeout 5 min uniforme)
+    showSuccessModal(
+      'Paiement enregistré',
+      "Recherche d'un prestataire en cours (max 5 min).\nTu seras prévenu(e) sur WhatsApp dès qu'un prestataire accepte ta mission.",
+      function(){ goto(4); }
+    );
 
   }catch(e){
     console.error('[HH] confirmPaymentFlow ERREUR:',e);
@@ -5089,7 +5125,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.17 · Sprint 12.5 · Cycle 1 Client robuste · 16/05/2026
+  v3.1.18 · Sprint 12.6 · Fix BUG#7 modal succès · 17/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

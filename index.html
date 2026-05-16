@@ -669,8 +669,8 @@ textarea.full{min-height:60px;resize:vertical;}
     <div class="sec">
       <div class="sec-t"><span class="num">3</span>Quand ?</div>
       <div class="date-row">
-        <div><label>Date</label><input type="date" id="cmd-date" value="2026-05-16" onchange="updateType()"></div>
-        <div><label>Heure</label><input type="time" id="cmd-time" value="14:00" onchange="updateType()"></div>
+        <div><label>Date</label><input type="date" id="cmd-date" onchange="updateType()"></div>
+        <div><label>Heure</label><input type="time" id="cmd-time" onchange="updateType()"></div>
         <div class="type-badge type-std" id="type-badge">STANDARD</div>
       </div>
     </div>
@@ -763,7 +763,7 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
     </div>
     <div class="s3-info">📱 Envoyez <strong style="color:var(--cy-text);" id="s3-info-montant">—</strong> au numéro <strong id="s3-info-num">—</strong> en indiquant la référence <strong style="font-family:monospace;color:var(--cy-text);" id="s3-info-ref">—</strong>.<br>Saisissez ensuite l'identifiant TXN ci-dessous.</div>
-    <input type="text" class="full" id="cmd-txn-id" placeholder="Identifiant TXN (ex : MP240516.1408.E12345)" style="margin-bottom:14px;">
+    <input type="text" class="full" id="cmd-txn-id" placeholder="Identifiant TXN reçu par SMS après envoi MoMo" style="margin-bottom:14px;">
     <input type="tel" class="full" id="cmd-numero-client" placeholder="Votre numéro MoMo (inscription automatique)" style="margin-bottom:14px;">
     <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;">Preuve de paiement (capture SMS) · optionnel mais recommandé</div>
     <label for="cmd-proof-file" style="display:block;padding:14px;border:1px dashed var(--cardb);border-radius:10px;background:var(--card);color:var(--t2);text-align:center;cursor:pointer;font-size:13px;margin-bottom:14px;" id="cmd-proof-lbl">📎 Choisir une image (max 5 Mo)</label>
@@ -2256,7 +2256,19 @@ async function doSignOut(){
   if(typeof goto==='function') goto(1);
 }
 
-window.addEventListener('DOMContentLoaded', () => { bootSupabase(); registerSW(); });
+window.addEventListener('DOMContentLoaded', () => {
+  bootSupabase(); registerSW();
+  // Date par défaut = maintenant + 2h pour éviter FLASH par défaut
+  const now2h = new Date(Date.now() + 2*60*60*1000);
+  const pad = n => String(n).padStart(2,'0');
+  const dateVal = now2h.getFullYear()+'-'+pad(now2h.getMonth()+1)+'-'+pad(now2h.getDate());
+  const timeVal = pad(now2h.getHours())+':'+pad(now2h.getMinutes());
+  const dInput = document.getElementById('cmd-date');
+  const tInput = document.getElementById('cmd-time');
+  if(dInput) dInput.value = dateVal;
+  if(tInput) tInput.value = timeVal;
+  if(typeof updateType === 'function') updateType();
+});
 
 function registerSW(){
   if(!('serviceWorker' in navigator))return;

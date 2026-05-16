@@ -623,7 +623,7 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
     </div>
 
-    <div class="kyc-band" id="kyc-band">
+    <div class="kyc-band" id="kyc-band" style="display:none;">
       <div class="kyc-head" onclick="toggleKyc()">
         <div class="kyc-status">
           <span class="kyc-dot" id="kyc-dot"></span>
@@ -783,6 +783,8 @@ textarea.full{min-height:60px;resize:vertical;}
     <input type="file" id="cmd-proof-file" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="onProofFileChange(this)">
     <div class="s3-cgu">En cliquant Confirmer, vous acceptez les <a href="#">CGU</a> et la <a href="#">Politique de confidentialité</a>.</div>
     <button class="s3-confirm" id="btn-confirm-payment" onclick="confirmPaymentFlow()">Confirmer le paiement</button>
+    <button id="btn-cancel-payment" style="display:none;width:100%;margin-top:10px;padding:12px;border-radius:50px;background:transparent;border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">Annuler la vérification</button>
+    <button onclick="if(confirm('Annuler le paiement et revenir à la commande ?\\nTa mission sera supprimée.')) cancelMissionAndReturn()" style="width:100%;margin-top:10px;padding:10px;border-radius:50px;background:transparent;border:1px solid rgba(244,67,54,.3);color:var(--cr);font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;">← Pas encore payé ? Revenir à la commande</button>
   </div>
 </section>
 
@@ -2217,6 +2219,11 @@ function goto(n){
   document.querySelectorAll('.mockbar-btn[data-s]').forEach(b=>b.classList.toggle('on',+b.dataset.s===n));
   window.scrollTo(0,0);
   // Hooks chargement async par écran
+  if(n===2 && _currentUser) checkOrphanMission();
+  if(n===3 && !_currentMission){
+    // Garde-fou : on n'arrive jamais sur s3 sans mission. Tentative de reprise puis redirection s2 si échec.
+    tryRecoverMissionFromStorage().then(ok=>{ if(!ok){alert('Aucune mission en cours. Recommence ta commande.');goto(2);} });
+  }
   if(n===4)loadActiveMissionForClient();
   if(n===8)setAdminTab('dash');
   if(n===10)loadKycQuartiers();
@@ -2312,8 +2319,53 @@ async function submitKycClient(){
   }
 }
 
+// ── Annuler mission depuis s3 (retour vers s2) ──
+async function cancelMissionAndReturn(){
+  if(_currentMission && _currentMission.mission_id && _currentUser){
+    try{
+      // Tentative : annuler en DB (status → annulee). Si RPC dédiée existe, l'utiliser sinon UPDATE direct via RLS owner
+      await _supabaseClient.from('missions').update({status:'annulee', updated_at:new Date().toISOString()})
+        .eq('id', _currentMission.mission_id).eq('status','creee');
+    }catch(e){console.warn('cancel mission fail:',e.message);}
+  }
+  _clearPendingPaymentStorage();
+  _currentMission=null; _currentPayment=null;
+  goto(2);
+}
+
+// ── Proposition de reprise mission au chargement de s2 (si on revient avec mission orpheline) ──
+async function checkOrphanMission(){
+  if(!_currentUser || !_supabaseClient) return;
+  try{
+    const {data}=await _supabaseClient.from('missions')
+      .select('id,reference,prix_total,type_mission,status,created_at,service_id')
+      .eq('client_id',_currentUser.id)
+      .eq('status','creee')
+      .gte('created_at', new Date(Date.now()-60*60*1000).toISOString())
+      .order('created_at',{ascending:false}).limit(1).maybeSingle();
+    if(data){
+      const minAgo = Math.round((Date.now()-new Date(data.created_at).getTime())/60000);
+      if(confirm('⏸ Reprendre ta mission ' + data.reference + ' (' + (data.prix_total||0).toLocaleString('fr-FR') + ' FCFA) créée il y a ' + minAgo + ' min ?\n\nOK = aller au paiement\nAnnuler = supprimer la mission et recommencer')){
+        _currentMission={mission_id:data.id, reference:data.reference, prix_total:data.prix_total, type_mission:data.type_mission, status:data.status};
+        // Pré-remplir s3
+        const sv=SERVICES[data.service_id]||{nm:data.service_id};
+        document.getElementById('s3-ref').textContent=data.reference;
+        document.getElementById('s3-service').textContent=sv.nm;
+        document.getElementById('s3-tot').textContent=(data.prix_total||0).toLocaleString('fr-FR')+' FCFA';
+        document.getElementById('s3-info-montant').textContent=(data.prix_total||0).toLocaleString('fr-FR')+' FCFA';
+        document.getElementById('s3-info-ref').textContent=data.reference;
+        goto(3);
+      } else {
+        // Annulation explicite
+        await _supabaseClient.from('missions').update({status:'annulee'}).eq('id',data.id);
+      }
+    }
+  }catch(e){console.warn('checkOrphanMission fail:',e.message);}
+}
+
 async function loadKycClientStatus(){
   if(!_supabaseClient || !_currentUser) return;
+  const band = document.getElementById('kyc-band');
   const { data, error } = await _supabaseClient
     .from('kyc_client').select('*').eq('client_id', _currentUser.id).maybeSingle();
 
@@ -2322,11 +2374,14 @@ async function loadKycClientStatus(){
   const statusTxt = document.getElementById('kyc-status-txt');
   const motifBox = document.getElementById('kyc-motif-rejet');
   const btn = document.getElementById('kyc-submit-btn');
-  if(!dot || !label) return;
+  if(!dot || !label || !band) return;
 
   if(!data){
+    // Non démarré : bande visible mais repliée. Pas d'urgence — le client peut commander sans.
+    band.style.display = 'block';
+    band.classList.remove('open');
     dot.classList.remove('ok');
-    label.textContent = 'KYC non validé · Compléter pour commander';
+    label.textContent = 'KYC optionnel · Renforce ta sécurité';
     if(statusTxt) statusTxt.value = 'Non soumis';
     return;
   }
@@ -2334,16 +2389,22 @@ async function loadKycClientStatus(){
   if(statusTxt) statusTxt.value = data.status;
 
   if(data.status === 'valide'){
-    dot.classList.add('ok');
-    label.textContent = 'KYC validé ✓ · Vous pouvez commander';
-    if(btn){ btn.style.display = 'none'; }
-    if(motifBox) motifBox.style.display = 'none';
-  } else if(data.status === 'en_attente' || data.status === 'en_cours'){
+    // KYC validé : on cache complètement la bande (rien à faire pour le client)
+    band.style.display = 'none';
+    return;
+  }
+  
+  // Sinon : bande visible
+  band.style.display = 'block';
+
+  if(data.status === 'en_attente' || data.status === 'en_cours'){
+    band.classList.remove('open');
     dot.classList.remove('ok');
     label.textContent = 'KYC en cours · Vérification 24-48h';
     if(btn){ btn.disabled = true; btn.textContent = 'Dossier en cours d\'analyse'; }
     if(motifBox) motifBox.style.display = 'none';
   } else if(data.status === 'rejete'){
+    band.classList.add('open'); // ouvert car action requise
     dot.classList.remove('ok');
     label.textContent = 'KYC refusé · Resoumettre dossier';
     if(motifBox && data.motif_rejet){
@@ -2916,76 +2977,209 @@ async function uploadProof(paymentId){
 }
 
 async function confirmPaymentFlow(){
-  if(!_currentMission||!_currentMission.mission_id){alert('Aucune mission en cours. Recommence la commande.');goto(2);return;}
+  // ── 0. PRÉ-CHECKS ─────────────────────────────────────────
+  if(!_currentMission||!_currentMission.mission_id){
+    // Tentative de reprise depuis localStorage si jamais on a perdu _currentMission
+    const recovered = await tryRecoverMissionFromStorage();
+    if(!recovered){
+      alert('Aucune mission en cours. Recommence la commande.');
+      goto(2);return;
+    }
+  }
   const txnId=(document.getElementById('cmd-txn-id').value||'').trim();
-  const numClient=(document.getElementById('cmd-numero-client').value||'').trim();
-  if(numClient.length<9){alert('Saisis ton numéro MoMo complet (9 chiffres min).');document.getElementById('cmd-numero-client').focus();return;}
+  const numClient=(document.getElementById('cmd-numero-client').value||'').trim().replace(/\s+/g,'');
+  if(numClient.replace(/\D/g,'').length<9){alert('Saisis ton numéro MoMo complet (9 chiffres min).');document.getElementById('cmd-numero-client').focus();return;}
   if(txnId.length<5){alert('Saisis l\'identifiant TXN reçu après envoi MoMo (min 5 caractères).');document.getElementById('cmd-txn-id').focus();return;}
 
-  const btn=document.getElementById('btn-confirm-payment');const oldTxt=btn.textContent;
-  btn.textContent='Vérification...';btn.disabled=true;
+  const btn=document.getElementById('btn-confirm-payment');
+  const oldTxt=btn.textContent;
+  const cancelBtn=document.getElementById('btn-cancel-payment');
+  let aborted=false;
+  
+  // ── 1. UI : passage en mode "Vérification" + bouton annuler visible ─────
+  btn.disabled=true;
+  btn.textContent='⏳ Étape 1/3 — Enregistrement...';
+  if(cancelBtn){
+    cancelBtn.style.display='block';
+    cancelBtn.onclick=function(){
+      aborted=true;
+      btn.disabled=false; btn.textContent=oldTxt;
+      cancelBtn.style.display='none';
+      console.warn('[HH] Paiement annulé par utilisateur');
+    };
+  }
+
+  // Helper : timeout sur n'importe quelle promise
+  const withTimeout = (p, ms, label) => Promise.race([
+    p,
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timeout après '+(ms/1000)+'s — '+label+'. Réseau lent ?')), ms))
+  ]);
 
   try{
-    // ── FLOW INVITÉ (sans compte) ──────────────────────────────
+    // ── 2. FLOW INVITÉ ────────────────────────────────────────
     if(!_currentUser && _currentMission.guest_token){
-      const {data,error}=await _supabaseClient.rpc('guest_confirm_payment',{
-        p_token:_currentMission.guest_token,
-        p_transaction_id:txnId,
-        p_screenshot_url:null
-      });
+      console.log('[HH] confirmPaymentFlow INVITÉ start');
+      const {data,error}=await withTimeout(
+        _supabaseClient.rpc('guest_confirm_payment',{
+          p_token:_currentMission.guest_token,
+          p_transaction_id:txnId,
+          p_screenshot_url:null
+        }), 20000, 'guest_confirm_payment'
+      );
+      if(aborted) return;
       if(error)throw new Error(error.message);
-      alert('Paiement enregistré. Vérification en cours (<30 min).\nVous recevrez un message WhatsApp dès validation.');
+      console.log('[HH] guest_confirm_payment OK', data);
+      _clearPendingPaymentStorage();
+      alert('✓ Paiement enregistré.\nVérification en cours (généralement <30 min).\nTu seras prévenu(e) sur WhatsApp.');
       goto(4);
       return;
     }
 
-    // ── FLOW CONNECTÉ (presta / membre) ───────────────────────
+    // ── 3. FLOW CONNECTÉ ──────────────────────────────────────
     if(!_currentUser){showAuthModal('signin');return;}
     const provider=_cmd.provider||'manual_om';
+    console.log('[HH] confirmPaymentFlow CONNECTÉ start · mission=',_currentMission.mission_id,'provider=',provider);
 
-    const sp=await _supabaseClient.rpc('submit_payment',{
-      p_mission_id:_currentMission.mission_id,
-      p_provider:provider
-    });
-    if(sp.error)throw new Error('submit_payment: '+sp.error.message);
-    const payRow=Array.isArray(sp.data)?sp.data[0]:sp.data;
-    if(!payRow||!payRow.payment_id)throw new Error('Réponse invalide submit_payment');
+    // 3a. submit_payment (crée le record payments)
+    let payRow = _resumePaymentRow(); // si on a déjà submit avant un crash
+    if(!payRow){
+      const sp=await withTimeout(
+        _supabaseClient.rpc('submit_payment',{
+          p_mission_id:_currentMission.mission_id,
+          p_provider:provider
+        }), 15000, 'submit_payment'
+      );
+      if(aborted) return;
+      if(sp.error)throw new Error('submit_payment: '+sp.error.message);
+      payRow=Array.isArray(sp.data)?sp.data[0]:sp.data;
+      if(!payRow||!payRow.payment_id)throw new Error('Réponse invalide submit_payment');
+      // Persiste pour reprise si l'utilisateur quitte avant la fin
+      try{
+        localStorage.setItem('hh_pending_payment', JSON.stringify({
+          payment_id: payRow.payment_id,
+          mission_id: _currentMission.mission_id,
+          reference: _currentMission.reference,
+          ts: Date.now()
+        }));
+      }catch(e){console.warn('localStorage pending fail',e);}
+      console.log('[HH] submit_payment OK', payRow);
+    } else {
+      console.log('[HH] submit_payment skipped (reprise)', payRow);
+    }
     _currentPayment=payRow;
 
+    // 3b. Upload preuve (optionnel, ne bloque pas si échoue)
     let proofPath=null;
     if(_proofFile){
-      btn.textContent='Envoi preuve...';
-      try{ proofPath=await uploadProof(payRow.payment_id); }
-      catch(upErr){ console.warn('upload preuve échec:',upErr.message); }
+      btn.textContent='⏳ Étape 2/3 — Envoi preuve...';
+      try{
+        proofPath=await withTimeout(uploadProof(payRow.payment_id), 30000, 'upload preuve');
+        console.log('[HH] preuve uploadée:', proofPath);
+      } catch(upErr){
+        console.warn('[HH] upload preuve échec, on continue:',upErr.message);
+        // On continue quand même, la preuve est optionnelle
+      }
     }
+    if(aborted) return;
 
-    btn.textContent='Confirmation...';
-    const cc=await _supabaseClient.rpc('client_confirm_payment_sent',{
-      p_payment_id:payRow.payment_id,
-      p_numero_client:numClient,
-      p_transaction_id:txnId,
-      p_proof_storage_path:proofPath
-    });
+    // 3c. client_confirm_payment_sent (déclenche matching)
+    btn.textContent='⏳ Étape 3/3 — Confirmation...';
+    const cc=await withTimeout(
+      _supabaseClient.rpc('client_confirm_payment_sent',{
+        p_payment_id:payRow.payment_id,
+        p_numero_client:numClient,
+        p_transaction_id:txnId,
+        p_proof_storage_path:proofPath
+      }), 15000, 'client_confirm_payment_sent'
+    );
+    if(aborted) return;
     if(cc.error)throw new Error('client_confirm: '+cc.error.message);
+    console.log('[HH] client_confirm OK');
 
-    const {data:notifs}=await _supabaseClient
-      .from('notifications').select('id')
-      .eq('type','paiement_a_valider').eq('canal','whatsapp').eq('envoyee',false)
-      .order('created_at',{ascending:false}).limit(1);
-    if(notifs&&notifs[0]){
-      _supabaseClient.functions.invoke('send_whatsapp_notif',{body:{notification_id:notifs[0].id}})
-        .catch(e=>console.warn('Edge Fn:',e.message));
-    }
+    // 3d. Notif WhatsApp admin (non bloquant)
+    try{
+      const {data:notifs}=await _supabaseClient
+        .from('notifications').select('id')
+        .eq('type','paiement_a_valider').eq('canal','whatsapp').eq('envoyee',false)
+        .order('created_at',{ascending:false}).limit(1);
+      if(notifs&&notifs[0]){
+        _supabaseClient.functions.invoke('send_whatsapp_notif',{body:{notification_id:notifs[0].id}})
+          .catch(e=>console.warn('Edge Fn send_whatsapp:',e.message));
+      }
+    }catch(e){console.warn('[HH] notif WhatsApp lookup fail:',e.message);}
+    
+    // 3e. Realtime listener pour mises à jour
     subscribePaymentStatus(payRow.payment_id);
-    alert('Paiement en cours de vérification (généralement <30 min).\nTu recevras une notification dès validation.');
+    
+    _clearPendingPaymentStorage();
+    alert('✓ Paiement enregistré.\nVérification admin en cours (généralement <30 min).\nTu seras prévenu(e) dès validation.');
     goto(4);
 
   }catch(e){
-    alert('Erreur paiement : '+e.message);
-    console.error('confirmPaymentFlow:',e);
+    console.error('[HH] confirmPaymentFlow ERREUR:',e);
+    // Affichage erreur claire dans l'UI au lieu d'alert seul (au cas où alert bloqué)
+    const errMsg = e.message || 'Erreur inconnue';
+    alert('❌ Erreur paiement :\n\n' + errMsg + '\n\nTon paiement MoMo n\'a PAS été perdu — ta mission est sauvegardée. Réessaye dans 1 minute ou contacte le support WhatsApp.');
   }finally{
-    btn.textContent=oldTxt;btn.disabled=false;
+    if(cancelBtn) cancelBtn.style.display='none';
+    btn.textContent=oldTxt;
+    btn.disabled=false;
   }
+}
+
+// ── Helpers de reprise / persistance paiement ──
+function _resumePaymentRow(){
+  try{
+    const raw=localStorage.getItem('hh_pending_payment');
+    if(!raw)return null;
+    const obj=JSON.parse(raw);
+    // Validité 1h
+    if(Date.now()-obj.ts>60*60*1000){_clearPendingPaymentStorage();return null;}
+    // Doit correspondre à la mission courante
+    if(_currentMission && obj.mission_id===_currentMission.mission_id){
+      console.log('[HH] Reprise paiement depuis localStorage:', obj);
+      return {payment_id:obj.payment_id, reference_paiement:'(reprise)', montant:0, numero_receveur:''};
+    }
+  }catch(e){}
+  return null;
+}
+
+function _clearPendingPaymentStorage(){
+  try{localStorage.removeItem('hh_pending_payment');}catch(e){}
+}
+
+async function tryRecoverMissionFromStorage(){
+  // Si l'utilisateur revient sur s3 sans _currentMission, essaie de retrouver une mission "creee" récente
+  if(!_supabaseClient) return false;
+  
+  // 1) Si connecté : chercher dans Supabase
+  if(_currentUser){
+    try{
+      const {data}=await _supabaseClient.from('missions')
+        .select('id,reference,prix_total,type_mission,status,service_id')
+        .eq('client_id',_currentUser.id)
+        .eq('status','creee')
+        .gte('created_at', new Date(Date.now()-60*60*1000).toISOString())
+        .order('created_at',{ascending:false}).limit(1).maybeSingle();
+      if(data){
+        _currentMission={mission_id:data.id, reference:data.reference, prix_total:data.prix_total, type_mission:data.type_mission, status:data.status};
+        console.log('[HH] Mission reprise depuis Supabase:', data.reference);
+        return true;
+      }
+    }catch(e){console.warn('recover fail',e);}
+  }
+  // 2) Sinon : chercher dans localStorage (guest_tokens)
+  try{
+    const tokens=JSON.parse(localStorage.getItem('hh_guest_tokens')||'[]');
+    if(tokens.length){
+      const t=tokens[0];
+      if(Date.now()-t.ts<60*60*1000){
+        _currentMission={mission_id:'?', reference:t.ref, guest_token:t.token};
+        return true;
+      }
+    }
+  }catch(e){}
+  return false;
 }
 
 function subscribePaymentStatus(paymentId){
@@ -3624,20 +3818,20 @@ async function loadDashAdmin(){
 
     // 6 KPIs parallèles
     const [r1,r2,r3,r4,r5,r6] = await Promise.all([
-      _supabaseClient.from('missions').select('id',{count:'exact',head:true}).in('statut',['recherche_presta','attribuee','en_route','en_cours']),
+      _supabaseClient.from('missions').select('id',{count:'exact',head:true}).in('status', ['payee_recherche','presta_assigne','en_cours']),
       _supabaseClient.from('kyc_presta').select('presta_id',{count:'exact',head:true}).in('status',['en_attente','en_cours']),
-      _supabaseClient.from('missions').select('id',{count:'exact',head:true}).eq('statut','litige'),
-      _supabaseClient.from('missions').select('id,montant_total').eq('statut','terminee').gte('created_at',startToday),
-      _supabaseClient.from('missions').select('id,montant_total').eq('statut','terminee').gte('created_at',startMonth),
-      _supabaseClient.from('subscriptions').select('id',{count:'exact',head:true}).eq('statut','actif')
+      _supabaseClient.from('litiges').select('id',{count:'exact',head:true}).eq('status', 'ouvert'),
+      _supabaseClient.from('missions').select('id,prix_total').in('status', ['validee','cloturee']).gte('created_at',startToday),
+      _supabaseClient.from('missions').select('id,prix_total').in('status', ['validee','cloturee']).gte('created_at',startMonth),
+      _supabaseClient.from('subscriptions').select('id',{count:'exact',head:true}).eq('status', 'active')
     ]);
     const missionsActives = r1.count || 0;
     const kycAttente = r2.count || 0;
     const litiges = r3.count || 0;
     const jourRows = r4.data || [];
-    const caJour = jourRows.reduce((s,m)=>s+(Number(m.montant_total)||0),0);
+    const caJour = jourRows.reduce((s,m)=>s+(Number(m.prix_total)||0),0);
     const moisRows = r5.data || [];
-    const caMois = moisRows.reduce((s,m)=>s+(Number(m.montant_total)||0),0);
+    const caMois = moisRows.reduce((s,m)=>s+(Number(m.prix_total)||0),0);
     const membres = r6.count || 0;
 
     document.getElementById('dash-kpis').innerHTML = `
@@ -3652,7 +3846,7 @@ async function loadDashAdmin(){
     // Dernières actions (5 dernières missions tous statuts)
     const {data:recent} = await _supabaseClient
       .from('missions')
-      .select('id,reference,statut,created_at,montant_total')
+      .select('id,reference,status,created_at,prix_total')
       .order('created_at',{ascending:false})
       .limit(6);
     const actEl = document.getElementById('dash-actions');
@@ -3661,7 +3855,7 @@ async function loadDashAdmin(){
     } else {
       actEl.innerHTML = recent.map(m=>{
         const t = new Date(m.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-        return `• ${t} · Mission <strong>${_esc(m.reference||m.id.slice(0,8))}</strong> · ${_esc(m.statut)} · ${_fmt(m.montant_total)} FCFA`;
+        return `• ${t} · Mission <strong>${_esc(m.reference||m.id.slice(0,8))}</strong> · ${_esc(m.status)} · ${_fmt(m.prix_total)} FCFA`;
       }).join('<br>');
     }
 
@@ -3713,18 +3907,18 @@ async function loadPrestaAdmin(){
     let stats = {};
     if(ids.length){
       const [{data:kyc},{data:miss}] = await Promise.all([
-        _supabaseClient.from('kyc_presta').select('presta_id,status').in('presta_id',ids),
-        _supabaseClient.from('missions').select('presta_id,statut,montant_total').in('presta_id',ids)
+        _supabaseClient.from('kyc_presta').select('presta_id,status').in('prestataire_id',ids),
+        _supabaseClient.from('missions').select('prestataire_id,status,prix_total').in('prestataire_id',ids)
       ]);
       (kyc||[]).forEach(k=>{ kycMap[k.presta_id]=k.status; });
       const now = new Date();
       const startMonth = new Date(now.getFullYear(),now.getMonth(),1).toISOString();
       (miss||[]).forEach(m=>{
-        if(!m.presta_id) return;
-        stats[m.presta_id] = stats[m.presta_id] || {total:0,gains:0};
-        if(m.statut==='terminee'){
-          stats[m.presta_id].total++;
-          if(m.montant_total) stats[m.presta_id].gains += (Number(m.montant_total)||0)*0.80;
+        if(!m.prestataire_id) return;
+        stats[m.prestataire_id] = stats[m.prestataire_id] || {total:0,gains:0};
+        if(m.status==='validee' || m.status==='cloturee'){
+          stats[m.prestataire_id].total++;
+          if(m.prix_total) stats[m.prestataire_id].gains += (Number(m.prix_total)||0)*0.80;
         }
       });
     }
@@ -3794,16 +3988,16 @@ async function loadClientsAdmin(){
     let stats = {};
     if(ids.length){
       const [{data:subs},{data:miss}] = await Promise.all([
-        _supabaseClient.from('subscriptions').select('user_id,statut').in('user_id',ids).eq('statut','actif'),
-        _supabaseClient.from('missions').select('client_id,statut,montant_total').in('client_id',ids)
+        _supabaseClient.from('subscriptions').select('user_id,status').in('user_id',ids).eq('status', 'active'),
+        _supabaseClient.from('missions').select('client_id,status,prix_total').in('client_id',ids)
       ]);
       (subs||[]).forEach(s=>{ subMap[s.user_id]=true; });
       (miss||[]).forEach(m=>{
         if(!m.client_id) return;
         stats[m.client_id] = stats[m.client_id] || {total:0,depenses:0};
-        if(m.statut==='terminee'){
+        if(m.status==='terminee'){
           stats[m.client_id].total++;
-          stats[m.client_id].depenses += Number(m.montant_total)||0;
+          stats[m.client_id].depenses += Number(m.prix_total)||0;
         }
       });
     }
@@ -3865,18 +4059,18 @@ async function loadComptaAdmin(){
     document.getElementById('compta-title').textContent = `Comptabilité · ${moisLabel.charAt(0).toUpperCase()+moisLabel.slice(1)}`;
 
     const [{data:terminees},{data:payments},{data:litiges}] = await Promise.all([
-      _supabaseClient.from('missions').select('id,statut,montant_total,provider,created_at').gte('created_at',startMonth),
+      _supabaseClient.from('missions').select('id,status,prix_total,created_at').gte('created_at',startMonth),
       _supabaseClient.from('payments').select('status,montant,provider,client_confirme_le').gte('client_confirme_le',startToday),
-      _supabaseClient.from('missions').select('id,montant_total').eq('statut','litige')
+      _supabaseClient.from('litiges').select('id,mission_id,missions:missions!litiges_mission_id_fkey(prix_total)').eq('status', 'ouvert')
     ]);
 
-    const term = (terminees||[]).filter(m=>m.statut==='terminee');
-    const caBrut = term.reduce((s,m)=>s+(Number(m.montant_total)||0),0);
+    const term = (terminees||[]).filter(m=>['validee','cloturee'].includes(m.status));
+    const caBrut = term.reduce((s,m)=>s+(Number(m.prix_total)||0),0);
     const commissionHH = Math.round(caBrut * 0.20 / 1.20);  // 20% commission incluse dans prix
     const aPayerPresta = caBrut - commissionHH;
-    const enAttente = (terminees||[]).filter(m=>['recherche_presta','attribuee','en_route','en_cours'].includes(m.statut))
-                                     .reduce((s,m)=>s+(Number(m.montant_total)||0),0);
-    const litigesBloque = (litiges||[]).reduce((s,m)=>s+(Number(m.montant_total)||0),0);
+    const enAttente = (terminees||[]).filter(m=>['payee_recherche','presta_assigne','en_cours','terminee'].includes(m.status))
+                                     .reduce((s,m)=>s+(Number(m.prix_total)||0),0);
+    const litigesBloque = (litiges||[]).reduce((s,l)=>s+(Number(l.missions?.prix_total)||0),0);
     const margeNette = commissionHH - Math.round(caBrut*0.03);  // -3% frais paiement
 
     document.getElementById('compta-kpis').innerHTML = `
@@ -3920,7 +4114,7 @@ async function loadComptaAdmin(){
 
     // Répartition par statut
     const statutCounts = {};
-    (terminees||[]).forEach(m=>{ statutCounts[m.statut]=(statutCounts[m.statut]||0)+1; });
+    (terminees||[]).forEach(m=>{ statutCounts[m.status]=(statutCounts[m.status]||0)+1; });
     const statEl = document.getElementById('compta-statuts');
     const entries = Object.entries(statutCounts);
     if(!entries.length){
@@ -3940,11 +4134,11 @@ async function loadComptaAdmin(){
 async function loadLitigesAdmin(){
   if(!_adminCheckAccess('litiges-list')) return;
   try {
-    // Étape 1 : missions en litige (sans embed FK qui peut échouer)
+    // Étape 1 : litiges depuis table litiges (avec join missions)
     const {data:litiges, error} = await _supabaseClient
-      .from('missions')
-      .select('id,reference,montant_total,adresse_complete,created_at,client_id,presta_id,motif_litige')
-      .eq('statut','litige')
+      .from('litiges')
+      .select('id,mission_id,motif,description,status,created_at,missions:missions!litiges_mission_id_fkey(id,reference,prix_total,adresse_complete,client_id,prestataire_id)')
+      .eq('status', 'ouvert')
       .order('created_at',{ascending:true});
     if(error) throw error;
 
@@ -3960,8 +4154,8 @@ async function loadLitigesAdmin(){
 
     // Étape 2 : lookup manuel des profils client + presta (évite la dépendance FK)
     const userIds = [...new Set([
-      ...litiges.map(m=>m.client_id).filter(Boolean),
-      ...litiges.map(m=>m.presta_id).filter(Boolean)
+      ...litiges.map(l=>l.missions?.client_id).filter(Boolean),
+      ...litiges.map(l=>l.missions?.prestataire_id).filter(Boolean)
     ])];
     let profMap = {};
     if(userIds.length){
@@ -3972,26 +4166,28 @@ async function loadLitigesAdmin(){
       (profs||[]).forEach(p=>{ profMap[p.id]=p; });
     }
 
-    el.innerHTML = litiges.map(m=>{
+    el.innerHTML = litiges.map(l=>{
+      const m = l.missions || {};
       const cl = profMap[m.client_id] || {};
-      const pr = profMap[m.presta_id] || {};
+      const pr = profMap[m.prestataire_id] || {};
       const clNom = `${_esc(cl.prenom||'')} ${_esc(cl.nom||'')}`.trim() || '(client inconnu)';
       const prNom = `${_esc(pr.prenom||'')} ${_esc(pr.nom||'')}`.trim() || '(presta inconnu)';
       return `<div class="s7-card" style="border-color:rgba(244,67,54,.3);background:rgba(244,67,54,.04);border-left:4px solid var(--cr);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-          <div style="font-weight:900;font-size:16px;">Mission ${_esc(m.reference||m.id.slice(0,8))} · ${clNom} vs ${prNom}</div>
+          <div style="font-weight:900;font-size:16px;">Mission ${_esc(m.reference||(m.id||'').slice(0,8))} · ${clNom} vs ${prNom}</div>
           <span class="ad-pill red">LITIGE</span>
         </div>
         <div style="font-size:13px;color:var(--t2);margin-bottom:14px;line-height:1.6;">
-          <strong>Motif</strong> : ${_esc(m.motif_litige||'Non précisé')}<br>
+          <strong>Motif</strong> : ${_esc(l.motif||'Non précisé')}<br>
+          <strong>Description</strong> : ${_esc(l.description||'—')}<br>
           <strong>Adresse</strong> : ${_esc(m.adresse_complete||'—')}<br>
-          <strong>Montant escrow bloqué</strong> : ${_fmt(m.montant_total)} FCFA<br>
-          <strong>Ouvert le</strong> : ${_fmtDateTime(m.created_at)}
+          <strong>Montant escrow bloqué</strong> : ${_fmt(m.prix_total)} FCFA<br>
+          <strong>Ouvert le</strong> : ${_fmtDateTime(l.created_at)}
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="ad-btn" style="background:var(--cg);color:#fff;border:none;" onclick="resolveLitigeAdmin('${m.id}','presta',${m.montant_total||0})">Libérer presta (${_fmt(m.montant_total)})</button>
-          <button class="ad-btn" style="background:var(--co);color:#fff;border:none;" onclick="resolveLitigeAdmin('${m.id}','client',${m.montant_total||0})">Refund client (${_fmt(m.montant_total)})</button>
-          <button class="ad-btn" style="background:var(--cy);color:#1a1a1a;border:none;" onclick="resolveLitigeAdmin('${m.id}','split',${m.montant_total||0})">Partager 50/50</button>
+          <button class="ad-btn" style="background:var(--cg);color:#fff;border:none;" onclick="resolveLitigeAdmin('${m.id}','presta',${m.prix_total||0})">Libérer presta (${_fmt(m.prix_total)})</button>
+          <button class="ad-btn" style="background:var(--co);color:#fff;border:none;" onclick="resolveLitigeAdmin('${m.id}','client',${m.prix_total||0})">Refund client (${_fmt(m.prix_total)})</button>
+          <button class="ad-btn" style="background:var(--cy);color:#1a1a1a;border:none;" onclick="resolveLitigeAdmin('${m.id}','split',${m.prix_total||0})">Partager 50/50</button>
           <button class="ad-btn" onclick="alert('Client : ${_esc(cl.telephone||'—')}')">Contacter client</button>
           <button class="ad-btn" onclick="alert('Presta : ${_esc(pr.telephone||'—')}')">Contacter presta</button>
         </div>
@@ -4888,7 +5084,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.15 · Sprint 12.2 · Pricing sync + Histo paiements · 16/05/2026
+  v3.1.16 · Sprint 12.3 · Cycle 1 Client robuste · 16/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

@@ -706,6 +706,24 @@ textarea.full{min-height:60px;resize:vertical;}
       <textarea class="full" placeholder="Animaux, allergies, accès difficile..."></textarea>
     </div>
 
+    <div class="sec" id="sec-coordonnees">
+      <div class="sec-t"><span class="num">7</span>Vos coordonnées</div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.5;">
+        Pas besoin de créer un compte. Votre nom doit correspondre exactement à celui de votre carte d'identité (CNI) liée à votre Mobile Money pour valider le paiement.
+      </div>
+      <input type="text" class="full" id="cmd-nom" placeholder="Nom complet (comme sur la CNI)" style="margin-bottom:10px;" required>
+      <input type="tel" class="full" id="cmd-whatsapp" placeholder="Numéro WhatsApp (ex: 6 99 12 34 56)" style="margin-bottom:10px;" inputmode="tel" required>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;">
+        <select class="full" id="cmd-momo-op" required>
+          <option value="">Opérateur MoMo</option>
+          <option value="orange">Orange Money</option>
+          <option value="mtn">MTN MoMo</option>
+        </select>
+        <input type="tel" class="full" id="cmd-momo-num" placeholder="Numéro MoMo" inputmode="tel" required>
+      </div>
+      <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.4;">Vous recevrez le lien de suivi de votre mission directement sur WhatsApp.</div>
+    </div>
+
   </div>
 
   <div class="sticky-bot">
@@ -2147,6 +2165,37 @@ function showAuthMsg(type, text){
   m.style.background=bg; m.style.color=fg; m.style.border='1px solid '+fg+'4D';
 }
 
+// Validation force mot de passe (compense l'absence de Leaked Password Protection sur plan Free)
+function hhValidatePwd(pwd){
+  if(!pwd || pwd.length < 8) return { ok:false, msg:'Mot de passe : 8 caractères minimum.' };
+  if(!/[a-z]/.test(pwd)) return { ok:false, msg:'Mot de passe : ajoutez 1 lettre minuscule.' };
+  if(!/[A-Z]/.test(pwd)) return { ok:false, msg:'Mot de passe : ajoutez 1 lettre majuscule.' };
+  if(!/\d/.test(pwd)) return { ok:false, msg:'Mot de passe : ajoutez 1 chiffre.' };
+  if(!/[^\w\s]/.test(pwd)) return { ok:false, msg:'Mot de passe : ajoutez 1 caractère spécial (! @ # ? etc.).' };
+  // Refuser mots de passe trop évidents
+  const faibles = ['password','motdepasse','123456','azerty','qwerty','admin','happyhome'];
+  const low = pwd.toLowerCase();
+  if(faibles.some(f => low.includes(f))) return { ok:false, msg:'Mot de passe trop facile à deviner. Choisissez autre chose.' };
+  return { ok:true };
+}
+
+// Indicateur de force live (sous l'input)
+function hhCheckPwd(input){
+  const box = document.getElementById('auth-pwd-strength');
+  if(!box) return;
+  const pwd = input.value;
+  if(!pwd){ box.style.display='none'; return; }
+  box.style.display='block';
+  const v = hhValidatePwd(pwd);
+  if(v.ok){
+    box.textContent = '✓ Mot de passe solide';
+    box.style.color = '#4caf50';
+  } else {
+    box.textContent = v.msg;
+    box.style.color = '#FFC107';
+  }
+}
+
 async function handleAuth(event){
   event.preventDefault();
   if(!_supabaseClient){ showAuthMsg('error','Supabase non initialisé'); return; }
@@ -2154,6 +2203,14 @@ async function handleAuth(event){
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
   const btn = document.getElementById('auth-submit');
+  // Validation force mot de passe (UNIQUEMENT à l'inscription)
+  if(isSignup){
+    const pwdCheck = hhValidatePwd(password);
+    if(!pwdCheck.ok){
+      showAuthMsg('error', pwdCheck.msg);
+      return;
+    }
+  }
   btn.disabled = true; btn.textContent = '...';
   try {
     if(isSignup){
@@ -2509,59 +2566,88 @@ async function loadQuartiers(){
 }
 
 async function submitMissionOnly(){
-  // 1. Auth check
-  if(!_currentUser){showAuthModal('signin');showAuthMsg('warn','Connecte-toi pour valider ta commande.');return;}
-  // 2. Lire valeurs formulaire
+  // 1. Lire valeurs formulaire
   const quartier=document.getElementById('cmd-quartier').value;
   const lieudit=(document.getElementById('cmd-lieudit').value||'').trim();
   const adresse=(document.getElementById('cmd-adresse').value||'').trim();
   const dateStr=document.getElementById('cmd-date').value;
   const timeStr=document.getElementById('cmd-time').value;
-  // 3. Validation côté client
+  const nom=(document.getElementById('cmd-nom')?.value||'').trim();
+  const whatsapp=(document.getElementById('cmd-whatsapp')?.value||'').replace(/\s+/g,'');
+  const momoOp=document.getElementById('cmd-momo-op')?.value||'';
+  const momoNum=(document.getElementById('cmd-momo-num')?.value||'').replace(/\s+/g,'');
+
+  // 2. Validation côté client
   if(!quartier){alert('Choisis un quartier.');return;}
   const hasLieudit=lieudit.length>=3;
   const hasAdresse=adresse.length>=5;
   if(!hasLieudit&&!hasAdresse){
     alert('Lieu-dit OU adresse exacte requis.\n\n• Lieu-dit : min 3 caractères (carrefour, repère)\n• Adresse exacte : min 5 caractères\n\nLe prestataire ne peut pas te trouver sans cela (pas de GPS).');
-    document.getElementById(hasLieudit?'cmd-adresse':'cmd-lieudit').focus();
-    return;
+    document.getElementById(hasLieudit?'cmd-adresse':'cmd-lieudit').focus();return;
   }
   if(!dateStr||!timeStr){alert('Choisis une date et une heure.');return;}
+
+  // 3. Validation coordonnées invité (si pas connecté)
+  if(!_currentUser){
+    if(nom.length<2){alert('Entre ton nom complet (comme sur la CNI).');document.getElementById('cmd-nom')?.focus();return;}
+    if(whatsapp.replace(/\D/g,'').length<9){alert('Numéro WhatsApp invalide.');document.getElementById('cmd-whatsapp')?.focus();return;}
+    if(!momoOp){alert('Choisis ton opérateur Mobile Money.');document.getElementById('cmd-momo-op')?.focus();return;}
+    if(momoNum.replace(/\D/g,'').length<9){alert('Numéro Mobile Money invalide.');document.getElementById('cmd-momo-num')?.focus();return;}
+  }
+
   const dateISO=new Date(dateStr+'T'+timeStr+':00').toISOString();
   const adresseComplete=hasLieudit&&hasAdresse?(lieudit+' — '+adresse):(hasLieudit?lieudit:adresse);
+
   // 4. UI loading
   const btn=document.querySelector('.sticky-cta');const oldTxt=btn.textContent;
   btn.textContent='Création...';btn.disabled=true;
   try{
-    // 5. Appel RPC create_mission
-    const {data,error}=await _supabaseClient.rpc('create_mission',{
-      p_service_id:_cmd.service,
-      p_caracteristique_id:_cmd.carac_id,
-      p_quartier_id:quartier,
-      p_adresse:adresseComplete,
-      p_date_souhaitee:dateISO
-    });
-    if(error)throw error;
-    const m=Array.isArray(data)?data[0]:data;
-    if(!m||!m.mission_id)throw new Error('Réponse invalide create_mission');
+    let m;
+    if(_currentUser){
+      // Flow authentifié (presta admin / membre)
+      const {data,error}=await _supabaseClient.rpc('create_mission',{
+        p_service_id:_cmd.service,p_caracteristique_id:_cmd.carac_id,
+        p_quartier_id:quartier,p_adresse:adresseComplete,p_date_souhaitee:dateISO
+      });
+      if(error)throw error;
+      m=Array.isArray(data)?data[0]:data;
+    } else {
+      // Flow invité (client sans compte)
+      const {data,error}=await _supabaseClient.rpc('create_guest_mission',{
+        p_nom:nom,p_whatsapp:whatsapp,p_momo_operateur:momoOp,p_momo_numero:momoNum,
+        p_service_id:_cmd.service,p_caracteristique_id:_cmd.carac_id,
+        p_quartier_id:quartier,p_adresse_complete:adresseComplete,p_date_souhaitee:dateISO
+      });
+      if(error)throw error;
+      m=Array.isArray(data)?data[0]:data;
+      // Stocker token pour suivi local sans relire WhatsApp
+      try{
+        const tokens=JSON.parse(localStorage.getItem('hh_guest_tokens')||'[]');
+        tokens.unshift({token:m.guest_token,ref:m.reference,url:m.suivi_url,ts:Date.now()});
+        localStorage.setItem('hh_guest_tokens',JSON.stringify(tokens.slice(0,10)));
+      }catch(e){}
+    }
+    if(!m||!m.mission_id)throw new Error('Réponse invalide RPC mission');
     _currentMission=m;
-    // 6. Mettre à jour le récap s3
+
+    // 5. Récap s3
     const sv=SERVICES[_cmd.service]||{nm:_cmd.service};
     document.getElementById('s3-ref').textContent=m.reference;
     document.getElementById('s3-service').textContent=sv.nm+' · '+_cmd.duree+'h';
     document.getElementById('s3-quartier').textContent=document.getElementById('cmd-quartier').options[document.getElementById('cmd-quartier').selectedIndex].text;
     const dt=new Date(dateISO);
     document.getElementById('s3-date').textContent=dt.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' · '+timeStr;
-    const typeLabel={FLASH:'FLASH',STANDARD:'STANDARD',ANTICIPE:'ANTICIPÉ'}[m.type_mission]||m.type_mission;
+    const typeLabel={FLASH:'FLASH',STANDARD:'STANDARD',NORMALE:'STANDARD',PLANIFIEE:'PLANIFIÉ',ANTICIPE:'ANTICIPÉ'}[m.type_mission]||m.type_mission;
     document.getElementById('s3-type').textContent=typeLabel;
     document.getElementById('s3-tot').textContent=m.prix_total.toLocaleString('fr-FR')+' FCFA';
     document.getElementById('s3-info-montant').textContent=m.prix_total.toLocaleString('fr-FR')+' FCFA';
     document.getElementById('s3-info-ref').textContent=m.reference;
-    // Préselection OM (par défaut)
-    _cmd.provider='manual_om';
-    const fmt=n=>n.replace(/(\d{3})(?=\d)/g,'$1 ').trim();
-    document.getElementById('s3-info-num').textContent=fmt(_hhConfig.numero_om);
-    // 7. Naviguer vers s3
+
+    // Préselection opérateur basée sur choix invité
+    _cmd.provider = !_currentUser && momoOp==='mtn' ? 'manual_mtn' : 'manual_om';
+    const fmt=n=>(n||'').replace(/(\d{3})(?=\d)/g,'$1 ').trim();
+    document.getElementById('s3-info-num').textContent=fmt(_cmd.provider==='manual_mtn'?_hhConfig.numero_mtn:_hhConfig.numero_om);
+
     goto(3);
   }catch(e){
     alert('Erreur création mission : '+e.message);
@@ -3792,7 +3878,8 @@ recalc();
         <input type="text" id="auth-referral" placeholder="Code parrainage (optionnel)" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;">
       </div>
       <input type="email" id="auth-email" placeholder="Email" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required autocomplete="email">
-      <input type="password" id="auth-password" placeholder="Mot de passe (min 6 caractères)" minlength="6" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required>
+      <input type="password" id="auth-password" placeholder="Mot de passe (8+ car, A-Z, 0-9, symbole)" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}" title="Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required oninput="hhCheckPwd(this)">
+        <div id="auth-pwd-strength" style="font-size:12px;margin-top:-8px;display:none;"></div>
       <button type="submit" id="auth-submit" style="padding:14px;border-radius:10px;border:none;background:var(--cy,#FFC107);color:#000;font-family:inherit;font-weight:900;font-size:15px;cursor:pointer;margin-top:6px;">Se connecter</button>
     </form>
     <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--t3,#888);">En continuant, vous acceptez nos CGU.</div>

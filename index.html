@@ -478,7 +478,7 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
       <div style="padding:14px 16px;"><div style="font-size:15px;font-weight:800;">Shampouinage textile</div><div style="font-size:12px;color:var(--t2);line-height:1.4;margin-top:4px;">Canapés, matelas, tapis. Anti-acariens, anti-moisissures.</div></div>
     </div>
-    <div class="prem-card" onclick="openSoonModal('Nettoyage électroménager','Four, frigo, micro-ondes, lave-linge.')" style="background:var(--card);border:1px solid var(--cardb);border-radius:18px;overflow:hidden;cursor:pointer;transition:.25s;">
+    <div class="prem-card" onclick="openSoonModal('Électroménager profond','Four, frigo : dégraissage intérieur, dégivrage, désinfection.')" style="background:var(--card);border:1px solid var(--cardb);border-radius:18px;overflow:hidden;cursor:pointer;transition:.25s;">
       <div class="svc-img elec" style="aspect-ratio:16/9;"><span class="em"></span>
         <div style="position:absolute;top:10px;right:10px;background:var(--cy);color:#1a1a1a;font-size:10px;font-weight:900;padding:3px 10px;border-radius:50px;letter-spacing:.5px;z-index:3;">PREMIUM</div>
       </div>
@@ -2653,10 +2653,12 @@ async function submitMissionOnly(){
     document.getElementById('s3-info-montant').textContent=m.prix_total.toLocaleString('fr-FR')+' FCFA';
     document.getElementById('s3-info-ref').textContent=m.reference;
 
-    // Préselection opérateur basée sur choix invité
+    // Présélection opérateur basée sur choix invité
     _cmd.provider = !_currentUser && momoOp==='mtn' ? 'manual_mtn' : 'manual_om';
     const fmt=n=>(n||'').replace(/(\d{3})(?=\d)/g,'$1 ').trim();
     document.getElementById('s3-info-num').textContent=fmt(_cmd.provider==='manual_mtn'?_hhConfig.numero_mtn:_hhConfig.numero_om);
+    // FIX BUG#4 (Sprint 12.5) : sync classe visuelle .on des boutons OM/MTN avec _cmd.provider
+    document.querySelectorAll('#s3 .s3-mbtn').forEach(b => b.classList.toggle('on', b.dataset.provider === _cmd.provider));
 
     goto(3);
   }catch(e){
@@ -4806,11 +4808,14 @@ document.addEventListener('click', function(e){
 
 console.log('[HH] Sprint 12 — Suivi mission + Membre + WhatsApp chargés');
 
-// Init thème depuis localStorage si déjà choisi
+// Init thème depuis localStorage si déjà choisi, sinon LIGHT par défaut (Sprint 12.5 - reco Gemini)
 try {
   const saved = localStorage.getItem('hh-theme');
   if(saved === 'dark' || saved === 'light'){
     document.body.setAttribute('data-theme', saved);
+  } else {
+    // Pas de préférence sauvegardée → light par défaut (lisibilité plein soleil Douala, neuromarketing pro)
+    document.body.setAttribute('data-theme', 'light');
   }
   // Sync icône FAB
   setTimeout(() => {
@@ -5084,7 +5089,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.16 · Sprint 12.3 · Cycle 1 Client robuste · 16/05/2026
+  v3.1.17 · Sprint 12.5 · Cycle 1 Client robuste · 16/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

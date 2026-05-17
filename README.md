@@ -80,7 +80,6 @@ const SUPABASE_ANON_KEY = 'eyJ...';
 Cloudflare Pages — déploiement automatique à chaque push sur `main`.
 
 ---
-
 ## Roadmap
 
 - [x] Landing page + plateforme MVP

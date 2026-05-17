@@ -1,6 +1,6 @@
 # HappyHome 🏠
 
-**Première plateforme de prestataires à domicile verifiés et securisée.**
+**Première plateforme de prestataires à domicile verifiés, securisée et totalement transparente .**
 
 Mise en relation entre particuliers et prestataires de services ménagers vérifiées — KYC 5 étapes, paiement Mobile Money, tracking en temps réel.
 ---

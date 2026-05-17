@@ -1906,56 +1906,9 @@ textarea.full{min-height:60px;resize:vertical;}
       <button class="perm-tab" onclick="setPermTab('non_resident',event)" style="padding:8px 18px;border-radius:50px;background:transparent;color:var(--text);border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">📅 Non-résident (visites planifiées)</button>
     </div>
 
-    <!-- Grille prestataires permanents RÉSIDENTS -->
-    <div id="perm-resident" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
-
-      <div class="s7-card" style="overflow:hidden;padding:0;cursor:pointer;transition:.2s;">
-        <div class="svc-img nounou" style="aspect-ratio:1/1;height:200px;"></div>
-        <div style="padding:14px 16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div style="font-weight:800;font-size:15px;">Pauline Eyenga · 38 ans</div>
-            <span class="ad-pill green">4.95</span>
-          </div>
-          <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Nounou résidente · 12 ans d'expérience · Anglais courant · Permis B</div>
-          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · CASIER JUDICIAIRE OK · CDD VALIDÉ</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">180 000 FCFA</div></div>
-            <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="s7-card" style="overflow:hidden;padding:0;cursor:pointer;transition:.2s;">
-        <div class="svc-img cuisine" style="aspect-ratio:1/1;height:200px;"></div>
-        <div style="padding:14px 16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div style="font-weight:800;font-size:15px;">Marguerite Ndjock · 45 ans</div>
-            <span class="ad-pill green">4.92</span>
-          </div>
-          <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Cuisinière + Ménagère résidente · Cuisine camerounaise et continentale · 18 ans d'expérience</div>
-          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · RÉFÉRENCES VÉRIFIÉES</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">220 000 FCFA</div></div>
-            <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="s7-card" style="overflow:hidden;padding:0;cursor:pointer;transition:.2s;">
-        <div class="svc-img soin" style="aspect-ratio:1/1;height:200px;"></div>
-        <div style="padding:14px 16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div style="font-weight:800;font-size:15px;">Nadia Tatchou · 32 ans</div>
-            <span class="ad-pill green">5.0</span>
-          </div>
-          <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Infirmière diplômée d'État · Garde-malade résidente · Soins post-op et palliatifs</div>
-          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ DIPLÔME IDE · 3 GARANTS · RÉFÉRENCES HÔPITAUX</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">300 000 FCFA</div></div>
-            <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
-          </div>
-        </div>
-      </div>
+    <!-- Grille prestataires permanents RÉSIDENTS — Sprint 12.6 : dynamique DB -->
+    <div id="perm-resident" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
+      <div id="catalogue-prestas-dynamic" style="grid-column:1/-1;font-size:12px;color:var(--t2);padding:20px;text-align:center;">Chargement des prestataires…</div>
     </div>
 
     <!-- Grille NON-RÉSIDENTS (masquée par défaut) -->
@@ -2359,6 +2312,7 @@ function goto(n){
   if(n===10)loadKycQuartiers();
   if(n===11)loadClientDashboard();
   if(n===12)refreshWhatsAppPrestaCard();
+  if(n===13)loadPrestaCatalogue();
 }
 
 function toggleTheme(){
@@ -2905,7 +2859,16 @@ async function acceptIncomingMission(){
   const {data,error}=await _supabaseClient.rpc('presta_accept_mission',{p_mission_id:mid});
   if(error){alert('Mission non disponible : '+error.message);return;}
   const m=Array.isArray(data)?data[0]:data;
-  alert('✓ Mission acceptée\n\nClient : '+(m.client_nom||'—')+'\nTéléphone : '+(m.client_telephone||'—')+'\nAdresse : '+(m.adresse||'—'));
+  if(!m){
+    showSuccessModal('Mission acceptée','La mission a été assignée. Détails à venir dans ton espace.\n\nSi tu ne vois pas les coordonnées du client, rafraîchis ton espace presta.',function(){ goto(7); });
+    return;
+  }
+  showSuccessModal(
+    'Mission acceptée ✓',
+    'Client : '+(m.client_nom||'—')+'\nTéléphone : '+(m.client_telephone||'—')+'\nAdresse : '+(m.adresse||'—')+'\n\nMets-toi en route maintenant. Préviens le client à ton arrivée.',
+    function(){ goto(7); },
+    'EN ROUTE'
+  );
 }
 
 async function declineIncomingMission(){
@@ -3200,6 +3163,71 @@ function closeResetPinModal(){
   _resetPinTargetId = null;
   _resetPinTargetName = null;
 }
+// ── Sprint 12.6 ITEM #5 : catalogue presta s13 dynamique depuis DB ──
+async function loadPrestaCatalogue(){
+  const cont = document.getElementById('catalogue-prestas-dynamic');
+  if(!cont || !_supabaseClient) return;
+  cont.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:var(--t2);padding:20px;text-align:center;">Chargement des prestataires…</div>';
+  try {
+    const {data, error} = await _supabaseClient.rpc('list_catalogue_prestas');
+    if(error) throw error;
+    if(!data || data.length === 0){
+      cont.innerHTML = '<div style="grid-column:1/-1;font-size:13px;color:var(--t2);padding:40px;text-align:center;background:var(--inp-bg);border-radius:12px;line-height:1.6;">Aucun prestataire disponible pour l\'instant.<br><span style="font-size:11px;">Les premiers prestataires HappyHome seront visibles ici dès validation de leur KYC.</span></div>';
+      return;
+    }
+    cont.innerHTML = data.map(p => {
+      const nomComplet = `${_esc(p.prenom||'')} ${_esc(p.nom||'')}`.trim() || '(Sans nom)';
+      const rating = Number(p.rating_moyen||0);
+      const ratingPill = rating > 0 
+        ? `<span class="ad-pill green">${rating.toFixed(2)}</span>` 
+        : '<span class="ad-pill gray">Nouveau</span>';
+      const onlinePill = p.presta_en_ligne 
+        ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--cg);font-weight:800;"><span style="width:6px;height:6px;border-radius:50%;background:var(--cg);"></span>EN LIGNE</span>'
+        : '<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--t2);font-weight:700;"><span style="width:6px;height:6px;border-radius:50%;background:var(--t2);"></span>Hors ligne</span>';
+      const services = (p.services||[]).filter(Boolean);
+      const quartiers = (p.quartiers||[]).filter(Boolean);
+      const servicesStr = services.length ? services.slice(0,3).join(' · ') : 'Services à définir';
+      const quartiersStr = quartiers.length ? `${quartiers.length} quartier${quartiers.length>1?'s':''}` : 'Zone à définir';
+      const initiale = (p.prenom || p.nom || '?').charAt(0).toUpperCase();
+      
+      return `<div class="s7-card" style="overflow:hidden;padding:0;cursor:pointer;transition:.2s;">
+        <div style="height:160px;background:linear-gradient(135deg,var(--cy),var(--co,#FF9800));display:flex;align-items:center;justify-content:center;">
+          <div style="width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,.95);color:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;">${initiale}</div>
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:6px;">
+            <div style="font-weight:800;font-size:14px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${nomComplet}</div>
+            ${ratingPill}
+          </div>
+          <div style="font-size:11px;color:var(--t2);line-height:1.5;margin-bottom:6px;">${_esc(servicesStr)}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:10px;margin-bottom:10px;">
+            <span style="color:var(--t2);">${_esc(quartiersStr)} · ${p.missions_total} mission${p.missions_total>1?'s':''}</span>
+            ${onlinePill}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
+            <div><div style="font-size:11px;color:var(--t2);">Tarif</div><div style="font-weight:900;color:var(--cy-text);font-size:14px;">À négocier</div></div>
+            <button onclick="reservePrestaDyn('${_esc(p.presta_id)}','${_esc(nomComplet)}')" style="padding:9px 14px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('[HH] loadPrestaCatalogue error:', e);
+    cont.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--cr);padding:20px;text-align:center;">Erreur chargement : ${_esc(e.message||e)}</div>`;
+  }
+}
+
+function reservePrestaDyn(prestaId, nom){
+  showSuccessModal(
+    'Réservation prestataire',
+    `Pour réserver ${nom} en mission longue durée (résident ou planifié), contacte directement l'admin HappyHome par WhatsApp au +237 6 90 38 41 99.\n\nL'admin organisera la mise en relation, vérifiera la disponibilité et établira le contrat.`,
+    null,
+    'OK'
+  );
+}
+
+// ── Note Sprint 12.6 : setPermTab() existe déjà plus bas (~ligne 3644 de v3.1.20), non dupliqué ici ──
+
 async function confirmResetPin(){
   if(!_resetPinTargetId) return;
   const motif = (document.getElementById('reset-pin-motif').value||'').trim();
@@ -3311,11 +3339,34 @@ async function confirmPaymentFlow(){
     };
   }
 
-  // Helper : timeout sur n'importe quelle promise
+  // Helper : timeout sur n'importe quelle promise (Sprint 12.6 ITEM #6 : enrichi)
   const withTimeout = (p, ms, label) => Promise.race([
     p,
-    new Promise((_,rej)=>setTimeout(()=>rej(new Error('Timeout après '+(ms/1000)+'s — '+label+'. Réseau lent ?')), ms))
+    new Promise((_,rej)=>setTimeout(()=>{
+      const err = new Error('Timeout après '+(ms/1000)+'s — '+label+'. Réseau lent ou DB indisponible ?');
+      err.code = 'HH_TIMEOUT';
+      err.label = label;
+      console.error('[HH withTimeout] timeout sur', label, 'après', ms+'ms');
+      rej(err);
+    }, ms))
   ]);
+  
+  // Helper : formater proprement une erreur PostgrestError (Sprint 12.6 ITEM #6)
+  // Évite la perte d'informations détails/hint/code que .message seul masque
+  const formatPgError = (error, contexte) => {
+    if(!error) return 'Erreur inconnue';
+    console.error('[HH PG error]', contexte, ':', JSON.stringify({
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code
+    }, null, 2));
+    let msg = error.message || 'Erreur Supabase';
+    if(error.code) msg += ' [code='+error.code+']';
+    if(error.details) msg += ' · '+error.details;
+    if(error.hint) msg += ' · Hint: '+error.hint;
+    return msg;
+  };
 
   try{
     // ── 2. FLOW INVITÉ ────────────────────────────────────────
@@ -3329,7 +3380,7 @@ async function confirmPaymentFlow(){
         }), 20000, 'guest_confirm_payment'
       );
       if(aborted) return;
-      if(error)throw new Error(error.message);
+      if(error)throw new Error(formatPgError(error, 'guest_confirm_payment'));
       console.log('[HH] guest_confirm_payment OK', data);
       _clearPendingPaymentStorage();
       // FIX BUG#7 (Sprint 12.6) : modal succès brandée + redirection s1 (s4 vide pour invité, suivi via WhatsApp)
@@ -3356,7 +3407,7 @@ async function confirmPaymentFlow(){
         }), 15000, 'submit_payment'
       );
       if(aborted) return;
-      if(sp.error)throw new Error('submit_payment: '+sp.error.message);
+      if(sp.error)throw new Error(formatPgError(sp.error, 'submit_payment'));
       payRow=Array.isArray(sp.data)?sp.data[0]:sp.data;
       if(!payRow||!payRow.payment_id)throw new Error('Réponse invalide submit_payment');
       // Persiste pour reprise si l'utilisateur quitte avant la fin
@@ -3399,7 +3450,7 @@ async function confirmPaymentFlow(){
       }), 15000, 'client_confirm_payment_sent'
     );
     if(aborted) return;
-    if(cc.error)throw new Error('client_confirm: '+cc.error.message);
+    if(cc.error)throw new Error(formatPgError(cc.error, 'client_confirm_payment_sent'));
     console.log('[HH] client_confirm OK');
 
     // 3d. Notif WhatsApp admin (non bloquant)
@@ -3722,21 +3773,21 @@ async function showMembreModal(){
 
   if(pending){
     document.getElementById('mm-pending').style.display = 'block';
-    document.getElementById('mp-plan').textContent = pending.plan;
-    document.getElementById('mp-montant').textContent = pending.prix_paye.toLocaleString('fr-FR');
-    document.getElementById('mp-ref').textContent = pending.paiement_ref || pending.id.substring(0,8).toUpperCase();
+    document.getElementById('mp-plan').textContent = pending.plan || '—';
+    document.getElementById('mp-montant').textContent = (pending.prix_paye||0).toLocaleString('fr-FR');
+    document.getElementById('mp-ref').textContent = pending.paiement_ref || (pending.id||'').substring(0,8).toUpperCase() || 'HH';
     return;
   }
 
   if(_membreActif && _currentSub){
     document.getElementById('mm-gerer').style.display = 'block';
-    document.getElementById('mg-plan').textContent = _currentSub.plan;
-    document.getElementById('mg-fin').textContent = new Date(_currentSub.fin_le).toLocaleDateString('fr-FR');
-    document.getElementById('mg-jours').textContent = _currentSub.jours_restants + ' jours restants';
+    document.getElementById('mg-plan').textContent = _currentSub.plan || '—';
+    document.getElementById('mg-fin').textContent = _currentSub.fin_le ? new Date(_currentSub.fin_le).toLocaleDateString('fr-FR') : '—';
+    document.getElementById('mg-jours').textContent = (_currentSub.jours_restants || 0) + ' jours restants';
     document.getElementById('mg-auto').textContent = _currentSub.renouvellement_auto ? 'Activé' : 'Désactivé';
     document.getElementById('mg-economie').textContent = (_currentSub.economie_mois_fcfa || 0).toLocaleString('fr-FR') + ' FCFA';
     document.getElementById('mg-credit').textContent = (_currentProfile?.credit_balance || 0).toLocaleString('fr-FR') + ' FCFA';
-    document.getElementById('mg-ref-code').textContent = _currentProfile?.referral_code || 'HH' + _currentUser.id.substring(0,6).toUpperCase();
+    document.getElementById('mg-ref-code').textContent = _currentProfile?.referral_code || 'HH' + (_currentUser.id||'').substring(0,6).toUpperCase();
     loadParrainagesCount();
     return;
   }
@@ -3773,11 +3824,11 @@ async function submitMembreSouscription(){
       p_paiement_ref: null
     });
     if(error) throw error;
-    if(!data.ok) throw new Error(data.error);
+    if(!data || !data.ok) throw new Error((data && data.error) || 'Réponse invalide subscription_souscrire');
 
     // Affiche instructions paiement OM
-    const ref = data.subscription_id.substring(0,8).toUpperCase();
-    document.getElementById('mm-montant').textContent = data.prix.toLocaleString('fr-FR');
+    const ref = (data.subscription_id||'').substring(0,8).toUpperCase() || 'HH';
+    document.getElementById('mm-montant').textContent = (data.prix||0).toLocaleString('fr-FR');
     document.getElementById('mm-ref').textContent = ref;
     document.getElementById('mm-paiement-instructions').style.display = 'block';
     btn.textContent = '✓ Souscription créée — Effectuez le paiement OM';
@@ -5400,7 +5451,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.19 · Sprint 12.6 · Login Presta PIN + Reset Admin · 17/05/2026
+  v3.1.20 · Sprint 12.6 · BUG#7 + Login PIN + Catalogue dyn + 4 fixes latents · 17/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

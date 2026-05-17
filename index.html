@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
@@ -404,6 +404,21 @@ textarea.full{min-height:60px;resize:vertical;}
   .ad-table{font-size:11px;}
   .ad-table th,.ad-table td{padding:8px 10px;}
 }
+/* Sprint 12 - Autocomplete lieu */
+.hh-ac{position:relative;width:100%}
+.hh-ac-dd{position:absolute;top:calc(100% + 2px);left:0;right:0;max-height:280px;overflow-y:auto;background:#fff;border:1px solid var(--bd,#E0E0E0);border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.12);z-index:999;display:none}
+.hh-ac-dd.open{display:block}
+.hh-ac-it{padding:9px 12px;cursor:pointer;border-bottom:1px solid #f4f5f7;display:flex;align-items:center;gap:8px;font-size:13px}
+.hh-ac-it:last-child{border-bottom:none}
+.hh-ac-it:hover,.hh-ac-it.foc{background:#f4f5f7}
+.hh-ac-ic{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:rgba(15,38,140,.08)}
+.hh-ac-tx{flex:1;min-width:0}
+.hh-ac-nm{font-weight:500;color:#1A1A1A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hh-ac-mt{font-size:11px;color:#6B7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px}
+.hh-ac-bd{font-size:9px;text-transform:uppercase;font-weight:600;padding:2px 6px;border-radius:3px;background:#f4f5f7;color:#6B7280;flex-shrink:0}
+.hh-ac-em{padding:12px;text-align:center;font-size:12px;color:#6B7280}
+.hh-ac-ok{font-size:11px;color:#10B981;margin-top:-6px;margin-bottom:6px;display:none}
+.hh-ac-ok.show{display:block}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -710,7 +725,11 @@ textarea.full{min-height:60px;resize:vertical;}
         <option value="deido">Deido</option>
         <option value="__more__" disabled>... (33 quartiers chargés depuis DB)</option>
       </select>
-      <input type="text" class="full" id="cmd-lieudit" placeholder="Lieu-dit (carrefour, repère) — requis si pas d'adresse exacte" style="margin-bottom:10px;">
+      <div class="hh-ac" id="hh-lieu-ac">
+      <input type="text" class="full" id="cmd-lieudit" placeholder="Tape un carrefour, marché, école (ex: Bijou, Ndokoti, Marché Central)…" autocomplete="off" style="margin-bottom:10px;">
+      <div class="hh-ac-dd" id="hh-lieu-dd"></div>
+      <div class="hh-ac-ok" id="hh-lieu-ok">✓ Lieu reconnu — quartier rempli automatiquement</div>
+      </div>
       <input type="text" class="full" id="cmd-adresse" placeholder="Adresse exacte (rue, immeuble, étage) — requis si pas de lieu-dit">
       <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.4;">📍 Au moins <strong>un des deux champs</strong> est obligatoire pour que le prestataire te trouve. Pas de GPS — sois le plus précis possible.</div>
     </div>
@@ -2270,11 +2289,13 @@ function goto(n){
 }
 
 function toggleTheme(){
-  const cur=document.body.getAttribute('data-theme');
-  const next=cur==='dark'?'light':'dark';
-  document.body.setAttribute('data-theme',next);
-  const icon=document.getElementById('theme-icon');
-  if(icon) icon.textContent = next==='dark'?'☀️':'🌙';
+  const root = document.documentElement;
+  const cur = root.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  document.body.setAttribute('data-theme', next); // compat CSS sélecteurs body
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.textContent = next === 'dark' ? '☀️' : '🌙';
   try { localStorage.setItem('hh-theme', next); } catch(e) {}
 }
 
@@ -2613,6 +2634,80 @@ async function loadQuartiers(){
     _cmd.quartier_id=sel.value||'bonapriso';
   }catch(e){console.warn('loadQuartiers:',e.message);}
 }
+
+// === Sprint 12 — Autocomplete lieu (rpc_search_lieu) ===
+const _hhLieuAC=(function(){
+  const ICONS={carrefour:'⛓',marche:'🛒',rond_point:'⊙',ecole:'🏫',college:'🏫',lycee:'🏫',universite:'🎓',supermarche:'🛍',boutique:'🏪',eglise:'⛪',mosquee:'🕌',cathedrale:'⛪',hopital:'🏥',clinique:'🏥',centre_sante:'🏥',gare:'🚉',stade:'🏟',aeroport:'✈',embarcadere:'⚓',monument:'🏛',institution:'🏛',industriel:'🏭',station_service:'⛽',quartier:'📍'};
+  const TYPES={carrefour:'Carrefour',marche:'Marché',rond_point:'Rond-point',ecole:'École',college:'Collège',lycee:'Lycée',universite:'Université',supermarche:'Supermarché',boutique:'Boutique',eglise:'Église',mosquee:'Mosquée',cathedrale:'Cathédrale',hopital:'Hôpital',clinique:'Clinique',centre_sante:'Centre santé',gare:'Gare',stade:'Stade',aeroport:'Aéroport',embarcadere:'Embarcadère',monument:'Monument',institution:'Institution',industriel:'Site indust.',station_service:'Station',premium:'Quartier ★',moyenne_sup:'Quartier',moyenne:'Quartier',populaire:'Quartier pop.',etudiant:'Quartier étud.',insulaire:'Île',quartier:'Quartier'};
+  let _tmr=null,_results=[],_foc=-1,_initialized=false;
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function hide(){const dd=document.getElementById('hh-lieu-dd');if(dd){dd.classList.remove('open');}_foc=-1;}
+  function showOk(b){const o=document.getElementById('hh-lieu-ok');if(o)o.classList.toggle('show',!!b);}
+  async function search(q){
+    if(!window._supabaseClient){console.warn('[lieu-ac] supabase pas pret');return;}
+    if(q.length<3){hide();return;}
+    try{
+      const {data,error}=await _supabaseClient.rpc('rpc_search_lieu',{p_query:q,p_limit:8});
+      if(error){console.warn('[lieu-ac]',error.message);return;}
+      _results=data||[];render();
+    }catch(e){console.warn('[lieu-ac]',e.message);}
+  }
+  function render(){
+    const dd=document.getElementById('hh-lieu-dd');if(!dd)return;
+    if(!_results.length){dd.innerHTML='<div class="hh-ac-em">Aucun lieu trouvé. Tape un carrefour, marché ou nom de quartier.</div>';dd.classList.add('open');return;}
+    dd.innerHTML=_results.map((r,i)=>{
+      const ic=ICONS[r.r_type]||'📍',lb=TYPES[r.r_type]||'Lieu';
+      const meta=r.result_type==='lieu_repere'?(r.r_quartier_nom+(r.r_sous_quartier?' · '+r.r_sous_quartier:'')):(r.r_arrondissement||'');
+      return '<div class="hh-ac-it" data-i="'+i+'"><div class="hh-ac-ic">'+ic+'</div><div class="hh-ac-tx"><div class="hh-ac-nm">'+esc(r.r_nom)+'</div><div class="hh-ac-mt">'+esc(meta)+'</div></div><span class="hh-ac-bd">'+esc(lb)+'</span></div>';
+    }).join('');
+    dd.classList.add('open');_foc=-1;
+    dd.querySelectorAll('.hh-ac-it').forEach(el=>{
+      el.addEventListener('click',()=>pick(_results[parseInt(el.dataset.i)]));
+    });
+  }
+  function pick(r){
+    if(!r)return;
+    const inp=document.getElementById('cmd-lieudit');
+    if(inp)inp.value=r.r_nom;
+    const qSel=document.getElementById('cmd-quartier');
+    if(qSel){
+      let target=null;
+      if(r.result_type==='quartier'){target=r.r_id;}
+      else if(r.r_quartier_nom){
+        const opt=Array.from(qSel.options).find(o=>o.textContent.startsWith(r.r_quartier_nom+' ')||o.textContent===r.r_quartier_nom);
+        if(opt)target=opt.value;
+      }
+      if(target){qSel.value=target;_cmd.quartier_id=target;showOk(true);}
+    }
+    hide();
+  }
+  function init(){
+    if(_initialized)return;
+    const inp=document.getElementById('cmd-lieudit');if(!inp)return;
+    _initialized=true;
+    inp.addEventListener('input',e=>{
+      showOk(false);
+      clearTimeout(_tmr);
+      const v=e.target.value.trim();
+      if(v.length<3){hide();return;}
+      _tmr=setTimeout(()=>search(v),300);
+    });
+    inp.addEventListener('keydown',e=>{
+      const dd=document.getElementById('hh-lieu-dd');
+      if(!dd||!dd.classList.contains('open'))return;
+      const its=dd.querySelectorAll('.hh-ac-it');if(!its.length)return;
+      if(e.key==='ArrowDown'){e.preventDefault();_foc=Math.min(_foc+1,its.length-1);its.forEach((x,i)=>x.classList.toggle('foc',i===_foc));}
+      else if(e.key==='ArrowUp'){e.preventDefault();_foc=Math.max(_foc-1,0);its.forEach((x,i)=>x.classList.toggle('foc',i===_foc));}
+      else if(e.key==='Enter'&&_foc>=0){e.preventDefault();pick(_results[_foc]);}
+      else if(e.key==='Escape'){hide();}
+    });
+    document.addEventListener('click',e=>{if(!e.target.closest('#hh-lieu-ac'))hide();});
+    console.log('[Sprint 12] Autocomplete lieu initialisé');
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else setTimeout(init,100);
+  return {init,pick};
+})();
 
 async function submitMissionOnly(){
   // 1. Lire valeurs formulaire
@@ -5138,18 +5233,16 @@ document.addEventListener('click', function(e){
 console.log('[HH] Sprint 12 — Suivi mission + Membre + WhatsApp chargés');
 
 // Init thème depuis localStorage si déjà choisi, sinon LIGHT par défaut (Sprint 12.5 - reco Gemini)
+// v3.1.21 : data-theme appliqué sur <html> ET <body> pour éviter flash sombre au démarrage
 try {
   const saved = localStorage.getItem('hh-theme');
-  if(saved === 'dark' || saved === 'light'){
-    document.body.setAttribute('data-theme', saved);
-  } else {
-    // Pas de préférence sauvegardée → light par défaut (lisibilité plein soleil Douala, neuromarketing pro)
-    document.body.setAttribute('data-theme', 'light');
-  }
+  const theme = (saved === 'dark' || saved === 'light') ? saved : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.setAttribute('data-theme', theme);
   // Sync icône FAB
   setTimeout(() => {
     const icon = document.getElementById('theme-icon');
-    if(icon) icon.textContent = document.body.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+    if(icon) icon.textContent = theme === 'dark' ? '☀️' : '🌙';
   }, 100);
 } catch(e) {}
 recalc();
@@ -5418,7 +5511,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.21 · Sprint 12.6 · 4 BUGS FIX (B1 escrow réel + B2 catalogue NR dyn + B3 timeout 5min + B4 pricing aligné) · 17/05/2026
+  v3.1.22 · Sprint 12.6 · 4 BUGS FIX + Fix flash sombre page démarrage (data-theme=light sur html) · 17/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

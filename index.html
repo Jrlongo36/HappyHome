@@ -2644,7 +2644,7 @@ const _hhLieuAC=(function(){
   function hide(){const dd=document.getElementById('hh-lieu-dd');if(dd){dd.classList.remove('open');}_foc=-1;}
   function showOk(b){const o=document.getElementById('hh-lieu-ok');if(o)o.classList.toggle('show',!!b);}
   async function search(q){
-    if(!window._supabaseClient){console.warn('[lieu-ac] supabase pas pret');return;}
+    if(typeof _supabaseClient==='undefined'||!_supabaseClient){console.warn('[lieu-ac] supabase pas pret');return;}
     if(q.length<3){hide();return;}
     try{
       const {data,error}=await _supabaseClient.rpc('rpc_search_lieu',{p_query:q,p_limit:8});

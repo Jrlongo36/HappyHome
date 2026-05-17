@@ -1911,55 +1911,9 @@ textarea.full{min-height:60px;resize:vertical;}
       <div id="catalogue-prestas-dynamic" style="grid-column:1/-1;font-size:12px;color:var(--t2);padding:20px;text-align:center;">Chargement des prestataires…</div>
     </div>
 
-    <!-- Grille NON-RÉSIDENTS (masquée par défaut) -->
+    <!-- Grille NON-RÉSIDENTS — B2 fix : dynamique DB (miroir Résident, même catalogue) -->
     <div id="perm-non_resident" style="display:none;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
-      <div class="s7-card" style="overflow:hidden;padding:0;cursor:pointer;transition:.2s;">
-        <div class="svc-img menage" style="aspect-ratio:1/1;height:200px;"></div>
-        <div style="padding:14px 16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div style="font-weight:800;font-size:15px;">Catherine Nguidjol · 35 ans</div>
-            <span class="ad-pill green">4.7</span>
-          </div>
-          <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Ménagère hebdomadaire · 3 visites/semaine (lundi, mercredi, vendredi) · 6h/jour</div>
-          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 2 GARANTS · CDD VALIDÉ</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">95 000 FCFA</div></div>
-            <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="s7-card" style="overflow:hidden;padding:0;cursor:pointer;transition:.2s;">
-        <div class="svc-img lessive" style="aspect-ratio:1/1;height:200px;"></div>
-        <div style="padding:14px 16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div style="font-weight:800;font-size:15px;">Marie Tchoutou · 41 ans</div>
-            <span class="ad-pill green">4.8</span>
-          </div>
-          <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Lessive + Repassage · 1 visite/semaine (samedi) · 8h</div>
-          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 2 GARANTS · RÉFÉRENCES</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">65 000 FCFA</div></div>
-            <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="s7-card" style="overflow:hidden;padding:0;cursor:pointer;transition:.2s;">
-        <div class="svc-img cuisine" style="aspect-ratio:1/1;height:200px;"></div>
-        <div style="padding:14px 16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div style="font-weight:800;font-size:15px;">Joséphine Mbida · 47 ans</div>
-            <span class="ad-pill green">4.85</span>
-          </div>
-          <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">Cuisinière journalière · 6 jours/semaine (lundi-samedi) · 4h/jour</div>
-          <div style="font-size:10px;color:var(--cy-text);font-weight:700;margin-bottom:10px;letter-spacing:.5px;">✓ 3 GARANTS · 8 ANS EXPÉRIENCE</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--divider);padding-top:10px;">
-            <div><div style="font-size:11px;color:var(--t2);">Tarif mensuel</div><div style="font-weight:900;color:var(--cy-text);font-size:18px;">110 000 FCFA</div></div>
-            <button onclick="reservePermanent(this)" style="padding:10px 16px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver</button>
-          </div>
-        </div>
-      </div>
+      <div id="catalogue-prestas-non-resident-dynamic" style="grid-column:1/-1;font-size:12px;color:var(--t2);padding:20px;text-align:center;">Chargement des prestataires…</div>
     </div>
 
     <!-- Info engagement -->
@@ -2624,17 +2578,18 @@ let _currentMission=null;
 
 async function loadHHConfig(){
   try{
-    const {data,error}=await _supabaseClient.from('hh_config').select('key,value').in('key',['numero_om_collecte','numero_mtn_collecte','pricing_multi_flash','pricing_multi_standard','pricing_multi_anticipe','pricing_comm_pct','pricing_frais_pct','pricing_min_cart']);
+    // B4 fix : aligné sur clés DB natives utilisées par get_multi_type + calculate_mission_price
+    const {data,error}=await _supabaseClient.from('hh_config').select('key,value').in('key',['numero_om_collecte','numero_mtn_collecte','multi_flash','multi_standard','multi_anticipe','commission_pct','frais_paiement_pct','pricing_min_cart']);
     if(error)throw error;
     data.forEach(r=>{
       const v=String(r.value).replace(/"/g,'');
       if(r.key==='numero_om_collecte')_hhConfig.numero_om=v;
       if(r.key==='numero_mtn_collecte')_hhConfig.numero_mtn=v;
-      if(r.key==='pricing_multi_flash')_PRICING.multi_flash=parseFloat(v)||1.25;
-      if(r.key==='pricing_multi_standard')_PRICING.multi_standard=parseFloat(v)||1.00;
-      if(r.key==='pricing_multi_anticipe')_PRICING.multi_anticipe=parseFloat(v)||0.90;
-      if(r.key==='pricing_comm_pct')_PRICING.comm_pct=parseFloat(v)||20;
-      if(r.key==='pricing_frais_pct')_PRICING.frais_pct=parseFloat(v)||3;
+      if(r.key==='multi_flash')_PRICING.multi_flash=parseFloat(v)||1.25;
+      if(r.key==='multi_standard')_PRICING.multi_standard=parseFloat(v)||1.00;
+      if(r.key==='multi_anticipe')_PRICING.multi_anticipe=parseFloat(v)||0.90;
+      if(r.key==='commission_pct')_PRICING.comm_pct=parseFloat(v)||20;
+      if(r.key==='frais_paiement_pct')_PRICING.frais_pct=parseFloat(v)||3;
       if(r.key==='pricing_min_cart')_PRICING.min_cart=parseFloat(v)||5000;
     });
     // Mettre à jour les affichages dans s3
@@ -3164,18 +3119,24 @@ function closeResetPinModal(){
   _resetPinTargetName = null;
 }
 // ── Sprint 12.6 ITEM #5 : catalogue presta s13 dynamique depuis DB ──
+// B2 fix : remplit en miroir les 2 grilles (Résident + Non-résident)
 async function loadPrestaCatalogue(){
   const cont = document.getElementById('catalogue-prestas-dynamic');
+  const contNR = document.getElementById('catalogue-prestas-non-resident-dynamic');
   if(!cont || !_supabaseClient) return;
-  cont.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:var(--t2);padding:20px;text-align:center;">Chargement des prestataires…</div>';
+  const loadingHtml = '<div style="grid-column:1/-1;font-size:12px;color:var(--t2);padding:20px;text-align:center;">Chargement des prestataires…</div>';
+  cont.innerHTML = loadingHtml;
+  if(contNR) contNR.innerHTML = loadingHtml;
   try {
     const {data, error} = await _supabaseClient.rpc('list_catalogue_prestas');
     if(error) throw error;
     if(!data || data.length === 0){
-      cont.innerHTML = '<div style="grid-column:1/-1;font-size:13px;color:var(--t2);padding:40px;text-align:center;background:var(--inp-bg);border-radius:12px;line-height:1.6;">Aucun prestataire disponible pour l\'instant.<br><span style="font-size:11px;">Les premiers prestataires HappyHome seront visibles ici dès validation de leur KYC.</span></div>';
+      const emptyHtml = '<div style="grid-column:1/-1;font-size:13px;color:var(--t2);padding:40px;text-align:center;background:var(--inp-bg);border-radius:12px;line-height:1.6;">Aucun prestataire disponible pour l\'instant.<br><span style="font-size:11px;">Les premiers prestataires HappyHome seront visibles ici dès validation de leur KYC.</span></div>';
+      cont.innerHTML = emptyHtml;
+      if(contNR) contNR.innerHTML = emptyHtml;
       return;
     }
-    cont.innerHTML = data.map(p => {
+    const html = data.map(p => {
       const nomComplet = `${_esc(p.prenom||'')} ${_esc(p.nom||'')}`.trim() || '(Sans nom)';
       const rating = Number(p.rating_moyen||0);
       const ratingPill = rating > 0 
@@ -3211,9 +3172,13 @@ async function loadPrestaCatalogue(){
         </div>
       </div>`;
     }).join('');
+    cont.innerHTML = html;
+    if(contNR) contNR.innerHTML = html;
   } catch(e) {
     console.error('[HH] loadPrestaCatalogue error:', e);
-    cont.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--cr);padding:20px;text-align:center;">Erreur chargement : ${_esc(e.message||e)}</div>`;
+    const errHtml = `<div style="grid-column:1/-1;font-size:12px;color:var(--cr);padding:20px;text-align:center;">Erreur chargement : ${_esc(e.message||e)}</div>`;
+    cont.innerHTML = errHtml;
+    if(contNR) contNR.innerHTML = errHtml;
   }
 }
 
@@ -4567,15 +4532,16 @@ async function resolveLitigeAdmin(missionId, decision, montant){
   const labels = {presta:'libérer l\'escrow au prestataire',client:'rembourser le client',split:'partager 50/50'};
   if(!confirm(`Confirmer : ${labels[decision]} (${_fmt(montant)} FCFA) ?\n\nCette action est irréversible.`)) return;
   try {
-    const {error} = await _supabaseClient.rpc('admin_resolve_litige',{p_mission_id:missionId,p_decision:decision});
-    if(error){
-      // Fallback : si RPC n'existe pas, faire un UPDATE direct sur statut
-      console.warn('RPC admin_resolve_litige indisponible, fallback UPDATE :', error.message);
-      const newStatut = decision==='client' ? 'rembourse' : 'terminee';
-      const {error:e2} = await _supabaseClient.from('missions').update({statut:newStatut}).eq('id',missionId);
-      if(e2){ alert('Erreur : '+e2.message); return; }
-    }
-    alert('✓ Litige résolu.');
+    // B1 fix : RPC complète en DB (libère vraiment escrow). Fallback supprimé (faux UPDATE statut masquait l'échec)
+    const {data, error} = await _supabaseClient.rpc('admin_resolve_litige',{p_mission_id:missionId,p_decision:decision});
+    if(error){ alert('Erreur résolution litige : '+error.message); return; }
+    const r = data || {};
+    const msg = r.decision === 'split'
+      ? `✓ Litige résolu (50/50)\nPresta : ${_fmt(r.montant_presta||0)} FCFA\nClient : ${_fmt(r.montant_client||0)} FCFA`
+      : r.decision === 'client'
+        ? `✓ Litige résolu — Remboursement client : ${_fmt(r.montant_client||0)} FCFA`
+        : `✓ Litige résolu — Paiement libéré au presta : ${_fmt(r.montant_presta||0)} FCFA`;
+    alert(msg);
     loadLitigesAdmin();
   } catch(e){
     alert('Erreur : '+(e.message||e));
@@ -4649,13 +4615,14 @@ async function loadHistoPayAdmin(){
 }
 
 // ── PRICING ADMIN (lecture/sauvegarde hh_config) ────────────────────
+// B4 fix : aligné sur clés DB natives (multi_*, commission_pct, frais_paiement_pct)
 async function loadPricingAdmin(){
   if(!_adminCheckAccess('pricing-title')) return;
   try {
     const {data, error} = await _supabaseClient
       .from('hh_config')
       .select('key,value')
-      .in('key',['pricing_multi_flash','pricing_multi_standard','pricing_multi_anticipe','pricing_comm_pct','pricing_frais_pct','pricing_min_cart']);
+      .in('key',['multi_flash','multi_standard','multi_anticipe','commission_pct','frais_paiement_pct','pricing_min_cart']);
     if(error) throw error;
     const map = {};
     (data||[]).forEach(r => { map[r.key] = String(r.value).replace(/"/g,''); });
@@ -4663,11 +4630,11 @@ async function loadPricingAdmin(){
       const el = document.getElementById(id);
       if(el) el.value = map[key] !== undefined ? map[key] : fallback;
     };
-    setVal('pric-mult-flash','pricing_multi_flash', _PRICING.multi_flash);
-    setVal('pric-mult-standard','pricing_multi_standard', _PRICING.multi_standard);
-    setVal('pric-mult-anticipe','pricing_multi_anticipe', _PRICING.multi_anticipe);
-    setVal('pric-comm-pct','pricing_comm_pct', _PRICING.comm_pct);
-    setVal('pric-frais-pct','pricing_frais_pct', _PRICING.frais_pct);
+    setVal('pric-mult-flash','multi_flash', _PRICING.multi_flash);
+    setVal('pric-mult-standard','multi_standard', _PRICING.multi_standard);
+    setVal('pric-mult-anticipe','multi_anticipe', _PRICING.multi_anticipe);
+    setVal('pric-comm-pct','commission_pct', _PRICING.comm_pct);
+    setVal('pric-frais-pct','frais_paiement_pct', _PRICING.frais_pct);
     setVal('pric-min-cart','pricing_min_cart', _PRICING.min_cart);
     const found = Object.keys(map).length;
     document.getElementById('pricing-title').textContent = found > 0 ? `Configuration Pricing · ${found}/6 clés en base` : 'Configuration Pricing · ⚠️ Initialisation requise (voir SQL fourni)';
@@ -4681,14 +4648,14 @@ async function savePricingAdmin(){
   if(!_currentProfile || _currentProfile.role !== 'admin'){ alert('Accès refusé'); return; }
   const get = id => parseFloat(document.getElementById(id).value);
   const payload = [
-    {key:'pricing_multi_flash', value: String(get('pric-mult-flash'))},
-    {key:'pricing_multi_standard', value: String(get('pric-mult-standard'))},
-    {key:'pricing_multi_anticipe', value: String(get('pric-mult-anticipe'))},
-    {key:'pricing_comm_pct', value: String(get('pric-comm-pct'))},
-    {key:'pricing_frais_pct', value: String(get('pric-frais-pct'))},
+    {key:'multi_flash', value: String(get('pric-mult-flash'))},
+    {key:'multi_standard', value: String(get('pric-mult-standard'))},
+    {key:'multi_anticipe', value: String(get('pric-mult-anticipe'))},
+    {key:'commission_pct', value: String(get('pric-comm-pct'))},
+    {key:'frais_paiement_pct', value: String(get('pric-frais-pct'))},
     {key:'pricing_min_cart', value: String(get('pric-min-cart'))}
   ];
-  if(!confirm('Confirmer la sauvegarde du pricing ?\n\nIMPACT IMMÉDIAT :\n• Tous les nouveaux affichages prix utiliseront ces valeurs\n• Toutes les nouvelles missions seront facturées avec ces valeurs\n• Modifier ces valeurs change le revenu effectif HappyHome.')) return;
+  if(!confirm('Confirmer la sauvegarde du pricing ?\n\nIMPACT IMMÉDIAT :\n• Tous les nouveaux affichages prix utiliseront ces valeurs\n• Toutes les nouvelles missions seront facturées avec ces valeurs (RPC create_mission lit hh_config)\n• Modifier ces valeurs change le revenu effectif HappyHome.')) return;
   try {
     const {error} = await _supabaseClient.from('hh_config').upsert(payload, {onConflict:'key'});
     if(error) throw error;
@@ -4699,7 +4666,7 @@ async function savePricingAdmin(){
     _PRICING.comm_pct = get('pric-comm-pct');
     _PRICING.frais_pct = get('pric-frais-pct');
     _PRICING.min_cart = get('pric-min-cart');
-    alert('✓ Pricing sauvegardé.\n\n⚠️ Le RPC SQL create_mission doit aussi être mis à jour si vous changez les multiplicateurs. Voir SQL fourni.');
+    alert('✓ Pricing sauvegardé.\n\nLes nouvelles missions seront facturées immédiatement avec ces valeurs (RPC backend lit dynamiquement hh_config).');
     if(typeof recalc==='function') recalc();
   } catch(e){
     alert('Erreur sauvegarde : '+(e.message||e));
@@ -4802,7 +4769,7 @@ function refreshWhatsAppPrestaCard(){
 // ─── s4 : Timer countdown step 1 (recherche presta) ───
 function startStep1Countdown(missionCreatedAt, typeMission){
   if(_s4Timer1) clearInterval(_s4Timer1);
-  const TIMEOUT_MIN = (typeMission === 'FLASH') ? 3 : 5; // FLASH 3min sinon 5min
+  const TIMEOUT_MIN = 5; // B3 fix : aligné backend matching_timeout_check (uniforme 5 min tous types)
   const tE = document.getElementById('s4-step1-timer');
   const typE = document.getElementById('s4-step1-type');
   if(typE) typE.textContent = 'Mission ' + (typeMission||'STANDARD') + ' · Timeout ' + TIMEOUT_MIN + ' min';
@@ -5451,7 +5418,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.20 · Sprint 12.6 · BUG#7 + Login PIN + Catalogue dyn + 4 fixes latents · 17/05/2026
+  v3.1.21 · Sprint 12.6 · 4 BUGS FIX (B1 escrow réel + B2 catalogue NR dyn + B3 timeout 5min + B4 pricing aligné) · 17/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

@@ -527,6 +527,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
   <div class="s1-footer">
     © 2026 HappyHome · Douala · Mobile Money uniquement
+    <span class="s1-footer-presta" onclick="goto(14)">Espace Prestataire →</span>
     <span class="s1-footer-presta" onclick="goto(6)">Devenir prestataire →</span>
   </div>
 </section>
@@ -1661,6 +1662,47 @@ textarea.full{min-height:60px;resize:vertical;}
       <button style="width:100%;padding:10px;border-radius:8px;background:var(--card);border:1px dashed var(--cardb);color:var(--t2);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">+ Ajouter un 3ème garant (optionnel)</button>
     </div>
 
+    <div class="sec">
+      <div class="sec-t"><span class="num">8</span>Identifiants de connexion</div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:12px;line-height:1.5;">
+        Tu te connecteras avec ton <strong style="color:var(--cy-text);">numéro Mobile Money</strong> et un <strong style="color:var(--cy-text);">PIN à 6 chiffres</strong> de ton choix. Plus simple à retenir qu'un mot de passe.
+      </div>
+
+      <div style="background:var(--inp-bg);border-radius:10px;padding:14px;margin-bottom:12px;">
+        <label style="font-size:11px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Numéro de connexion (Orange Money ou MTN)</label>
+        <input type="tel" id="kyc-numero-login" class="full" placeholder="6XX XXX XXX" inputmode="numeric" maxlength="13" style="font-size:16px;letter-spacing:1px;">
+        <div style="font-size:11px;color:var(--t2);margin-top:6px;">Ce numéro sera ton identifiant. 9 chiffres minimum.</div>
+      </div>
+
+      <div style="background:var(--inp-bg);border-radius:10px;padding:14px;margin-bottom:12px;">
+        <label style="font-size:11px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">PIN — 6 chiffres</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <input type="password" id="kyc-pin-1" class="full" placeholder="••••••" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="new-password" style="text-align:center;font-size:18px;letter-spacing:8px;">
+          <input type="password" id="kyc-pin-2" class="full" placeholder="Confirme" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="new-password" style="text-align:center;font-size:18px;letter-spacing:8px;">
+        </div>
+        <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.5;">
+          ⚠️ Séquences trop simples interdites : 000000, 111111, 123456, 654321. Mémorise bien ton PIN, l'admin pourra le réinitialiser sur présentation de ta CNI.
+        </div>
+      </div>
+
+      <div style="background:var(--inp-bg);border-radius:10px;padding:14px;">
+        <label style="font-size:11px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:10px;">Comment veux-tu être notifié(e) ?</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <label class="tier on" id="kyc-canal-whatsapp" onclick="selectKycCanal('whatsapp')" style="padding:14px;cursor:pointer;text-align:center;">
+            <div style="font-size:22px;">💬</div>
+            <div style="font-size:12px;font-weight:700;margin-top:4px;">WhatsApp</div>
+            <div style="font-size:10px;color:var(--t2);margin-top:2px;">Recommandé</div>
+          </label>
+          <label class="tier" id="kyc-canal-sms" onclick="selectKycCanal('sms')" style="padding:14px;cursor:pointer;text-align:center;">
+            <div style="font-size:22px;">✉️</div>
+            <div style="font-size:12px;font-weight:700;margin-top:4px;">SMS</div>
+            <div style="font-size:10px;color:var(--t2);margin-top:2px;">Sans Internet</div>
+          </label>
+        </div>
+        <input type="hidden" id="kyc-canal-notif" value="whatsapp">
+      </div>
+    </div>
+
 <div style="padding:14px;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);border-radius:10px;margin-bottom:18px;font-size:12px;color:var(--t2);line-height:1.6;">
       <div style="font-weight:700;color:var(--cg);margin-bottom:6px;">✓ Avantages prestataire HappyHome</div>
       Paiement garanti J+1 · Pas d'avance de frais · Vos données restent confidentielles · Vous pouvez vous désinscrire à tout moment.
@@ -1982,6 +2024,66 @@ textarea.full{min-height:60px;resize:vertical;}
   </div>
 </section>
 
+<!-- ═══════════════════════ ÉCRAN 14 — LOGIN PRESTATAIRE (Sprint 12.6) ═══════════════════════ -->
+<section class="screen" id="s14">
+  <div class="s2-hdr"><button class="s2-back" onclick="goto(1)">← Retour</button><div class="s2-title">Espace Prestataire</div><div class="s2-spacer"></div></div>
+  <div style="max-width:420px;margin:0 auto;padding:40px 20px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:54px;margin-bottom:8px;">🔧</div>
+      <h1 style="font-size:26px;font-weight:900;margin-bottom:8px;">Connexion Prestataire</h1>
+      <div style="font-size:13px;color:var(--t2);line-height:1.5;">Connecte-toi avec ton numéro Mobile Money et ton PIN à 6 chiffres.</div>
+    </div>
+
+    <div class="s7-card" style="padding:24px;margin-bottom:18px;">
+      <div style="margin-bottom:16px;">
+        <label style="font-size:11px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Numéro Mobile Money</label>
+        <input type="tel" id="login-presta-numero" class="full" placeholder="6XX XXX XXX" inputmode="numeric" maxlength="13" style="font-size:16px;letter-spacing:1px;">
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <label style="font-size:11px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">PIN — 6 chiffres</label>
+        <input type="password" id="login-presta-pin" class="full" placeholder="••••••" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="current-password" style="text-align:center;font-size:18px;letter-spacing:10px;">
+      </div>
+
+      <button id="login-presta-btn" class="s5-cta" style="width:100%;padding:14px;font-size:14px;" onclick="loginPresta()">Connexion</button>
+
+      <div id="login-presta-msg" style="margin-top:12px;font-size:12px;text-align:center;display:none;"></div>
+    </div>
+
+    <div style="text-align:center;font-size:12px;color:var(--t2);line-height:1.6;">
+      <a href="#" onclick="event.preventDefault();showSuccessModal('PIN oublié','Contacte l\'admin HappyHome par WhatsApp au +237 6 90 38 41 99 avec une photo de ta CNI.\n\nL\'admin pourra réinitialiser ton PIN sous 24h ouvrées.','OK')" style="color:var(--cy-text);text-decoration:none;font-weight:700;">PIN oublié ?</a>
+      <div style="margin-top:14px;">
+        Pas encore prestataire ?
+        <a href="#" onclick="event.preventDefault();goto(6)" style="color:var(--cy-text);text-decoration:none;font-weight:700;">Postuler →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ MODAL RESET PIN ADMIN (Sprint 12.6) ═══════════════════════ -->
+<div id="reset-pin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:360;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--card);border:2px solid var(--co,#FF9800);border-radius:18px;padding:28px;max-width:480px;width:100%;text-align:left;box-shadow:0 20px 60px rgba(0,0,0,.5);">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:48px;margin-bottom:6px;">🔐</div>
+      <div style="font-size:20px;font-weight:900;margin-bottom:4px;">Réinitialiser le PIN presta</div>
+      <div style="font-size:12px;color:var(--t2);" id="reset-pin-target">—</div>
+    </div>
+    <div style="background:rgba(255,152,0,.12);border:1px solid rgba(255,152,0,.3);border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;line-height:1.55;">
+      <strong>⚠️ Procédure obligatoire :</strong><br>
+      1. Le presta doit te présenter sa <strong>CNI originale</strong> + numéro MoMo<br>
+      2. Tu vérifies l'identité face à face ou par appel vidéo<br>
+      3. Tu logges le motif ici (traçabilité légale)<br>
+      4. Tu réinitialises ensuite manuellement dans le Dashboard Supabase Auth
+    </div>
+    <label style="font-size:11px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Motif (min 10 caractères, obligatoire)</label>
+    <textarea id="reset-pin-motif" class="full" rows="3" placeholder="Ex: CNI verifiee en personne le 17/05, presta Aicha M., a oublie PIN apres 3 mois inactivite" style="font-family:inherit;resize:vertical;"></textarea>
+    <div style="display:flex;gap:10px;margin-top:18px;">
+      <button onclick="closeResetPinModal()" style="flex:1;padding:12px;border:1px solid var(--cardb);background:transparent;color:var(--t2);font-family:inherit;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;">Annuler</button>
+      <button id="reset-pin-confirm-btn" onclick="confirmResetPin()" style="flex:2;padding:12px;border:none;background:var(--co,#FF9800);color:white;font-family:inherit;font-size:13px;font-weight:800;border-radius:10px;cursor:pointer;letter-spacing:.5px;">LOGGER ET CONTINUER</button>
+    </div>
+  </div>
+</div>
+
 <!-- Overlay verrouillage pour non-membres (caché par défaut, démo via toggle) -->
 <div id="perm-lock-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:200;align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--card);border:1px solid var(--cy);border-radius:18px;padding:32px;max-width:420px;text-align:center;">
@@ -2243,7 +2345,7 @@ function goto(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+n).classList.add('active');
   cur=n;
-  const _sp=document.getElementById('screen-pill'); if(_sp) _sp.textContent='Écran '+n+' / 13';
+  const _sp=document.getElementById('screen-pill'); if(_sp) _sp.textContent='Écran '+n+' / 14';
   document.querySelectorAll('.mockbar-btn[data-s]').forEach(b=>b.classList.toggle('on',+b.dataset.s===n));
   window.scrollTo(0,0);
   // Hooks chargement async par écran
@@ -2945,19 +3047,189 @@ async function submitKycPresta(){
   const services=Array.from(document.querySelectorAll('#kyc-services input:checked')).map(c=>c.value);
   const quartiers=Array.from(document.querySelectorAll('#kyc-quartiers input:checked')).map(c=>c.value);
   if(!services.length||!quartiers.length){alert('Sélectionne au moins 1 service et 1 quartier.');return;}
+
+  // ── Sprint 12.6 : validation identifiants login presta ─────────────
+  const numeroLoginRaw = (document.getElementById('kyc-numero-login')?.value||'').replace(/\D/g,'');
+  if(numeroLoginRaw.length < 9){alert('Numéro de connexion : 9 chiffres minimum.');document.getElementById('kyc-numero-login').focus();return;}
+  const pin1 = (document.getElementById('kyc-pin-1')?.value||'').trim();
+  const pin2 = (document.getElementById('kyc-pin-2')?.value||'').trim();
+  const pinErr = validatePinFormat(pin1, pin2);
+  if(pinErr){alert(pinErr);document.getElementById('kyc-pin-1').focus();return;}
+  const canalNotif = document.getElementById('kyc-canal-notif')?.value || 'whatsapp';
+  if(!['whatsapp','sms'].includes(canalNotif)){alert('Canal de notification invalide.');return;}
+
   const btn=document.getElementById('kyc-submit-btn');btn.disabled=true;btn.textContent='Upload...';
   try{
     const [recto,verso,selfie]=await Promise.all([uploadKycFile('recto'),uploadKycFile('verso'),uploadKycFile('selfie')]);
-    btn.textContent='Soumission...';
+    
+    // ── Sprint 12.6 : set le PIN comme password Supabase Auth ─────────
+    btn.textContent='Définition du PIN...';
+    const upd = await _supabaseClient.auth.updateUser({password: pin1});
+    if(upd.error){
+      throw new Error('Impossible de définir le PIN : '+upd.error.message+'. Réessaie ou contacte l\'admin.');
+    }
+    console.log('[HH] PIN défini comme password Supabase Auth pour presta', _currentUser.id);
+
+    btn.textContent='Soumission KYC...';
     const {error}=await _supabaseClient.rpc('submit_kyc_presta',{
       p_date_naissance:dateNaiss, p_cni_recto:recto, p_cni_verso:verso, p_selfie:selfie,
-      p_services:services, p_quartiers:quartiers
+      p_services:services, p_quartiers:quartiers,
+      p_canal_notif: canalNotif,
+      p_numero_login: numeroLoginRaw
     });
     if(error)throw new Error(error.message);
-    alert('✓ KYC soumis. Tu seras notifié(e) sous 24h après validation admin.');
-    goto(11);
-  }catch(e){alert('Erreur : '+e.message);}
+    
+    // ── Sprint 12.6 : modal succès brandée avec rappel identifiants ──
+    showSuccessModal(
+      'KYC soumis ✓',
+      "Ton dossier est en cours de validation par l'admin (sous 24h).\n\nIDENTIFIANTS DE CONNEXION (à retenir) :\n• Numéro : "+numeroLoginRaw+"\n• PIN : "+pin1+"\n\nUne fois ton KYC validé, tu pourras te connecter sur l'écran Espace Prestataire.\n\nTu seras notifié(e) par "+(canalNotif==='whatsapp'?'WhatsApp':'SMS')+".",
+      function(){ goto(11); }
+    );
+  }catch(e){
+    alert('Erreur soumission KYC : '+e.message);
+    console.error('[HH] submitKycPresta error:', e);
+  }
   finally{btn.disabled=false;btn.textContent='Soumettre pour validation';}
+}
+
+// ── Sprint 12.6 : validation format PIN 6 chiffres ────────────────
+function validatePinFormat(pin1, pin2){
+  if(!pin1 || !pin2) return 'Saisis ton PIN deux fois.';
+  if(!/^[0-9]{6}$/.test(pin1)) return 'Le PIN doit faire exactement 6 chiffres (0-9 uniquement).';
+  if(pin1 !== pin2) return 'Les deux PIN ne correspondent pas. Vérifie ta saisie.';
+  const trivial = ['000000','111111','222222','333333','444444','555555','666666','777777','888888','999999','123456','654321','012345'];
+  if(trivial.includes(pin1)) return 'PIN trop simple. Évite les séquences (000000, 123456, 111111, etc.). Choisis 6 chiffres moins évidents.';
+  return null;
+}
+
+// ── Sprint 12.6 : sélecteur canal_notif dans le KYC s10 ───────────
+function selectKycCanal(canal){
+  document.getElementById('kyc-canal-notif').value = canal;
+  document.getElementById('kyc-canal-whatsapp').classList.toggle('on', canal==='whatsapp');
+  document.getElementById('kyc-canal-sms').classList.toggle('on', canal==='sms');
+}
+
+// ── Sprint 12.6 : Login presta (numéro MoMo + PIN) ────────────────
+async function loginPresta(){
+  const numero = (document.getElementById('login-presta-numero').value||'').replace(/\D/g,'');
+  const pin = (document.getElementById('login-presta-pin').value||'').trim();
+  const msgEl = document.getElementById('login-presta-msg');
+  const btn = document.getElementById('login-presta-btn');
+  
+  msgEl.style.display = 'none';
+  
+  if(numero.length < 9){
+    msgEl.style.color = 'var(--cr)';
+    msgEl.textContent = 'Numéro invalide (9 chiffres min).';
+    msgEl.style.display = 'block';
+    return;
+  }
+  if(!/^[0-9]{6}$/.test(pin)){
+    msgEl.style.color = 'var(--cr)';
+    msgEl.textContent = 'PIN invalide (6 chiffres requis).';
+    msgEl.style.display = 'block';
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Vérification...';
+  
+  try {
+    // 1. Lookup email depuis numéro
+    const {data:email, error:lookupErr} = await _supabaseClient.rpc('presta_lookup_email', {p_numero: numero});
+    if(lookupErr) throw new Error('Erreur lookup : '+lookupErr.message);
+    if(!email){
+      msgEl.style.color = 'var(--cr)';
+      msgEl.textContent = 'Numéro non reconnu. Vérifie ou contacte l\'admin.';
+      msgEl.style.display = 'block';
+      return;
+    }
+    
+    // 2. SignIn avec email + PIN
+    btn.textContent = 'Connexion...';
+    const {data, error} = await _supabaseClient.auth.signInWithPassword({email, password: pin});
+    if(error){
+      msgEl.style.color = 'var(--cr)';
+      msgEl.textContent = 'PIN incorrect. Réessaie ou clique sur "PIN oublié ?".';
+      msgEl.style.display = 'block';
+      return;
+    }
+    
+    // 3. Vérifier kyc_valide
+    const {data: prof} = await _supabaseClient.from('profiles').select('role,kyc_valide,prenom').eq('id',data.user.id).maybeSingle();
+    if(!prof || prof.role !== 'prestataire'){
+      await _supabaseClient.auth.signOut();
+      msgEl.style.color = 'var(--cr)';
+      msgEl.textContent = 'Ce compte n\'est pas prestataire.';
+      msgEl.style.display = 'block';
+      return;
+    }
+    if(!prof.kyc_valide){
+      await _supabaseClient.auth.signOut();
+      msgEl.style.color = 'var(--co,#FF9800)';
+      msgEl.textContent = 'KYC en attente de validation admin. Patience, tu seras notifié(e) dès activation.';
+      msgEl.style.display = 'block';
+      return;
+    }
+    
+    // 4. Succès → redirige vers espace presta
+    showSuccessModal('Bienvenue '+(prof.prenom||'')+' !', 'Connexion réussie. Active le bouton EN LIGNE pour commencer à recevoir des missions.', function(){ goto(7); });
+  } catch(e) {
+    console.error('[HH] loginPresta error:', e);
+    msgEl.style.color = 'var(--cr)';
+    msgEl.textContent = 'Erreur : '+e.message;
+    msgEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Connexion';
+  }
+}
+
+// ── Sprint 12.6 : Reset PIN admin (log seulement, reset manuel Dashboard) ──
+let _resetPinTargetId = null;
+let _resetPinTargetName = null;
+function openResetPinModal(prestaId, prestaName){
+  _resetPinTargetId = prestaId;
+  _resetPinTargetName = prestaName;
+  document.getElementById('reset-pin-target').textContent = prestaName + ' (' + prestaId.substring(0,8) + '...)';
+  document.getElementById('reset-pin-motif').value = '';
+  document.getElementById('reset-pin-modal').style.display = 'flex';
+}
+function closeResetPinModal(){
+  document.getElementById('reset-pin-modal').style.display = 'none';
+  _resetPinTargetId = null;
+  _resetPinTargetName = null;
+}
+async function confirmResetPin(){
+  if(!_resetPinTargetId) return;
+  const motif = (document.getElementById('reset-pin-motif').value||'').trim();
+  if(motif.length < 10){
+    alert('Motif obligatoire (min 10 caractères). Mentionne ID/CNI vérifiée.');
+    document.getElementById('reset-pin-motif').focus();
+    return;
+  }
+  const btn = document.getElementById('reset-pin-confirm-btn');
+  btn.disabled = true;
+  btn.textContent = 'Log en cours...';
+  try {
+    const {data, error} = await _supabaseClient.rpc('admin_reset_pin_log', {
+      p_presta_id: _resetPinTargetId,
+      p_motif: motif
+    });
+    if(error) throw new Error(error.message);
+    closeResetPinModal();
+    showSuccessModal(
+      'Reset loggé ✓',
+      "Action tracée pour "+(data?.presta_nom||_resetPinTargetName)+".\n\n📋 PROCHAINE ÉTAPE MANUELLE :\n"+(data?.instructions||'Va dans Dashboard Supabase Auth > Users > reset password')+"\n\nCommunique le nouveau PIN au presta directement.",
+      null,
+      'OK'
+    );
+  } catch(e) {
+    alert('Erreur log reset PIN : '+e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'LOGGER ET CONTINUER';
+  }
 }
 
 async function togglePrestaOnline(checkbox){
@@ -3994,7 +4266,10 @@ function _renderPrestaTable(rows){
       <td>—</td>
       <td>${_fmt(Math.round(p.gains))} FCFA</td>
       <td>${statutPill}</td>
-      <td><button class="ad-btn" onclick="alert('ID : ${_esc(p.id)}\\nEmail : ${_esc(p.email||'—')}\\nQuartier : ${_esc(p.quartier||'—')}\\nInscrit le ${_fmtDate(p.created_at)}')">Voir</button></td>
+      <td style="white-space:nowrap;">
+        <button class="ad-btn" onclick="alert('ID : ${_esc(p.id)}\\nEmail : ${_esc(p.email||'—')}\\nQuartier : ${_esc(p.quartier||'—')}\\nInscrit le ${_fmtDate(p.created_at)}')">Voir</button>
+        <button class="ad-btn" style="background:rgba(255,152,0,.15);border-color:var(--co,#FF9800);color:var(--co,#FF9800);margin-left:4px;" onclick="openResetPinModal('${_esc(p.id)}','${_esc(nom)}')">Reset PIN</button>
+      </td>
     </tr>`;
   }).join('');
 }
@@ -5125,7 +5400,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.18 · Sprint 12.6 · Fix BUG#7 modal succès · 17/05/2026
+  v3.1.19 · Sprint 12.6 · Login Presta PIN + Reset Admin · 17/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

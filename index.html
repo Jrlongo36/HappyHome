@@ -21,6 +21,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="HappyHome — Services à domicile à Douala">
 <meta name="twitter:description" content="Prestataire à domicile en 5 minutes. Paiement Mobile Money.">
+<link rel="canonical" href="https://happyhome.pages.dev/" />
 <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22HappyHome%20-%20Services%20%C3%A0%20domicile%20Douala%22%2C%22short_name%22%3A%22HappyHome%22%2C%22start_url%22%3A%22.%2F%22%2C%22scope%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23030a1f%22%2C%22theme_color%22%3A%22%230F268C%22%2C%22description%22%3A%22Services%20%C3%A0%20domicile%20%C3%A0%20Douala%22%2C%22lang%22%3A%22fr%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzBGMjY4QyIvPjx0ZXh0IHg9IjI1NiIgeT0iMzIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAwIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5IUDwvdGV4dD48L3N2Zz4%3D%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
 <title>HappyHome — Services à domicile à Douala</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -387,6 +388,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .gps-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .pric-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:12px;font-weight:700;gap:8px;}
 .pric-inp{width:90px;padding:6px 10px;background:var(--inp-bg);border:1px solid var(--inp-b);border-radius:6px;color:var(--text);font-family:inherit;font-size:12px;text-align:right;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 [data-theme="light"] .gps-pin{box-shadow:0 0 0 3px rgba(255,255,255,.9),0 4px 12px rgba(15,38,140,.25);}
 @media(max-width:600px){
   .ad-table{font-size:11px;}
@@ -434,7 +436,7 @@ textarea.full{min-height:60px;resize:vertical;}
     <p class="s1-sub">Ménage, cuisine, garde d'enfants, lessive, courses. Vérifiées. Paiement Mobile Money. Sans abonnement.</p>
   </div>
 
-  <div class="s1-section-title">Nos 8 services</div>
+  <div class="s1-section-title">Nos services</div>
   <div class="s1-services">
     <div class="s1-card" onclick="selectService('menage')">
       <div class="s1-card-img svc-img menage"><span class="em"></span></div>
@@ -615,15 +617,15 @@ textarea.full{min-height:60px;resize:vertical;}
     <div class="s5-tiers">
       <div class="tier-mb" onclick="this.parentNode.querySelectorAll('.tier-mb').forEach(x=>x.classList.remove('best'));this.classList.add('best')">
         <div class="tier-mb-name">Mensuel</div>
-        <div class="tier-mb-price">2 500</div>
+        <div class="tier-mb-price" id="s5-prix-mensuel">2 000</div>
         <div class="tier-mb-period">FCFA / mois</div>
       </div>
       <div class="tier-mb best" onclick="this.parentNode.querySelectorAll('.tier-mb').forEach(x=>x.classList.remove('best'));this.classList.add('best')">
         <div class="tier-mb-best">MEILLEURE OFFRE</div>
         <div class="tier-mb-name">Annuel</div>
-        <div class="tier-mb-price">25 000</div>
+        <div class="tier-mb-price" id="s5-prix-annuel">18 000</div>
         <div class="tier-mb-period">FCFA / an</div>
-        <div class="tier-mb-save">Économie 5 000 FCFA</div>
+        <div class="tier-mb-save" id="s5-prix-save">Économie 6 000 FCFA</div>
       </div>
     </div>
 
@@ -1354,8 +1356,8 @@ textarea.full{min-height:60px;resize:vertical;}
           </div>
           <div class="s7-card-t" style="margin-top:18px;">ABONNEMENT MEMBRE</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
-            <div class="pric-row"><span>Mensuel</span><input type="number" class="pric-inp" value="2500"> FCFA</div>
-            <div class="pric-row"><span>Annuel</span><input type="number" class="pric-inp" value="25000"> FCFA</div>
+            <div class="pric-row"><span>Mensuel</span><input id="pric-abo-mensuel" type="number" class="pric-inp" value="2000"> FCFA</div>
+            <div class="pric-row"><span>Annuel</span><input id="pric-abo-annuel" type="number" class="pric-inp" value="18000"> FCFA</div>
             <div class="pric-row"><span>Réduction membre</span><input type="number" class="pric-inp" value="10"> %</div>
           </div>
         </div>
@@ -2368,6 +2370,7 @@ function goto(n){
     tryRecoverMissionFromStorage().then(ok=>{ if(!ok){alert('Aucune mission en cours. Recommence ta commande.');goto(2);} });
   }
   if(n===4)loadActiveMissionForClient();
+  if(n===5)loadMembrePricing();
   if(n===8)setAdminTab('dash');
   if(n===10)loadKycQuartiers();
   if(n===11)loadClientDashboard();
@@ -4199,10 +4202,51 @@ async function loadMembreStatus(){
   }
 }
 
+// ── PRICING MEMBRES DYNAMIQUE (source : hh_config Supabase) ─────────
+async function loadMembrePricing(){
+  const FALLBACK_MENSUEL = 2000;
+  const FALLBACK_ANNUEL  = 18000;
+  let mensuel = FALLBACK_MENSUEL;
+  let annuel  = FALLBACK_ANNUEL;
+  try {
+    if(_supabaseClient){
+      const {data, error} = await _supabaseClient
+        .from('hh_config')
+        .select('key,value')
+        .in('key',['abonnement_mensuel','abonnement_annuel']);
+      if(!error && data){
+        data.forEach(r=>{
+          const v = parseInt(String(r.value).replace(/"/g,''), 10);
+          if(!isNaN(v)){
+            if(r.key==='abonnement_mensuel') mensuel = v;
+            if(r.key==='abonnement_annuel')  annuel  = v;
+          }
+        });
+      }
+    }
+  } catch(e){ console.warn('loadMembrePricing fallback:',e); }
+  const eco = mensuel * 12 - annuel;
+  // Mise à jour screen Devenir Membre (s5)
+  const elM = document.getElementById('s5-prix-mensuel');
+  const elA = document.getElementById('s5-prix-annuel');
+  const elS = document.getElementById('s5-prix-save');
+  if(elM) elM.textContent = mensuel.toLocaleString('fr-FR');
+  if(elA) elA.textContent = annuel.toLocaleString('fr-FR');
+  if(elS) elS.textContent = 'Économie ' + (eco > 0 ? eco.toLocaleString('fr-FR') : '0') + ' FCFA';
+  // Mise à jour admin panel si présent
+  const pricM = document.getElementById('pric-abo-mensuel');
+  const pricA = document.getElementById('pric-abo-annuel');
+  if(pricM) pricM.value = mensuel;
+  if(pricA) pricA.value = annuel;
+  return {mensuel, annuel, eco};
+}
+
 async function showMembreModal(){
   const m = document.getElementById('membre-modal');
   if(!m) return;
   m.style.display = 'flex';
+  // Chargement dynamique des prix depuis hh_config (fallback 2000/18000 si offline)
+  loadMembrePricing();
 
   if(!_supabaseClient || !_currentUser){
     closeMembreModal();
@@ -5987,7 +6031,7 @@ recalc();
             <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>Priorité matching</strong> — servi avant les non-membres</span></div>
             <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>Annulation flexible</strong> jusqu'à 1h avant (vs 2h)</span></div>
             <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>1 mission FLASH offerte</strong> par an (valeur 6 000 FCFA)</span></div>
-            <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>Parrainage premium</strong> — 1 000 FCFA crédités par filleul actif</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--cg);">✓</span><span><strong>Parrainage premium</strong> — 2 500 FCFA crédités par filleul actif</span></div>
           </div>
         </div>
 
@@ -6070,11 +6114,15 @@ recalc();
     <div id="auth-msg" style="display:none;padding:10px;border-radius:8px;margin-bottom:12px;font-size:13px;"></div>
     <form id="auth-form" onsubmit="handleAuth(event)" style="display:flex;flex-direction:column;gap:12px;">
       <div id="signup-fields" style="display:none;flex-direction:column;gap:12px;">
+        <label for="auth-nom" class="sr-only">Nom de famille</label>
         <input type="text" id="auth-nom" placeholder="Nom de famille" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required>
+        <label for="auth-prenom" class="sr-only">Prénom</label>
         <input type="text" id="auth-prenom" placeholder="Prénom" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required>
+        <label for="auth-telephone" class="sr-only">Numéro de téléphone</label>
         <input type="tel" id="auth-telephone" placeholder="Téléphone (6XX XXX XXX)" pattern="^6[0-9]{8}$" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required>
+        <label for="auth-quartier" class="sr-only">Quartier</label>
         <select id="auth-quartier" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required>
-          <option value="">Quartier...</option>
+          <option value="" disabled selected>Choisir votre quartier</option>
           <option value="akwa">Akwa</option><option value="bonanjo">Bonanjo</option><option value="bonapriso">Bonapriso</option>
           <option value="deido">Deido</option><option value="bali">Bali</option><option value="bonaberi">Bonabéri</option>
           <option value="bepanda">Bepanda</option><option value="makepe">Makepe</option><option value="logbessou">Logbessou</option>
@@ -6087,9 +6135,12 @@ recalc();
           <option value="ndogpassi">Ndogpassi</option><option value="beedi">Beedi</option><option value="youpwe">Youpwé</option>
           <option value="bonamoussadi">Bonamoussadi</option>
         </select>
+        <label for="auth-referral" class="sr-only">Code de parrainage (optionnel)</label>
         <input type="text" id="auth-referral" placeholder="Code parrainage (optionnel)" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;">
       </div>
+      <label for="auth-email" class="sr-only">Adresse email</label>
       <input type="email" id="auth-email" placeholder="Email" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required autocomplete="email">
+      <label for="auth-password" class="sr-only">Mot de passe</label>
       <input type="password" id="auth-password" placeholder="Mot de passe (8+ car, A-Z, 0-9, symbole)" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}" title="Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial" style="padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:var(--card,#222);color:var(--t1,#fff);font-family:inherit;" required oninput="hhCheckPwd(this)">
         <div id="auth-pwd-strength" style="font-size:12px;margin-top:-8px;display:none;"></div>
       <button type="submit" id="auth-submit" style="padding:14px;border-radius:10px;border:none;background:var(--cy,#FFC107);color:#000;font-family:inherit;font-weight:900;font-size:15px;cursor:pointer;margin-top:6px;">Se connecter</button>

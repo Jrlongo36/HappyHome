@@ -2320,6 +2320,17 @@ async function doSignOut(){
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  // ── VERSION CACHE-BUSTING ─────────────────────────────────────────────────
+  const _APP_VERSION = 'v16';
+  const _storedVer = localStorage.getItem('hh_app_version');
+  if(_storedVer !== _APP_VERSION){
+    // Nouvelle version déployée → purger les images en cache pour forcer rechargement Supabase
+    ['menage','cuisine','nounou','courses','lessive','repassage','fete','soin','clim','shamp','elec','demenag']
+      .forEach(s=>localStorage.removeItem('hh_svc_img_'+s));
+    localStorage.setItem('hh_app_version', _APP_VERSION);
+    console.info('[HH] Cache images purgé → v16');
+  }
+  // ─────────────────────────────────────────────────────────────────────────
   bootSupabase(); registerSW(); _loadServiceImages();
   // Date par défaut = maintenant + 2h pour éviter FLASH par défaut
   const now2h = new Date(Date.now() + 2*60*60*1000);

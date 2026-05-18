@@ -1066,6 +1066,21 @@ textarea.full{min-height:60px;resize:vertical;}
         <button class="s5-cta" style="margin-top:14px;padding:12px;font-size:13px;" onclick="goto(12)">Voir le détail · Chat</button>
       </div>
 
+      <!-- GPS Mission Card — visible si mission active -->
+      <div id="gps-mission-card" class="s7-card" style="display:none;border-left:4px solid #4CAF50;margin-bottom:14px;">
+        <div class="s7-card-t">📍 Suivi GPS mission</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.5;margin-bottom:10px;">
+          Partagez votre position pendant la mission pour votre sécurité et celle du client.<br>
+          <strong>Recommandé · Batterie min. 30%</strong>
+        </div>
+        <button id="gps-toggle-btn" onclick="toggleGpsTracking(this)"
+          style="width:100%;padding:12px;border-radius:50px;background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;">
+          📍 Activer le suivi GPS
+        </button>
+        <div id="gps-battery-info" style="font-size:10px;color:var(--t3);margin-top:6px;text-align:center;display:none;"></div>
+        <div style="font-size:10px;color:var(--t3);margin-top:4px;text-align:center;">Données enregistrées uniquement pendant les missions actives</div>
+      </div>
+
       <div class="s7-card">
         <div class="s7-card-t">Statistiques · Mai 2026</div>
         <div class="s7-stats-grid">
@@ -2358,6 +2373,7 @@ function goto(n){
   if(n===11)loadClientDashboard();
   if(n===12)refreshWhatsAppPrestaCard();
   if(n===13)loadPrestaCatalogue();
+  if(n===7 && _currentUser && _currentProfile && _currentProfile.role==='prestataire') checkPrestaActiveMission();
 }
 
 function toggleTheme(){
@@ -2905,6 +2921,76 @@ async function startPrestaListener(){
     .subscribe();
   console.log('[HH] Presta listener actif');
 }
+
+// ════════════════════════════════════════════════════════
+// GPS TRACKING MISSION — Sécurité prestataire
+// ════════════════════════════════════════════════════════
+let _gpsInterval = null;
+let _gpsActive = false;
+
+async function checkPrestaActiveMission(){
+  if(!_supabaseClient||!_currentUser||!_currentProfile||_currentProfile.role!=='prestataire')return;
+  const {data}=await _supabaseClient.from('missions').select('id,status')
+    .eq('prestataire_id',_currentUser.id)
+    .in('status',['presta_assigne','en_cours'])
+    .maybeSingle();
+  const card=document.getElementById('gps-mission-card');
+  if(!card)return;
+  if(data){
+    card.style.display='block';
+    card.dataset.missionId=data.id;
+  } else {
+    card.style.display='none';
+    if(_gpsActive) stopGpsTracking(document.getElementById('gps-toggle-btn'));
+  }
+}
+
+function toggleGpsTracking(btn){
+  if(_gpsActive){stopGpsTracking(btn);}else{startGpsTracking(btn);}
+}
+
+function startGpsTracking(btn){
+  if(!confirm('📍 Activer le suivi GPS\n\nEn activant ce suivi vous acceptez que HappyHome enregistre votre position GPS pendant toute la durée de votre mission.\n\nCe suivi est facultatif mais fortement recommandé pour votre sécurité et celle du client.\n⚡ Vérifiez que votre batterie est ≥ 30%.\n\nActiver le suivi GPS ?'))return;
+  if(!navigator.geolocation){alert('GPS non disponible sur cet appareil.');return;}
+  _gpsActive=true;
+  btn.textContent='🟢 GPS actif · Toucher pour désactiver';
+  btn.style.background='rgba(76,175,80,.2)';
+  btn.style.borderColor='#4CAF50';
+  btn.style.color='#4CAF50';
+  sendGpsPosition();
+  _gpsInterval=setInterval(sendGpsPosition,120000); // toutes les 2 min
+}
+
+function stopGpsTracking(btn){
+  _gpsActive=false;
+  if(_gpsInterval){clearInterval(_gpsInterval);_gpsInterval=null;}
+  if(!btn)return;
+  btn.textContent='📍 Activer le suivi GPS';
+  btn.style.background='var(--inp-bg)';
+  btn.style.borderColor='var(--cardb)';
+  btn.style.color='var(--text)';
+}
+
+async function sendGpsPosition(){
+  if(!_gpsActive||!_supabaseClient||!_currentUser)return;
+  const card=document.getElementById('gps-mission-card');
+  const missionId=card&&card.dataset.missionId;
+  if(!missionId)return;
+  navigator.geolocation.getCurrentPosition(async(pos)=>{
+    let battPct=null;
+    try{if(navigator.getBattery){const b=await navigator.getBattery();battPct=Math.round(b.level*100);}}catch{}
+    const info=document.getElementById('gps-battery-info');
+    if(info){info.style.display='block';info.textContent='Position envoyée · '+(battPct!==null?'Batterie : '+battPct+'%':'');}
+    try{
+      await fetch(SUPABASE_URL+'/functions/v1/gps-track',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
+        body:JSON.stringify({mission_id:missionId,presta_id:_currentUser.id,lat:pos.coords.latitude,lng:pos.coords.longitude,battery_pct:battPct})
+      });
+    }catch(e){console.warn('GPS send error:',e);}
+  },(err)=>{console.warn('GPS position error:',err);},{enableHighAccuracy:false,timeout:10000});
+}
+
 
 async function showIncomingMission(mission){
   if(_incomingMission)return; // déjà une mission en cours d'affichage
@@ -4427,6 +4513,9 @@ async function rejectPayAdmin(payId,ref){
 // ╚══════════════════════════════════════════════════════════════════╝
 let _kycAdminChannel=null;
 
+// ════════════════════════════════════════════════════════
+// KYC ADMIN v2 — OCR Gemini + Score confiance + SMS ETECH
+// ════════════════════════════════════════════════════════
 async function loadKycAdmin(){
   if(!_supabaseClient||!_currentProfile||_currentProfile.role!=='admin'){
     document.getElementById('kyc-list').innerHTML='<div style="color:var(--cr);font-size:13px;text-align:center;padding:30px;">Accès admin requis.</div>';
@@ -4434,7 +4523,7 @@ async function loadKycAdmin(){
   }
   const {data,error}=await _supabaseClient
     .from('kyc_presta')
-    .select('presta_id,date_naissance,cni_recto_path,cni_verso_path,selfie_path,status,soumis_le,motif_rejet,profiles!kyc_presta_presta_id_fkey(prenom,nom,telephone,email,quartier)')
+    .select('presta_id,date_naissance,cni_recto_path,cni_verso_path,selfie_path,status,soumis_le,motif_rejet,kyc_score,kyc_nom_extrait,kyc_prenom_extrait,kyc_num_cni,kyc_ocr_done,profiles!kyc_presta_presta_id_fkey(prenom,nom,telephone,email,quartier,kyc_valide,kyc_auto_active,kyc_taux)')
     .in('status',['en_attente','en_cours'])
     .order('soumis_le',{ascending:true});
   const el=document.getElementById('kyc-list');
@@ -4443,7 +4532,6 @@ async function loadKycAdmin(){
   if(badge){badge.textContent=data.length;badge.style.display=data.length?'inline-block':'none';}
   if(!data.length){el.innerHTML='<div style="color:var(--cg);font-size:13px;text-align:center;padding:30px;">✓ Aucun KYC en attente</div>';return;}
 
-  // Charger services + quartiers de chaque presta
   const prestaIds=data.map(d=>d.presta_id);
   const [{data:svs},{data:qts}]=await Promise.all([
     _supabaseClient.from('presta_services').select('presta_id,service_id').in('presta_id',prestaIds),
@@ -4457,58 +4545,105 @@ async function loadKycAdmin(){
     const services=(svMap[k.presta_id]||[]).join(', ')||'—';
     const quartiers=(qtMap[k.presta_id]||[]).join(', ')||'—';
     const dn=k.date_naissance?new Date(k.date_naissance).toLocaleDateString('fr-FR'):'—';
-    return `<div style="background:var(--card);border:1px solid var(--cardb);border-radius:12px;padding:14px;">
+    const score=k.kyc_score||0;
+    const ocrDone=k.kyc_ocr_done===true;
+    const autoActive=p.kyc_auto_active===true;
+    const scoreColor=score>=80?'#4CAF50':score>=50?'#FF9800':'#F44336';
+    const scoreBg=score>=80?'rgba(76,175,80,.15)':score>=50?'rgba(255,152,0,.15)':'rgba(244,67,54,.15)';
+    const scoreLabel=score>=80?'Pré-validé ✓':score>=50?'À vérifier ⚠':'Attention ✗';
+    const autoActiveBadge=autoActive?`<div style="background:rgba(255,193,7,.2);border:1px solid #FFC107;border-radius:50px;padding:4px 10px;font-size:11px;font-weight:800;color:#e6a800;">🟡 Probatoire · Auto-activé ${p.kyc_taux||score}%</div>`:'';
+    const nomMatch=k.kyc_nom_extrait?`<span style="color:var(--t2);">OCR nom : <strong style="color:var(--text);">${k.kyc_nom_extrait}</strong> (déclaré : ${p.nom||'—'})</span><br>`:'';
+    const prenomMatch=k.kyc_prenom_extrait?`<span style="color:var(--t2);">OCR prénom : <strong style="color:var(--text);">${k.kyc_prenom_extrait}</strong> (déclaré : ${p.prenom||'—'})</span><br>`:'';
+    const cniNum=k.kyc_num_cni?`<span style="color:var(--t2);">N° CNI extrait : <strong style="color:var(--text);">${k.kyc_num_cni}</strong></span><br>`:'';
+    const nom=((p.prenom||'')+' '+(p.nom||'')).trim();
+    return `<div style="background:var(--card);border:2px solid ${scoreColor}40;border-radius:14px;padding:14px;position:relative;">
+      <!-- Score badge -->
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
         <div>
           <div style="font-size:15px;font-weight:900;">${p.prenom||''} ${p.nom||''}</div>
           <div style="font-size:11px;color:var(--t2);">${p.telephone||'—'} · ${p.email||'—'} · Né(e) le ${dn}</div>
         </div>
-        <div style="font-size:10px;color:var(--t2);">Soumis ${k.soumis_le?new Date(k.soumis_le).toLocaleString('fr-FR'):'—'}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          ${autoActiveBadge}
+          ${ocrDone?`<div style="background:${scoreBg};border:1px solid ${scoreColor};border-radius:50px;padding:5px 12px;font-size:12px;font-weight:900;color:${scoreColor};">${score}% · ${scoreLabel}</div>`:`<button onclick="triggerKycOcr('${k.presta_id}',this)" style="padding:6px 12px;border-radius:50px;background:rgba(15,38,140,.15);border:1px solid var(--cb);color:var(--cb);font-family:inherit;font-weight:700;font-size:11px;cursor:pointer;">🔍 Lancer OCR</button>`}
+          <div style="font-size:10px;color:var(--t2);">${k.soumis_le?new Date(k.soumis_le).toLocaleString('fr-FR'):'—'}</div>
+        </div>
       </div>
-      <div style="font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:10px;">
-        <strong>Services :</strong> ${services}<br>
-        <strong>Quartiers :</strong> ${quartiers}
-      </div>
+      <!-- OCR résultats -->
+      ${ocrDone?`<div style="background:var(--inp-bg);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px;line-height:1.8;">${nomMatch}${prenomMatch}${cniNum}<span style="color:var(--t2);">Services : ${services} · Quartiers : ${quartiers}</span></div>`:`<div style="font-size:12px;color:var(--t2);margin-bottom:10px;">Services : ${services} · Quartiers : ${quartiers}</div>`}
+      <!-- Documents -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
-        <button onclick="viewKycDoc('${k.cni_recto_path}','CNI recto')" style="padding:8px;border-radius:8px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">📄 CNI recto</button>
-        <button onclick="viewKycDoc('${k.cni_verso_path}','CNI verso')" style="padding:8px;border-radius:8px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">📄 CNI verso</button>
-        <button onclick="viewKycDoc('${k.selfie_path}','Selfie')" style="padding:8px;border-radius:8px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">📄 Selfie</button>
+        <button onclick="viewKycDoc('${k.cni_recto_path}','CNI recto')" style="padding:8px;border-radius:8px;background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">📄 CNI recto${k.cni_recto_path?' ✓':' ✗'}</button>
+        <button onclick="viewKycDoc('${k.cni_verso_path}','CNI verso')" style="padding:8px;border-radius:8px;background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">📄 CNI verso${k.cni_verso_path?' ✓':' ✗'}</button>
+        <button onclick="viewKycDoc('${k.selfie_path}','Selfie')" style="padding:8px;border-radius:8px;background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">📄 Selfie${k.selfie_path?' ✓':' ✗'}</button>
       </div>
+      <!-- Actions -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <button onclick="rejectKycAdmin('${k.presta_id}','${(p.prenom||'')+' '+(p.nom||'')}')" style="padding:10px;border-radius:50px;background:rgba(244,67,54,.15);color:var(--cr);border:1px solid rgba(244,67,54,.3);font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">✗ Refuser</button>
-        <button onclick="validateKycAdmin('${k.presta_id}','${(p.prenom||'')+' '+(p.nom||'')}')" style="padding:10px;border-radius:50px;background:var(--cg);color:#fff;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">✓ Valider</button>
+        <button onclick="rejectKycAdmin('${k.presta_id}','${nom.replace(/'/g,'\\\'')}')" style="padding:10px;border-radius:50px;background:rgba(244,67,54,.15);color:var(--cr);border:1px solid rgba(244,67,54,.3);font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">✗ Refuser</button>
+        <button onclick="validateKycAdmin('${k.presta_id}','${nom.replace(/'/g,'\\\'')}','${p.telephone||''}')" style="padding:10px;border-radius:50px;background:var(--cg);color:#fff;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">✓ Valider + SMS</button>
       </div>
     </div>`;
   }).join('');
 
-  // Realtime auto-refresh
   if(_kycAdminChannel)_supabaseClient.removeChannel(_kycAdminChannel);
   _kycAdminChannel=_supabaseClient.channel('admin-kyc')
     .on('postgres_changes',{event:'*',schema:'public',table:'kyc_presta'},()=>loadKycAdmin())
     .subscribe();
 }
 
+async function triggerKycOcr(prestaId,btn){
+  btn.disabled=true; btn.textContent='⏳ OCR en cours…';
+  try {
+    const resp=await fetch(`${SUPABASE_URL}/functions/v1/kyc-ocr`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
+      body:JSON.stringify({presta_id:prestaId})
+    });
+    const d=await resp.json();
+    if(!d.ok)throw new Error(d.error||'Erreur OCR');
+    btn.textContent=`✓ Score : ${d.score}%`;
+    btn.style.background='rgba(76,175,80,.2)';
+    setTimeout(loadKycAdmin,800);
+  } catch(e) {
+    btn.disabled=false; btn.textContent='🔍 Relancer OCR';
+    alert('Erreur OCR : '+e.message);
+  }
+}
+
 async function viewKycDoc(path,label){
-  if(!path){alert('Document manquant');return;}
+  if(!path){alert('Document manquant (non uploadé)');return;}
   const {data,error}=await _supabaseClient.storage.from('kyc-documents').createSignedUrl(path,300);
   if(error){alert('Erreur: '+error.message);return;}
   window.open(data.signedUrl,'_blank');
 }
 
-async function validateKycAdmin(prestaId,nom){
-  if(!confirm('Valider le KYC de '+nom+' ?\n\nLe prestataire pourra activer le mode en ligne et recevoir des missions.'))return;
+async function validateKycAdmin(prestaId,nom,telephone){
+  if(!confirm('Valider le KYC de '+nom+' ?\n\nLe prestataire recevra un SMS de confirmation et pourra recevoir des missions.'))return;
   const {error}=await _supabaseClient.rpc('admin_validate_kyc',{p_presta_id:prestaId});
   if(error){alert('Erreur: '+error.message);return;}
-  alert('✓ KYC '+nom+' validé.');
+  // SMS ETECH KEYS
+  if(telephone){
+    try {
+      await fetch(`${SUPABASE_URL}/functions/v1/send-sms`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
+        body:JSON.stringify({
+          telephone,
+          message:`HappyHome : Bonjour ${nom}, votre dossier KYC a été validé. Vous pouvez maintenant activer le mode en ligne et recevoir des missions. Bienvenue !`
+        })
+      });
+    } catch(e){console.warn('SMS non envoyé:',e);}
+  }
+  alert('✓ KYC '+nom+' validé. SMS envoyé.');
   loadKycAdmin();
 }
 
 async function rejectKycAdmin(prestaId,nom){
-  const motif=prompt('Motif du refus pour '+nom+' (min 5 caractères) :\nExemples : CNI floue, selfie illisible, info incohérente');
+  const motif=prompt('Motif du refus pour '+nom+' (min 5 caractères) :\nEx: CNI floue, selfie illisible, infos incohérentes');
   if(!motif||motif.trim().length<5){alert('Motif obligatoire (min 5 caractères).');return;}
   const {error}=await _supabaseClient.rpc('admin_reject_kyc',{p_presta_id:prestaId,p_motif:motif.trim()});
   if(error){alert('Erreur: '+error.message);return;}
-  alert('✗ KYC '+nom+' refusé.\nLe candidat est notifié pour corriger.');
+  alert('✗ KYC '+nom+' refusé. Le candidat doit soumettre un nouveau dossier.');
   loadKycAdmin();
 }
 
@@ -5077,14 +5212,14 @@ async function savePricingAdmin(){
 const _MT_KEY = 'eMFHTYCr4dPAwOil3PbR';
 let _hhMap = null;
 let _gpsMarkers = [];
-let _gpsInterval = null;
+let _gpsMapInterval = null;
 
 async function loadGpsAdmin(){
   const panel = document.getElementById('ap-gps');
   if(!panel) return;
 
   // Stopper le polling précédent
-  if(_gpsInterval){ clearInterval(_gpsInterval); _gpsInterval = null; }
+  if(_gpsMapInterval){ clearInterval(_gpsMapInterval); _gpsMapInterval = null; }
   // Détruire la carte précédente (container va être recréé)
   if(_hhMap){ _hhMap.remove(); _hhMap = null; _gpsMarkers = []; }
 
@@ -5133,7 +5268,7 @@ async function loadGpsAdmin(){
 
   _hhMap.on('load', async () => {
     await _refreshGpsMap();
-    _gpsInterval = setInterval(_refreshGpsMap, 30000);
+    _gpsMapInterval = setInterval(_refreshGpsMap, 30000);
   });
 }
 

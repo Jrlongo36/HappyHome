@@ -5036,97 +5036,84 @@ async function _refreshGpsMap(){
   if(statusEl) statusEl.textContent = 'Actualisation…';
 
   try {
-    // 1. Prestataires
-    const {data:profiles, error:pErr} = await _supabaseClient
-      .from('profiles')
-      .select('id,prenom,nom,telephone')
-      .eq('role','prestataire');
+    // 1. Prestataires (table dédiée, pas profiles)
+    const {data:prestas, error:pErr} = await _supabaseClient
+      .from('prestataires')
+      .select('id,nom,telephone,quartier,dispo,actif,kyc_step')
+      .eq('actif', true);
     if(pErr) throw pErr;
 
-    const ids = (profiles||[]).map(p=>p.id);
-    if(!ids.length){
+    if(!prestas || !prestas.length){
       if(sidebarEl) sidebarEl.innerHTML = '<div style="color:var(--t2);font-size:12px;text-align:center;padding:20px;">Aucun prestataire inscrit</div>';
       if(statusEl) statusEl.textContent = '0 prestataire';
       return;
     }
 
-    // 2. Requêtes parallèles : quartiers / missions actives / KYC
-    const [{data:pqRows},{data:activeMiss},{data:kycs}] = await Promise.all([
-      _supabaseClient.from('presta_quartiers').select('presta_id,quartier_id').in('presta_id',ids),
-      _supabaseClient.from('missions').select('prestataire_id,status').in('prestataire_id',ids).in('status',['presta_assigne','en_cours']),
-      _supabaseClient.from('kyc_presta').select('presta_id,status').in('presta_id',ids)
-    ]);
-
-    // 3. Charger coordonnées des quartiers concernés
-    const qIds = [...new Set((pqRows||[]).map(r=>r.quartier_id).filter(Boolean))];
+    // 2. Coordonnées via nom du quartier (prestataires.quartier = texte)
+    const quartierNames = [...new Set(prestas.map(p=>p.quartier).filter(Boolean))];
     let qMap = {};
-    if(qIds.length){
-      const {data:qData} = await _supabaseClient.from('quartiers').select('id,nom,lat,lng').in('id',qIds);
-      (qData||[]).forEach(q=>{ qMap[q.id]=q; });
+    if(quartierNames.length){
+      const {data:qData} = await _supabaseClient
+        .from('quartiers').select('nom,lat,lng').in('nom', quartierNames);
+      (qData||[]).forEach(q=>{ qMap[q.nom]=q; });
     }
 
-    // 4. Lookup maps
-    const activeMap = {};  (activeMiss||[]).forEach(m=>{ activeMap[m.prestataire_id]=true; });
-    const kycMap   = {};  (kycs||[]).forEach(k=>{ kycMap[k.presta_id]=k.status; });
-    const pqMap    = {};  (pqRows||[]).forEach(r=>{ (pqMap[r.presta_id]=pqMap[r.presta_id]||[]).push(r.quartier_id); });
+    // 3. Missions actives
+    const ids = prestas.map(p=>p.id);
+    const {data:activeMiss} = await _supabaseClient
+      .from('missions').select('prestataire_id,status')
+      .in('prestataire_id', ids).in('status',['presta_assigne','en_cours']);
+    const activeMap = {};
+    (activeMiss||[]).forEach(m=>{ activeMap[m.prestataire_id]=true; });
 
-    // 5. Nettoyer anciens markers
+    // 4. Nettoyer anciens markers
     _gpsMarkers.forEach(m=>m.remove());
     _gpsMarkers = [];
 
-    // 6. Placer markers + construire sidebar
+    // 5. Placer markers + construire sidebar
     let shown = 0;
     const sidebarHtml = [];
 
-    for(const p of (profiles||[])){
-      const hasMission = !!activeMap[p.id];
-      const kycStatus  = kycMap[p.id] || 'non_soumis';
-      const quartierIds = pqMap[p.id] || [];
+    for(const p of prestas){
+      const hasMission  = !!activeMap[p.id];
+      const q           = qMap[p.quartier];
 
-      let color = '#9E9E9E'; let label = 'Inactif';
-      if(hasMission)                                              { color='#4CAF50'; label='En mission'; }
-      else if(kycStatus==='valide')                               { color='#FF9800'; label='Disponible'; }
-      else if(kycStatus==='en_attente'||kycStatus==='en_cours')   { color='#FFC107'; label='KYC en cours'; }
+      // Couleur : mission > disponible > KYC > inactif
+      let color = '#9E9E9E', label = 'Inactif';
+      if(hasMission)                        { color='#4CAF50'; label='En mission'; }
+      else if(p.dispo && p.kyc_step >= 2)   { color='#FF9800'; label='Disponible'; }
+      else if(p.kyc_step < 2)               { color='#FFC107'; label='KYC en cours'; }
 
-      const nom = `${p.prenom||''} ${p.nom||''}`.trim() || '(sans nom)';
+      const nom      = (p.nom||'(sans nom)').trim();
       const initiale = (nom.charAt(0)||'?').toUpperCase();
 
-      // Marker sur premier quartier avec coordonnées valides
-      for(const qid of quartierIds){
-        const q = qMap[qid];
-        if(q && q.lat && q.lng){
-          const el = document.createElement('div');
-          el.style.cssText = `width:32px;height:32px;border-radius:50%;background:${color};border:3px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);font-family:Outfit,sans-serif;flex-shrink:0;`;
-          el.textContent = initiale;
+      if(q && q.lat && q.lng){
+        const el = document.createElement('div');
+        el.style.cssText = `width:32px;height:32px;border-radius:50%;background:${color};border:3px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);font-family:Outfit,sans-serif;flex-shrink:0;`;
+        el.textContent = initiale;
 
-          const popup = new maplibregl.Popup({offset:20,closeButton:true,maxWidth:'210px'})
-            .setHTML(`<div style="font-family:Outfit,sans-serif;padding:4px 2px;">
-              <div style="font-weight:900;font-size:14px;margin-bottom:3px;">${nom}</div>
-              <div style="font-size:11px;color:#777;margin-bottom:7px;">📍 ${q.nom}</div>
-              <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${color};color:${color==='#FFC107'?'#1a1a1a':'#fff'};">${label}</span>
-              ${p.telephone?`<div style="font-size:11px;margin-top:7px;color:#555;">📞 ${p.telephone}</div>`:''}
-            </div>`);
+        const popup = new maplibregl.Popup({offset:20,closeButton:true,maxWidth:'210px'})
+          .setHTML(`<div style="font-family:Outfit,sans-serif;padding:4px 2px;">
+            <div style="font-weight:900;font-size:14px;margin-bottom:3px;">${_esc(nom)}</div>
+            <div style="font-size:11px;color:#777;margin-bottom:7px;">📍 ${_esc(p.quartier||'')}</div>
+            <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${color};color:${color==='#FFC107'?'#1a1a1a':'#fff'};">${label}</span>
+            ${p.telephone?`<div style="font-size:11px;margin-top:7px;color:#555;">📞 ${_esc(p.telephone)}</div>`:''}
+          </div>`);
 
-          const marker = new maplibregl.Marker({element:el})
-            .setLngLat([q.lng, q.lat])
-            .setPopup(popup)
-            .addTo(_hhMap);
+        const marker = new maplibregl.Marker({element:el})
+          .setLngLat([parseFloat(q.lng), parseFloat(q.lat)])
+          .setPopup(popup)
+          .addTo(_hhMap);
 
-          _gpsMarkers.push(marker);
-          shown++;
-          break;
-        }
+        _gpsMarkers.push(marker);
+        shown++;
       }
-
-      // Sidebar entry
-      const zonesStr = quartierIds.map(qid=>qMap[qid]?.nom||qid).filter(Boolean).slice(0,3).join(', ')
-        + (quartierIds.length>3 ? ` +${quartierIds.length-3}`:'' ) || 'Zone à définir';
 
       sidebarHtml.push(`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--divider);">
         <span style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;margin-top:2px;"></span>
         <div style="flex:1;min-width:0;">
-          <div style="font-weight:700;font-size:12px;">${nom}</div>
-          <div style="font-size:10px;color:var(--t2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${zonesStr}">${zonesStr}</div>
+          <div style="font-weight:700;font-size:12px;">${_esc(nom)}</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:1px;">${_esc(p.quartier||'Zone à définir')}</div>
         </div>
         <span style="font-size:10px;font-weight:700;color:${color};white-space:nowrap;">${label}</span>
       </div>`);
@@ -5135,7 +5122,7 @@ async function _refreshGpsMap(){
     if(sidebarEl) sidebarEl.innerHTML = sidebarHtml.join('') || '<div style="color:var(--t2);font-size:12px;text-align:center;padding:20px;">Aucun prestataire</div>';
     if(statusEl){
       const heure = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-      statusEl.textContent = `${shown}/${(profiles||[]).length} sur carte · MàJ ${heure}`;
+      statusEl.textContent = `${shown}/${prestas.length} sur carte · MàJ ${heure}`;
     }
 
   } catch(e){

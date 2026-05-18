@@ -3909,7 +3909,7 @@ async function doUploadImage(){
   const inp = document.getElementById('upload-file-input');
   const st  = document.getElementById('upload-status');
   if(!inp || !inp.files || !inp.files[0]){
-    if(st){ st.textContent='⚠️ Sélectionnez d'abord une image.'; st.style.color='var(--cr)'; }
+    if(st){ st.textContent="⚠️ Sélectionnez d'abord une image."; st.style.color='var(--cr)'; }
     return;
   }
   const file = inp.files[0];
@@ -5264,7 +5264,7 @@ async function loadMediasAdmin(){
   const note = document.createElement('div');
   note.className = 'medias-note';
   note.style.cssText = 'background:rgba(76,175,80,.08);border-left:3px solid var(--cg);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:12px;line-height:1.5;';
-  note.innerHTML = '<strong>✅ Upload actif</strong> · Cliquer "Changer" sur un service → sélectionner image → Sauvegarder. L'image est uploadée vers <code style="background:var(--inp-bg);padding:2px 6px;border-radius:4px;">services-images</code> et appliquée immédiatement.';
+  note.innerHTML = "<strong>✅ Upload actif</strong> · Cliquer \"Changer\" sur un service → sélectionner image → Sauvegarder. L'image est uploadée vers <code style=\"background:var(--inp-bg);padding:2px 6px;border-radius:4px;\">services-images</code> et appliquée immédiatement.";
   panel.insertBefore(note, panel.firstChild.nextSibling);
 }
 

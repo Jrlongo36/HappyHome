@@ -543,12 +543,49 @@ textarea.full{min-height:60px;resize:vertical;}
     </div>
   </div>
 
+  <!-- ── CTA CARTE ZONES ── -->
+  <div style="max-width:1080px;margin:0 auto 40px;padding:0 24px;text-align:center;">
+    <button onclick="openZonesMap()" style="display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:50px;background:linear-gradient(135deg,#0F268C,#1a3ab8);color:#fff;border:none;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 18px rgba(15,38,140,.45);transition:.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(15,38,140,.55)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(15,38,140,.45)'">
+      <span style="font-size:20px;">🗺️</span>
+      <span>Voir les zones couvertes à Douala</span>
+    </button>
+    <div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,.5);">Découvrez où nos prestataires opèrent · Mis à jour en temps réel</div>
+  </div>
+
   <div class="s1-footer">
     © 2026 HappyHome · Douala · Mobile Money uniquement
     <span class="s1-footer-presta" onclick="goto(14)">Espace Prestataire →</span>
     <span class="s1-footer-presta" onclick="goto(6)">Devenir prestataire →</span>
   </div>
 </section>
+
+<!-- ═══════════════════════ MODAL CARTE ZONES COUVERTES (Client) ═══════════════════════ -->
+<div id="client-map-modal" style="display:none;position:fixed;inset:0;z-index:8500;background:rgba(0,0,0,.65);backdrop-filter:blur(5px);" onclick="if(event.target===this)closeZonesMap()">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(96vw,920px);max-height:min(90vh,640px);background:var(--bg);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.5);">
+
+    <!-- Header modal -->
+    <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--cardb);background:var(--card);flex-shrink:0;">
+      <div>
+        <div style="font-size:16px;font-weight:900;">🗺️ Zones couvertes · Douala</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:3px;" id="client-map-status">Initialisation de la carte…</div>
+      </div>
+      <button onclick="closeZonesMap()" style="width:34px;height:34px;border-radius:50%;background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;flex-shrink:0;">✕</button>
+    </div>
+
+    <!-- Conteneur carte -->
+    <div id="client-map-container" style="flex:1;min-height:400px;"></div>
+
+    <!-- Légende + CTA bas -->
+    <div style="padding:12px 18px;background:var(--card);border-top:1px solid var(--cardb);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;flex-shrink:0;">
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <span style="font-size:11px;display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#4CAF50;display:inline-block;"></span>Disponible</span>
+        <span style="font-size:11px;display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#FF9800;display:inline-block;"></span>En mission</span>
+        <span style="font-size:11px;display:flex;align-items:center;gap:5px;"><span style="width:12px;height:12px;border-radius:50%;background:#0F268C;display:inline-block;font-size:8px;color:#fff;display:inline-flex;align-items:center;justify-content:center;">×n</span>&nbsp;Plusieurs prestataires</span>
+      </div>
+      <button onclick="closeZonesMap()" style="padding:10px 22px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">Réserver un service →</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════════ ÉCRAN 5 — DEVENIR MEMBRE ═══════════════════════ -->
 <section class="screen" id="s5">
@@ -5036,84 +5073,97 @@ async function _refreshGpsMap(){
   if(statusEl) statusEl.textContent = 'Actualisation…';
 
   try {
-    // 1. Prestataires (table dédiée, pas profiles)
-    const {data:prestas, error:pErr} = await _supabaseClient
-      .from('prestataires')
-      .select('id,nom,telephone,quartier,dispo,actif,kyc_step')
-      .eq('actif', true);
+    // 1. Prestataires
+    const {data:profiles, error:pErr} = await _supabaseClient
+      .from('profiles')
+      .select('id,prenom,nom,telephone')
+      .eq('role','prestataire');
     if(pErr) throw pErr;
 
-    if(!prestas || !prestas.length){
+    const ids = (profiles||[]).map(p=>p.id);
+    if(!ids.length){
       if(sidebarEl) sidebarEl.innerHTML = '<div style="color:var(--t2);font-size:12px;text-align:center;padding:20px;">Aucun prestataire inscrit</div>';
       if(statusEl) statusEl.textContent = '0 prestataire';
       return;
     }
 
-    // 2. Coordonnées via nom du quartier (prestataires.quartier = texte)
-    const quartierNames = [...new Set(prestas.map(p=>p.quartier).filter(Boolean))];
+    // 2. Requêtes parallèles : quartiers / missions actives / KYC
+    const [{data:pqRows},{data:activeMiss},{data:kycs}] = await Promise.all([
+      _supabaseClient.from('presta_quartiers').select('presta_id,quartier_id').in('presta_id',ids),
+      _supabaseClient.from('missions').select('prestataire_id,status').in('prestataire_id',ids).in('status',['presta_assigne','en_cours']),
+      _supabaseClient.from('kyc_presta').select('presta_id,status').in('presta_id',ids)
+    ]);
+
+    // 3. Charger coordonnées des quartiers concernés
+    const qIds = [...new Set((pqRows||[]).map(r=>r.quartier_id).filter(Boolean))];
     let qMap = {};
-    if(quartierNames.length){
-      const {data:qData} = await _supabaseClient
-        .from('quartiers').select('nom,lat,lng').in('nom', quartierNames);
-      (qData||[]).forEach(q=>{ qMap[q.nom]=q; });
+    if(qIds.length){
+      const {data:qData} = await _supabaseClient.from('quartiers').select('id,nom,lat,lng').in('id',qIds);
+      (qData||[]).forEach(q=>{ qMap[q.id]=q; });
     }
 
-    // 3. Missions actives
-    const ids = prestas.map(p=>p.id);
-    const {data:activeMiss} = await _supabaseClient
-      .from('missions').select('prestataire_id,status')
-      .in('prestataire_id', ids).in('status',['presta_assigne','en_cours']);
-    const activeMap = {};
-    (activeMiss||[]).forEach(m=>{ activeMap[m.prestataire_id]=true; });
+    // 4. Lookup maps
+    const activeMap = {};  (activeMiss||[]).forEach(m=>{ activeMap[m.prestataire_id]=true; });
+    const kycMap   = {};  (kycs||[]).forEach(k=>{ kycMap[k.presta_id]=k.status; });
+    const pqMap    = {};  (pqRows||[]).forEach(r=>{ (pqMap[r.presta_id]=pqMap[r.presta_id]||[]).push(r.quartier_id); });
 
-    // 4. Nettoyer anciens markers
+    // 5. Nettoyer anciens markers
     _gpsMarkers.forEach(m=>m.remove());
     _gpsMarkers = [];
 
-    // 5. Placer markers + construire sidebar
+    // 6. Placer markers + construire sidebar
     let shown = 0;
     const sidebarHtml = [];
 
-    for(const p of prestas){
-      const hasMission  = !!activeMap[p.id];
-      const q           = qMap[p.quartier];
+    for(const p of (profiles||[])){
+      const hasMission = !!activeMap[p.id];
+      const kycStatus  = kycMap[p.id] || 'non_soumis';
+      const quartierIds = pqMap[p.id] || [];
 
-      // Couleur : mission > disponible > KYC > inactif
-      let color = '#9E9E9E', label = 'Inactif';
-      if(hasMission)                        { color='#4CAF50'; label='En mission'; }
-      else if(p.dispo && p.kyc_step >= 2)   { color='#FF9800'; label='Disponible'; }
-      else if(p.kyc_step < 2)               { color='#FFC107'; label='KYC en cours'; }
+      let color = '#9E9E9E'; let label = 'Inactif';
+      if(hasMission)                                              { color='#4CAF50'; label='En mission'; }
+      else if(kycStatus==='valide')                               { color='#FF9800'; label='Disponible'; }
+      else if(kycStatus==='en_attente'||kycStatus==='en_cours')   { color='#FFC107'; label='KYC en cours'; }
 
-      const nom      = (p.nom||'(sans nom)').trim();
+      const nom = `${p.prenom||''} ${p.nom||''}`.trim() || '(sans nom)';
       const initiale = (nom.charAt(0)||'?').toUpperCase();
 
-      if(q && q.lat && q.lng){
-        const el = document.createElement('div');
-        el.style.cssText = `width:32px;height:32px;border-radius:50%;background:${color};border:3px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);font-family:Outfit,sans-serif;flex-shrink:0;`;
-        el.textContent = initiale;
+      // Marker sur premier quartier avec coordonnées valides
+      for(const qid of quartierIds){
+        const q = qMap[qid];
+        if(q && q.lat && q.lng){
+          const el = document.createElement('div');
+          el.style.cssText = `width:32px;height:32px;border-radius:50%;background:${color};border:3px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);font-family:Outfit,sans-serif;flex-shrink:0;`;
+          el.textContent = initiale;
 
-        const popup = new maplibregl.Popup({offset:20,closeButton:true,maxWidth:'210px'})
-          .setHTML(`<div style="font-family:Outfit,sans-serif;padding:4px 2px;">
-            <div style="font-weight:900;font-size:14px;margin-bottom:3px;">${_esc(nom)}</div>
-            <div style="font-size:11px;color:#777;margin-bottom:7px;">📍 ${_esc(p.quartier||'')}</div>
-            <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${color};color:${color==='#FFC107'?'#1a1a1a':'#fff'};">${label}</span>
-            ${p.telephone?`<div style="font-size:11px;margin-top:7px;color:#555;">📞 ${_esc(p.telephone)}</div>`:''}
-          </div>`);
+          const popup = new maplibregl.Popup({offset:20,closeButton:true,maxWidth:'210px'})
+            .setHTML(`<div style="font-family:Outfit,sans-serif;padding:4px 2px;">
+              <div style="font-weight:900;font-size:14px;margin-bottom:3px;">${nom}</div>
+              <div style="font-size:11px;color:#777;margin-bottom:7px;">📍 ${q.nom}</div>
+              <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${color};color:${color==='#FFC107'?'#1a1a1a':'#fff'};">${label}</span>
+              ${p.telephone?`<div style="font-size:11px;margin-top:7px;color:#555;">📞 ${p.telephone}</div>`:''}
+            </div>`);
 
-        const marker = new maplibregl.Marker({element:el})
-          .setLngLat([parseFloat(q.lng), parseFloat(q.lat)])
-          .setPopup(popup)
-          .addTo(_hhMap);
+          const marker = new maplibregl.Marker({element:el})
+            .setLngLat([q.lng, q.lat])
+            .setPopup(popup)
+            .addTo(_hhMap);
 
-        _gpsMarkers.push(marker);
-        shown++;
+          _gpsMarkers.push(marker);
+          shown++;
+          break;
+        }
       }
+
+      // Sidebar entry
+      const zonesStr = quartierIds.map(qid=>qMap[qid]?.nom||qid).filter(Boolean).slice(0,3).join(', ')
+        + (quartierIds.length>3 ? ` +${quartierIds.length-3}`:'' ) || 'Zone à définir';
 
       sidebarHtml.push(`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--divider);">
         <span style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;margin-top:2px;"></span>
         <div style="flex:1;min-width:0;">
-          <div style="font-weight:700;font-size:12px;">${_esc(nom)}</div>
-          <div style="font-size:10px;color:var(--t2);margin-top:1px;">${_esc(p.quartier||'Zone à définir')}</div>
+          <div style="font-weight:700;font-size:12px;">${nom}</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${zonesStr}">${zonesStr}</div>
         </div>
         <span style="font-size:10px;font-weight:700;color:${color};white-space:nowrap;">${label}</span>
       </div>`);
@@ -5122,7 +5172,7 @@ async function _refreshGpsMap(){
     if(sidebarEl) sidebarEl.innerHTML = sidebarHtml.join('') || '<div style="color:var(--t2);font-size:12px;text-align:center;padding:20px;">Aucun prestataire</div>';
     if(statusEl){
       const heure = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-      statusEl.textContent = `${shown}/${prestas.length} sur carte · MàJ ${heure}`;
+      statusEl.textContent = `${shown}/${(profiles||[]).length} sur carte · MàJ ${heure}`;
     }
 
   } catch(e){
@@ -5863,6 +5913,191 @@ recalc();
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }
 </style>
+
+<!-- ═══════════════════════ JS — CARTE CLIENT ZONES COUVERTES ═══════════════════════ -->
+<script>
+// ── CARTE CLIENT — Modal "Zones couvertes" — Sprint 13b ─────────────────
+const _CM_KEY = 'eMFHTYCr4dPAwOil3PbR';
+let _clientMap = null;
+let _clientMapReady = false;
+
+function openZonesMap() {
+  document.getElementById('client-map-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  if (!_clientMapReady) _initClientMap();
+  else if (_clientMap) { setTimeout(()=>_clientMap.resize(),100); }
+}
+
+function closeZonesMap() {
+  document.getElementById('client-map-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// Fermeture clavier Escape
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeZonesMap(); });
+
+async function _initClientMap() {
+  const statusEl = document.getElementById('client-map-status');
+
+  if (typeof maplibregl === 'undefined') {
+    statusEl.textContent = '⚠️ Carte non disponible — vérifiez votre connexion internet';
+    return;
+  }
+
+  // Initialiser la carte MapLibre
+  _clientMap = new maplibregl.Map({
+    container: 'client-map-container',
+    style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${_CM_KEY}`,
+    center: [9.7085, 4.0511],
+    zoom: 11.5,
+    attributionControl: false
+  });
+
+  _clientMap.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+  _clientMap.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+
+  _clientMap.on('load', async () => {
+    if (!_supabaseClient) {
+      statusEl.textContent = 'Connexion requise pour charger les prestataires';
+      return;
+    }
+
+    statusEl.textContent = 'Chargement des prestataires…';
+
+    try {
+      // 1. Prestataires validés
+      const { data: prestas, error: e1 } = await _supabaseClient
+        .from('profiles')
+        .select('id, prenom, nom, is_dispo')
+        .eq('role', 'presta')
+        .eq('kyc_valide', true);
+
+      if (e1) throw e1;
+
+      if (!prestas || !prestas.length) {
+        statusEl.textContent = 'Aucun prestataire disponible actuellement';
+        return;
+      }
+
+      const prestaIds = prestas.map(p => p.id);
+
+      // 2. Zones des prestataires
+      const { data: pqData, error: e2 } = await _supabaseClient
+        .from('presta_quartiers')
+        .select('presta_id, quartier_id')
+        .in('presta_id', prestaIds);
+
+      if (e2) throw e2;
+
+      const qIds = [...new Set((pqData || []).map(r => r.quartier_id))];
+      if (!qIds.length) {
+        statusEl.textContent = 'Aucune zone configurée pour le moment';
+        return;
+      }
+
+      // 3. Coordonnées des quartiers
+      const { data: qData, error: e3 } = await _supabaseClient
+        .from('quartiers')
+        .select('id, nom, arrondissement, lat, lng')
+        .in('id', qIds);
+
+      if (e3) throw e3;
+
+      // Indexation
+      const qMap = {};
+      (qData || []).forEach(q => { qMap[q.id] = q; });
+      const pMap = {};
+      prestas.forEach(p => { pMap[p.id] = p; });
+
+      // Grouper prestataires par quartier
+      const qToPrestas = {};
+      (pqData || []).forEach(r => {
+        if (!qToPrestas[r.quartier_id]) qToPrestas[r.quartier_id] = [];
+        if (pMap[r.presta_id]) qToPrestas[r.quartier_id].push(pMap[r.presta_id]);
+      });
+
+      let totalZones = 0;
+      let totalDispos = 0;
+
+      Object.entries(qToPrestas).forEach(([qId, pList]) => {
+        const q = qMap[qId];
+        if (!q || !q.lat || !q.lng) return;
+
+        const hasDispo = pList.some(p => p.is_dispo);
+        const count = pList.length;
+        const color = hasDispo ? '#4CAF50' : '#FF9800';
+        const bgColor = count > 1 ? '#0F268C' : color;
+
+        // Élément marqueur
+        const el = document.createElement('div');
+        el.style.cssText = [
+          `width:${count > 1 ? 38 : 28}px`,
+          `height:${count > 1 ? 38 : 28}px`,
+          'border-radius:50%',
+          `background:${bgColor}`,
+          'border:3px solid #fff',
+          'box-shadow:0 2px 10px rgba(0,0,0,.4)',
+          'cursor:pointer',
+          'display:flex',
+          'align-items:center',
+          'justify-content:center',
+          `font-size:${count > 1 ? 11 : 9}px`,
+          'font-weight:900',
+          'color:#fff',
+          'font-family:inherit',
+          'transition:transform .15s'
+        ].join(';');
+        el.textContent = count > 1 ? `×${count}` : '1';
+        el.title = q.nom;
+        el.addEventListener('mouseenter', () => { el.style.transform = 'scale(1.2)'; });
+        el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+
+        // Contenu popup
+        const prestaRows = pList.map(p =>
+          `<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.07);">
+            <span style="font-size:12px;font-weight:700;">${p.prenom || '—'}</span>
+            <span style="font-size:10px;font-weight:800;color:${p.is_dispo ? '#4CAF50' : '#FF9800'};">${p.is_dispo ? '🟢 Dispo' : '🟠 Mission'}</span>
+          </div>`
+        ).join('');
+
+        const popup = new maplibregl.Popup({
+          offset: 22,
+          maxWidth: '230px',
+          closeButton: true,
+          className: 'cm-popup'
+        }).setHTML(`
+          <div style="font-size:14px;font-weight:900;margin-bottom:3px;">${q.nom}</div>
+          <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">${q.arrondissement || ''}</div>
+          ${prestaRows}
+          <button onclick="closeZonesMap()" style="margin-top:12px;width:100%;padding:9px;border-radius:9px;background:#0F268C;color:#fff;border:none;font-family:inherit;font-weight:800;font-size:11px;cursor:pointer;letter-spacing:.3px;">Réserver dans cette zone →</button>
+        `);
+
+        new maplibregl.Marker({ element: el })
+          .setLngLat([parseFloat(q.lng), parseFloat(q.lat)])
+          .setPopup(popup)
+          .addTo(_clientMap);
+
+        totalZones++;
+        if (hasDispo) totalDispos++;
+      });
+
+      _clientMapReady = true;
+      const s = totalZones > 1 ? 's' : '';
+      statusEl.textContent = `${totalZones} zone${s} couverte${s} · ${totalDispos} disponible${totalDispos > 1 ? 's' : ''} maintenant`;
+
+    } catch (err) {
+      statusEl.textContent = '⚠️ Erreur de chargement — réessayez dans un instant';
+      console.error('[Carte client]', err);
+    }
+  });
+
+  _clientMap.on('error', (e) => {
+    statusEl.textContent = '⚠️ Erreur carte MapTiler — vérifiez votre connexion';
+    console.error('[MapLibre client]', e);
+  });
+}
+// ── FIN CARTE CLIENT ─────────────────────────────────────────────────────
+</script>
 
 </body>
 </html>

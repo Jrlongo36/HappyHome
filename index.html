@@ -769,7 +769,7 @@ textarea.full{min-height:60px;resize:vertical;}
       <textarea class="full" placeholder="Animaux, allergies, accès difficile..."></textarea>
     </div>
 
-    <div class="sec" id="sec-coordonnees">
+    <div class="sec" id="sec-coordonnees" style="display:none;">
       <div class="sec-t"><span class="num">7</span>Vos coordonnées</div>
       <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.5;">
         Pas besoin de créer un compte. Votre nom doit correspondre exactement à celui de votre carte d'identité (CNI) liée à votre Mobile Money pour valider le paiement.
@@ -1673,13 +1673,13 @@ textarea.full{min-height:60px;resize:vertical;}
     <div class="sec">
       <div class="sec-t"><span class="num">5</span>Disponibilités hebdomadaires</div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
-        <div class="tier on" style="padding:8px 2px;"><div style="font-size:11px;font-weight:800;">Lun</div></div>
-        <div class="tier on" style="padding:8px 2px;"><div style="font-size:11px;font-weight:800;">Mar</div></div>
-        <div class="tier on" style="padding:8px 2px;"><div style="font-size:11px;font-weight:800;">Mer</div></div>
-        <div class="tier on" style="padding:8px 2px;"><div style="font-size:11px;font-weight:800;">Jeu</div></div>
-        <div class="tier on" style="padding:8px 2px;"><div style="font-size:11px;font-weight:800;">Ven</div></div>
-        <div class="tier on" style="padding:8px 2px;"><div style="font-size:11px;font-weight:800;">Sam</div></div>
-        <div class="tier" style="padding:8px 2px;"><div style="font-size:11px;font-weight:800;">Dim</div></div>
+        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Lun</div></div>
+        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Mar</div></div>
+        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Mer</div></div>
+        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Jeu</div></div>
+        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Ven</div></div>
+        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Sam</div></div>
+        <div class="tier" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Dim</div></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Heure début</label><input type="time" class="full" value="07:00"></div>
@@ -1690,10 +1690,11 @@ textarea.full{min-height:60px;resize:vertical;}
     <div class="sec">
       <div class="sec-t"><span class="num">6</span>Numéro Mobile Money pour recevoir les paiements</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <label class="tier on" style="padding:14px;cursor:pointer;text-align:center;"><div style="font-size:24px;"></div><div style="font-size:11px;font-weight:700;margin-top:4px;">Orange Money</div></label>
-        <label class="tier" style="padding:14px;cursor:pointer;text-align:center;"><div style="font-size:24px;"></div><div style="font-size:11px;font-weight:700;margin-top:4px;">MTN MoMo</div></label>
+        <label class="tier on" id="kyc-momo-om" onclick="selectKycMomo('orange',this)" style="padding:14px;cursor:pointer;text-align:center;"><div style="font-size:24px;"></div><div style="font-size:11px;font-weight:700;margin-top:4px;">Orange Money</div></label>
+        <label class="tier" id="kyc-momo-mtn" onclick="selectKycMomo('mtn',this)" style="padding:14px;cursor:pointer;text-align:center;"><div style="font-size:24px;"></div><div style="font-size:11px;font-weight:700;margin-top:4px;">MTN MoMo</div></label>
       </div>
-      <input type="tel" class="full" placeholder="6XX XXX XXX" style="margin-top:10px;">
+      <input type="hidden" id="kyc-momo-op" value="orange">
+      <input type="tel" id="kyc-momo-num" class="full" placeholder="6XX XXX XXX" style="margin-top:10px;">
     </div>
 
         <div class="sec">
@@ -2303,6 +2304,7 @@ async function handleAuth(event){
       const { error } = await _supabaseClient.auth.signInWithPassword({ email, password });
       if(error) throw error;
       showAuthMsg('success', '✓ Connexion réussie');
+      setTimeout(closeAuthModal, 1000);
     }
   } catch(e){
     showAuthMsg('error', e.message);
@@ -2320,17 +2322,6 @@ async function doSignOut(){
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  // ── VERSION CACHE-BUSTING ─────────────────────────────────────────────────
-  const _APP_VERSION = 'v16';
-  const _storedVer = localStorage.getItem('hh_app_version');
-  if(_storedVer !== _APP_VERSION){
-    // Nouvelle version déployée → purger les images en cache pour forcer rechargement Supabase
-    ['menage','cuisine','nounou','courses','lessive','repassage','fete','soin','clim','shamp','elec','demenag']
-      .forEach(s=>localStorage.removeItem('hh_svc_img_'+s));
-    localStorage.setItem('hh_app_version', _APP_VERSION);
-    console.info('[HH] Cache images purgé → v16');
-  }
-  // ─────────────────────────────────────────────────────────────────────────
   bootSupabase(); registerSW(); _loadServiceImages();
   // Date par défaut = maintenant + 2h pour éviter FLASH par défaut
   const now2h = new Date(Date.now() + 2*60*60*1000);
@@ -2833,12 +2824,10 @@ async function submitMissionOnly(){
   }
   if(!dateStr||!timeStr){alert('Choisis une date et une heure.');return;}
 
-  // 3. Validation coordonnées invité (si pas connecté)
+  // 3. Guard authentification obligatoire
   if(!_currentUser){
-    if(nom.length<2){alert('Entre ton nom complet (comme sur la CNI).');document.getElementById('cmd-nom')?.focus();return;}
-    if(whatsapp.replace(/\D/g,'').length<9){alert('Numéro WhatsApp invalide.');document.getElementById('cmd-whatsapp')?.focus();return;}
-    if(!momoOp){alert('Choisis ton opérateur Mobile Money.');document.getElementById('cmd-momo-op')?.focus();return;}
-    if(momoNum.replace(/\D/g,'').length<9){alert('Numéro Mobile Money invalide.');document.getElementById('cmd-momo-num')?.focus();return;}
+    showAuthModal('signin');
+    return;
   }
 
   const dateISO=new Date(dateStr+'T'+timeStr+':00').toISOString();
@@ -3289,6 +3278,15 @@ function validatePinFormat(pin1, pin2){
 
 // ── Sprint 12.6 : sélecteur canal_notif dans le KYC s10 ───────────
 function selectKycCanal(canal){
+function selectKycMomo(op, el){
+  document.getElementById('kyc-momo-op').value = op;
+  ['kyc-momo-om','kyc-momo-mtn'].forEach(id => {
+    const btn = document.getElementById(id);
+    if(btn) btn.classList.remove('on');
+  });
+  if(el) el.classList.add('on');
+}
+
   document.getElementById('kyc-canal-notif').value = canal;
   document.getElementById('kyc-canal-whatsapp').classList.toggle('on', canal==='whatsapp');
   document.getElementById('kyc-canal-sms').classList.toggle('on', canal==='sms');
@@ -4145,7 +4143,7 @@ function updateMembreUI(){
       banner.innerHTML='<span style="font-size:18px;">⭐</span><div style="flex:1;"><strong style="color:var(--cy-text);">-10% Membre appliqué automatiquement</strong></div>';
       banner.style.borderColor='var(--cy)';
     } else {
-      banner.innerHTML='<span style="font-size:18px;"></span><div style="flex:1;"><strong style="color:var(--co);">Devenez membre et économisez -10% sur cette commande !</strong> <a href="#" onclick="goto(5);return false;" style="color:var(--cy-text);font-weight:700;">Voir les avantages →</a></div>';
+      banner.innerHTML='<span style="font-size:18px;"></span><div style="flex:1;"><strong style="color:var(--co);">Devenez membre · 2 000 FCFA/mois et économisez -10% sur cette commande !</strong> <a href="#" onclick="goto(5);return false;" style="color:var(--cy-text);font-weight:700;">Voir les avantages →</a></div>';
       banner.style.borderColor='var(--co)';
     }
   }

@@ -1986,6 +1986,48 @@ textarea.full{min-height:60px;resize:vertical;}
   </div>
 </section>
 
+<!-- ═══════════════════════ SCREEN ADMIN (Sprint 13 - Accès caché : #admin ou triple-clic logo) ═══════════════════════ -->
+<section class="screen" id="s-admin">
+  <div style="max-width:440px;margin:0 auto;padding:60px 24px 40px;">
+    <a href="#" onclick="event.preventDefault();window.location.hash='';goto(1);return false;"
+       style="display:inline-block;color:var(--t2);text-decoration:none;font-size:14px;margin-bottom:24px;font-weight:600;">
+      ← Retour
+    </a>
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:54px;margin-bottom:10px;">🔐</div>
+      <h2 style="font-size:24px;font-weight:900;margin-bottom:8px;">Espace Admin</h2>
+      <div style="font-size:13px;color:var(--t2);line-height:1.5;">Accès réservé administrateurs HappyHome.<br>Connexion par email + mot de passe.</div>
+    </div>
+
+    <div class="s7-card" style="padding:24px;margin-bottom:18px;">
+      <div style="margin-bottom:16px;">
+        <label style="font-size:11px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Email administrateur</label>
+        <input type="email" id="admin-login-email" class="full" placeholder="admin@example.com"
+               autocomplete="email" style="font-size:15px;"
+               onkeydown="if(event.key==='Enter'){document.getElementById('admin-login-pwd').focus();}">
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <label style="font-size:11px;font-weight:800;color:var(--cy-text);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Mot de passe</label>
+        <input type="password" id="admin-login-pwd" class="full" placeholder="••••••••••••••"
+               autocomplete="current-password" maxlength="64" style="font-size:15px;letter-spacing:2px;"
+               onkeydown="if(event.key==='Enter'){loginAdmin();}">
+      </div>
+
+      <button id="admin-login-btn" class="s5-cta" style="width:100%;padding:14px;font-size:14px;"
+              onclick="loginAdmin()">Connexion admin</button>
+
+      <div id="admin-login-msg" style="margin-top:12px;font-size:12px;text-align:center;display:none;"></div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:var(--t3);line-height:1.6;">
+      🔒 Espace protégé · Tentatives enregistrées<br>
+      <span style="opacity:.7;">Tu n'es pas admin ? <a href="#" onclick="event.preventDefault();window.location.hash='';goto(1);return false;" style="color:var(--cy-text);text-decoration:none;font-weight:700;">Retour à l'accueil</a></span>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════════════════ MODAL RESET PIN ADMIN (Sprint 12.6) ═══════════════════════ -->
 <div id="reset-pin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:360;align-items:center;justify-content:center;padding:20px;">
   <div style="background:var(--card);border:2px solid var(--co,#FF9800);border-radius:18px;padding:28px;max-width:480px;width:100%;text-align:left;box-shadow:0 20px 60px rgba(0,0,0,.5);">
@@ -3139,9 +3181,9 @@ async function loginPresta(){
     msgEl.style.display = 'block';
     return;
   }
-  if(!/^[0-9]{6}$/.test(pin)){
+  if(!pin || pin.length < 4){
     msgEl.style.color = 'var(--cr)';
-    msgEl.textContent = 'PIN invalide (6 chiffres requis).';
+    msgEl.textContent = 'Mot de passe trop court (minimum 4 caractères).';
     msgEl.style.display = 'block';
     return;
   }
@@ -3170,9 +3212,22 @@ async function loginPresta(){
       return;
     }
     
-    // 3. Vérifier kyc_valide
+    // 3. Vérifier rôle et rediriger selon profil
     const {data: prof} = await _supabaseClient.from('profiles').select('role,kyc_valide,prenom').eq('id',data.user.id).maybeSingle();
-    if(!prof || prof.role !== 'prestataire'){
+    const _ADMIN_ROLES = ['admin','superadmin','operateur','comptable'];
+    if(!prof){
+      await _supabaseClient.auth.signOut();
+      msgEl.style.color = 'var(--cr)';
+      msgEl.textContent = 'Profil introuvable. Contacte l\'admin.';
+      msgEl.style.display = 'block';
+      return;
+    }
+    if(_ADMIN_ROLES.includes(prof.role)){
+      // Admin/superadmin → panel admin direct
+      showSuccessModal('Bienvenue '+(prof.prenom||'')+' !', 'Connexion admin réussie.', function(){ goto(8); });
+      return;
+    }
+    if(prof.role !== 'prestataire'){
       await _supabaseClient.auth.signOut();
       msgEl.style.color = 'var(--cr)';
       msgEl.textContent = 'Ce compte n\'est pas prestataire.';
@@ -3199,6 +3254,142 @@ async function loginPresta(){
     btn.textContent = 'Connexion';
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ── Sprint 13 : LOGIN ADMIN DÉDIÉ (écran séparé, password fort) ──
+// Accès : #admin dans l'URL OU triple-clic sur le logo HappyHome
+// ═══════════════════════════════════════════════════════════════════════════
+function gotoAdmin(){
+  // Si admin déjà connecté → panel admin direct
+  if(_currentUser && _currentProfile && ['admin','superadmin','operateur','comptable'].includes(_currentProfile.role)){
+    try { window.location.hash = ''; } catch(e){}
+    goto(8);
+    return;
+  }
+  // Sinon afficher l'écran de login admin
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const adminScreen = document.getElementById('s-admin');
+  if(!adminScreen) return;
+  adminScreen.classList.add('active');
+  cur='admin';
+  const _sp=document.getElementById('screen-pill'); if(_sp) _sp.textContent='Admin';
+  window.scrollTo(0,0);
+  // Focus auto sur le champ email
+  setTimeout(()=>{ const el=document.getElementById('admin-login-email'); if(el) el.focus(); }, 100);
+}
+
+async function loginAdmin(){
+  const email = (document.getElementById('admin-login-email').value||'').trim().toLowerCase();
+  const pwd = (document.getElementById('admin-login-pwd').value||'');
+  const msgEl = document.getElementById('admin-login-msg');
+  const btn = document.getElementById('admin-login-btn');
+
+  msgEl.style.display = 'none';
+
+  // Validation email
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    msgEl.style.color = 'var(--cr)';
+    msgEl.textContent = 'Email invalide.';
+    msgEl.style.display = 'block';
+    return;
+  }
+  // Validation password (min 10 chars, accepte 6 pour compat anciens admins legacy)
+  if(!pwd || pwd.length < 6){
+    msgEl.style.color = 'var(--cr)';
+    msgEl.textContent = 'Mot de passe trop court (minimum 6 caractères).';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Vérification...';
+
+  try {
+    if(!_supabaseClient){
+      msgEl.style.color = 'var(--cr)';
+      msgEl.textContent = 'Connexion Supabase non initialisée. Recharge la page.';
+      msgEl.style.display = 'block';
+      return;
+    }
+
+    // 1. SignIn avec email + password
+    const {data, error} = await _supabaseClient.auth.signInWithPassword({email, password: pwd});
+    if(error){
+      msgEl.style.color = 'var(--cr)';
+      msgEl.textContent = 'Identifiants incorrects. Réessaie.';
+      msgEl.style.display = 'block';
+      return;
+    }
+
+    // 2. Vérifier rôle admin/superadmin/operateur/comptable
+    btn.textContent = 'Vérification du rôle...';
+    const {data: prof, error: profErr} = await _supabaseClient.from('profiles').select('role,prenom,nom').eq('id',data.user.id).maybeSingle();
+    if(profErr){
+      await _supabaseClient.auth.signOut();
+      msgEl.style.color = 'var(--cr)';
+      msgEl.textContent = 'Erreur lecture profil. Contacte le support.';
+      msgEl.style.display = 'block';
+      return;
+    }
+    const _ADMIN_ROLES = ['admin','superadmin','operateur','comptable'];
+    if(!prof || !_ADMIN_ROLES.includes(prof.role)){
+      await _supabaseClient.auth.signOut();
+      msgEl.style.color = 'var(--cr)';
+      msgEl.textContent = 'Accès refusé. Ce compte n\'a pas les droits administrateur.';
+      msgEl.style.display = 'block';
+      // Reset des champs après refus
+      document.getElementById('admin-login-pwd').value = '';
+      return;
+    }
+
+    // 3. Succès → nettoyer URL + redirection panel admin
+    document.getElementById('admin-login-pwd').value = '';
+    showSuccessModal('Bienvenue '+(prof.prenom||'Admin')+' !', 'Connexion admin réussie.', function(){
+      try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e){}
+      goto(8);
+    });
+  } catch(e) {
+    console.error('[HH] loginAdmin error:', e);
+    msgEl.style.color = 'var(--cr)';
+    msgEl.textContent = 'Erreur : '+(e.message||'inconnue');
+    msgEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Connexion admin';
+  }
+}
+
+// Hash routing : #admin → écran admin caché
+function _checkAdminHashRoute(){
+  if(window.location.hash === '#admin'){
+    gotoAdmin();
+  }
+}
+window.addEventListener('hashchange', _checkAdminHashRoute);
+window.addEventListener('DOMContentLoaded', function(){
+  // Vérifie le hash au chargement
+  _checkAdminHashRoute();
+
+  // Triple-clic sur le logo HappyHome pour accès admin
+  let _adminClickCount = 0;
+  let _adminClickTimer = null;
+  document.querySelectorAll('.s1-head img.logo-png, .s1-head img').forEach(function(logo){
+    logo.style.cursor = 'pointer';
+    logo.addEventListener('click', function(e){
+      _adminClickCount++;
+      if(_adminClickTimer) clearTimeout(_adminClickTimer);
+      if(_adminClickCount >= 3){
+        e.preventDefault();
+        e.stopPropagation();
+        _adminClickCount = 0;
+        gotoAdmin();
+        return false;
+      }
+      _adminClickTimer = setTimeout(function(){ _adminClickCount = 0; }, 700);
+    }, true);
+  });
+});
+// ═══════════════════════════════════════════════════════════════════════════
 
 // ── Sprint 12.6 : Reset PIN admin (log seulement, reset manuel Dashboard) ──
 let _resetPinTargetId = null;
@@ -5513,7 +5704,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.1.22 · Sprint 12.6 · 4 BUGS FIX + Fix flash sombre page démarrage (data-theme=light sur html) · 17/05/2026
+  v3.2.0 · Sprint 13 · ÉCRAN ADMIN DÉDIÉ (#admin + triple-clic logo) · password fort · 17/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

@@ -3982,13 +3982,33 @@ function _applyServiceImage(slug, url){
   });
 }
 
-// Charge les images sauvegardées (localStorage) au démarrage
-function _loadServiceImages(){
+// Charge les images depuis hh_config (Supabase) → DOM + cache localStorage
+// Fallback : localStorage si offline ou Supabase indispo
+async function _loadServiceImages(){
   const slugs=['menage','cuisine','nounou','courses','lessive','repassage','fete','soin','clim','shamp','elec','demenag'];
+  // 1. Appliquer immédiatement les URLs en cache (affichage instantané)
   slugs.forEach(s=>{
-    const url = localStorage.getItem('hh_svc_img_'+s);
-    if(url) _applyServiceImage(s, url);
+    const cached=localStorage.getItem('hh_svc_img_'+s);
+    if(cached) _applyServiceImage(s, cached);
   });
+  // 2. Charger depuis hh_config (source de vérité cross-session)
+  if(!_supabaseClient) return;
+  try {
+    const keys = slugs.map(s=>'svc_img_'+s);
+    const {data, error} = await _supabaseClient
+      .from('hh_config')
+      .select('key,value')
+      .in('key', keys);
+    if(error || !data || !data.length) return;
+    data.forEach(row=>{
+      const slug = row.key.replace('svc_img_','');
+      const url  = String(row.value).replace(/^"|"$/g, ''); // strip JSON quotes si besoin
+      if(url && url.startsWith('http')){
+        _applyServiceImage(slug, url);
+        localStorage.setItem('hh_svc_img_'+slug, url);
+      }
+    });
+  } catch(e){ console.warn('[HH] _loadServiceImages:', e.message); }
 }
 
 // Upload réel vers Supabase Storage bucket services-images
@@ -4024,6 +4044,11 @@ async function doUploadImage(){
     _applyServiceImage(_currentUploadSlug, publicUrl);
     // Sauvegarder en localStorage (fallback offline)
     localStorage.setItem('hh_svc_img_'+_currentUploadSlug, publicUrl);
+    // Sauvegarder dans hh_config (source de vérité cross-session / cross-browser)
+    try {
+      await _supabaseClient.from('hh_config')
+        .upsert({ key: 'svc_img_'+_currentUploadSlug, value: publicUrl }, { onConflict: 'key' });
+    } catch(_){}
     // Mettre à jour table services (best-effort)
     try {
       await _supabaseClient.from('services')

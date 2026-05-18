@@ -422,6 +422,9 @@ textarea.full{min-height:60px;resize:vertical;}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- MapLibre GL JS + MapTiler — Sprint 13 carte prestataires -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css">
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js"></script>
 </head>
 <body data-theme="light">
 
@@ -4962,19 +4965,183 @@ async function savePricingAdmin(){
 }
 
 // ── GPS LIVE (placeholder honnête : connecté Sprint 13) ─────────────
+// ── SPRINT 13 — CARTE MAPTILER (MapLibre GL JS) ─────────────────────────────
+const _MT_KEY = 'eMFHTYCr4dPAwOil3PbR';
+let _hhMap = null;
+let _gpsMarkers = [];
+let _gpsInterval = null;
+
 async function loadGpsAdmin(){
   const panel = document.getElementById('ap-gps');
   if(!panel) return;
-  // Affichage honnête : pas de table presta_location encore
-  panel.innerHTML = `<div style="text-align:center;padding:60px 20px;">
-    <div style="font-size:42px;margin-bottom:14px;">📍</div>
-    <div style="font-size:20px;font-weight:900;margin-bottom:10px;">GPS Live · Migration Supabase à venir</div>
-    <div style="color:var(--t2);font-size:13px;max-width:520px;margin:0 auto;line-height:1.6;">
-      Cet onglet nécessite une table <code style="background:var(--inp-bg);padding:2px 6px;border-radius:4px;">presta_location</code> (avec colonnes presta_id, latitude, longitude, statut, updated_at) et un mécanisme de push GPS depuis l'app prestataire.<br><br>
-      <strong>Prévu Sprint 13</strong> : création table + cron 30s + Realtime channel + carte Leaflet.<br><br>
-      En attendant, suivi des prestas via WhatsApp manuel.
+
+  // Stopper le polling précédent
+  if(_gpsInterval){ clearInterval(_gpsInterval); _gpsInterval = null; }
+  // Détruire la carte précédente (container va être recréé)
+  if(_hhMap){ _hhMap.remove(); _hhMap = null; _gpsMarkers = []; }
+
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+      <div style="font-size:22px;font-weight:900;">Carte Prestataires · Douala</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span id="gps-status" style="font-size:11px;color:var(--t2);">Chargement…</span>
+        <button onclick="_refreshGpsMap()" style="padding:8px 16px;border-radius:50px;background:var(--card);color:var(--text);border:1px solid var(--cardb);font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;">↻ Rafraîchir</button>
+      </div>
     </div>
-  </div>`;
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:10px;">
+      <div class="s7-card" style="padding:0;overflow:hidden;height:480px;position:relative;">
+        <div id="hh-map" style="width:100%;height:100%;"></div>
+      </div>
+      <div class="s7-card" style="height:480px;overflow-y:auto;padding:14px;">
+        <div class="s7-card-t">PRESTATAIRES · ZONES DE COUVERTURE</div>
+        <div id="gps-sidebar-list" style="display:flex;flex-direction:column;margin-top:10px;">
+          <div style="color:var(--t2);font-size:12px;text-align:center;padding:20px;">Chargement…</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:18px;align-items:center;padding:10px 14px;background:var(--card);border:1px solid var(--cardb);border-radius:10px;flex-wrap:wrap;">
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;"><span style="width:10px;height:10px;border-radius:50%;background:#4CAF50;display:inline-block;"></span>En mission</span>
+      <span style="display:flex;align-items:center;gap=6px;font-size:11px;"><span style="width:10px;height:10px;border-radius:50%;background:#FF9800;display:inline-block;"></span>Disponible</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;"><span style="width:10px;height:10px;border-radius:50%;background:#FFC107;display:inline-block;"></span>KYC en cours</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;"><span style="width:10px;height:10px;border-radius:50%;background:#9E9E9E;display:inline-block;"></span>Inactif</span>
+      <span style="margin-left:auto;font-size:10px;color:var(--t2);">📍 Position = quartier principal · Rafraîchissement 30s</span>
+    </div>
+  `;
+
+  if(typeof maplibregl === 'undefined'){
+    document.getElementById('hh-map').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--t2);font-size:13px;text-align:center;padding:20px;">MapLibre GL non chargé.<br>Vérifiez votre connexion internet.</div>';
+    return;
+  }
+
+  _hhMap = new maplibregl.Map({
+    container: 'hh-map',
+    style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${_MT_KEY}`,
+    center: [9.7085, 4.0511],
+    zoom: 12,
+    attributionControl: false
+  });
+  _hhMap.addControl(new maplibregl.NavigationControl({showCompass:false}), 'top-right');
+  _hhMap.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-right');
+
+  _hhMap.on('load', async () => {
+    await _refreshGpsMap();
+    _gpsInterval = setInterval(_refreshGpsMap, 30000);
+  });
+}
+
+async function _refreshGpsMap(){
+  const statusEl = document.getElementById('gps-status');
+  const sidebarEl = document.getElementById('gps-sidebar-list');
+  if(!_supabaseClient || !_hhMap){ return; }
+  if(statusEl) statusEl.textContent = 'Actualisation…';
+
+  try {
+    // 1. Prestataires
+    const {data:profiles, error:pErr} = await _supabaseClient
+      .from('profiles')
+      .select('id,prenom,nom,telephone')
+      .eq('role','prestataire');
+    if(pErr) throw pErr;
+
+    const ids = (profiles||[]).map(p=>p.id);
+    if(!ids.length){
+      if(sidebarEl) sidebarEl.innerHTML = '<div style="color:var(--t2);font-size:12px;text-align:center;padding:20px;">Aucun prestataire inscrit</div>';
+      if(statusEl) statusEl.textContent = '0 prestataire';
+      return;
+    }
+
+    // 2. Requêtes parallèles : quartiers / missions actives / KYC
+    const [{data:pqRows},{data:activeMiss},{data:kycs}] = await Promise.all([
+      _supabaseClient.from('presta_quartiers').select('presta_id,quartier_id').in('presta_id',ids),
+      _supabaseClient.from('missions').select('prestataire_id,status').in('prestataire_id',ids).in('status',['presta_assigne','en_cours']),
+      _supabaseClient.from('kyc_presta').select('presta_id,status').in('presta_id',ids)
+    ]);
+
+    // 3. Charger coordonnées des quartiers concernés
+    const qIds = [...new Set((pqRows||[]).map(r=>r.quartier_id).filter(Boolean))];
+    let qMap = {};
+    if(qIds.length){
+      const {data:qData} = await _supabaseClient.from('quartiers').select('id,nom,lat,lng').in('id',qIds);
+      (qData||[]).forEach(q=>{ qMap[q.id]=q; });
+    }
+
+    // 4. Lookup maps
+    const activeMap = {};  (activeMiss||[]).forEach(m=>{ activeMap[m.prestataire_id]=true; });
+    const kycMap   = {};  (kycs||[]).forEach(k=>{ kycMap[k.presta_id]=k.status; });
+    const pqMap    = {};  (pqRows||[]).forEach(r=>{ (pqMap[r.presta_id]=pqMap[r.presta_id]||[]).push(r.quartier_id); });
+
+    // 5. Nettoyer anciens markers
+    _gpsMarkers.forEach(m=>m.remove());
+    _gpsMarkers = [];
+
+    // 6. Placer markers + construire sidebar
+    let shown = 0;
+    const sidebarHtml = [];
+
+    for(const p of (profiles||[])){
+      const hasMission = !!activeMap[p.id];
+      const kycStatus  = kycMap[p.id] || 'non_soumis';
+      const quartierIds = pqMap[p.id] || [];
+
+      let color = '#9E9E9E'; let label = 'Inactif';
+      if(hasMission)                                              { color='#4CAF50'; label='En mission'; }
+      else if(kycStatus==='valide')                               { color='#FF9800'; label='Disponible'; }
+      else if(kycStatus==='en_attente'||kycStatus==='en_cours')   { color='#FFC107'; label='KYC en cours'; }
+
+      const nom = `${p.prenom||''} ${p.nom||''}`.trim() || '(sans nom)';
+      const initiale = (nom.charAt(0)||'?').toUpperCase();
+
+      // Marker sur premier quartier avec coordonnées valides
+      for(const qid of quartierIds){
+        const q = qMap[qid];
+        if(q && q.lat && q.lng){
+          const el = document.createElement('div');
+          el.style.cssText = `width:32px;height:32px;border-radius:50%;background:${color};border:3px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);font-family:Outfit,sans-serif;flex-shrink:0;`;
+          el.textContent = initiale;
+
+          const popup = new maplibregl.Popup({offset:20,closeButton:true,maxWidth:'210px'})
+            .setHTML(`<div style="font-family:Outfit,sans-serif;padding:4px 2px;">
+              <div style="font-weight:900;font-size:14px;margin-bottom:3px;">${nom}</div>
+              <div style="font-size:11px;color:#777;margin-bottom:7px;">📍 ${q.nom}</div>
+              <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${color};color:${color==='#FFC107'?'#1a1a1a':'#fff'};">${label}</span>
+              ${p.telephone?`<div style="font-size:11px;margin-top:7px;color:#555;">📞 ${p.telephone}</div>`:''}
+            </div>`);
+
+          const marker = new maplibregl.Marker({element:el})
+            .setLngLat([q.lng, q.lat])
+            .setPopup(popup)
+            .addTo(_hhMap);
+
+          _gpsMarkers.push(marker);
+          shown++;
+          break;
+        }
+      }
+
+      // Sidebar entry
+      const zonesStr = quartierIds.map(qid=>qMap[qid]?.nom||qid).filter(Boolean).slice(0,3).join(', ')
+        + (quartierIds.length>3 ? ` +${quartierIds.length-3}`:'' ) || 'Zone à définir';
+
+      sidebarHtml.push(`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--divider);">
+        <span style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;margin-top:2px;"></span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:12px;">${nom}</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${zonesStr}">${zonesStr}</div>
+        </div>
+        <span style="font-size:10px;font-weight:700;color:${color};white-space:nowrap;">${label}</span>
+      </div>`);
+    }
+
+    if(sidebarEl) sidebarEl.innerHTML = sidebarHtml.join('') || '<div style="color:var(--t2);font-size:12px;text-align:center;padding:20px;">Aucun prestataire</div>';
+    if(statusEl){
+      const heure = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      statusEl.textContent = `${shown}/${(profiles||[]).length} sur carte · MàJ ${heure}`;
+    }
+
+  } catch(e){
+    console.error('[HH GPS]', e);
+    if(statusEl) statusEl.textContent = 'Erreur · ' + _esc(e.message||String(e));
+  }
 }
 
 // ── MÉDIAS (placeholder honnête : connecté Sprint 13) ───────────────

@@ -770,21 +770,21 @@ textarea.full{min-height:60px;resize:vertical;}
     </div>
 
     <div class="sec" id="sec-coordonnees" style="display:none;">
-      <div class="sec-t"><span class="num">7</span>Vos coordonnées</div>
+      <div class="sec-t"><span class="num">7</span>Vos coordonnées <span style="font-size:11px;color:var(--t2);font-weight:400;">(optionnel · facilite le suivi)</span></div>
       <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.5;">
-        Pas besoin de créer un compte. Votre nom doit correspondre exactement à celui de votre carte d'identité (CNI) liée à votre Mobile Money pour valider le paiement.
+        Pas besoin de créer un compte. Ces infos aident le prestataire à te contacter et te permettent de suivre ta mission par WhatsApp. <b>Tu peux aussi continuer sans rien remplir</b> (paiement direct).
       </div>
-      <input type="text" class="full" id="cmd-nom" placeholder="Nom complet (comme sur la CNI)" style="margin-bottom:10px;" required>
-      <input type="tel" class="full" id="cmd-whatsapp" placeholder="Numéro WhatsApp (ex: 6 99 12 34 56)" style="margin-bottom:10px;" inputmode="tel" required>
+      <input type="text" class="full" id="cmd-nom" placeholder="Nom complet (comme sur la CNI)" style="margin-bottom:10px;">
+      <input type="tel" class="full" id="cmd-whatsapp" placeholder="Numéro WhatsApp (ex: 6 99 12 34 56)" style="margin-bottom:10px;" inputmode="tel">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;">
-        <select class="full" id="cmd-momo-op" required>
+        <select class="full" id="cmd-momo-op">
           <option value="">Opérateur MoMo</option>
           <option value="orange">Orange Money</option>
           <option value="mtn">MTN MoMo</option>
         </select>
-        <input type="tel" class="full" id="cmd-momo-num" placeholder="Numéro MoMo" inputmode="tel" required>
+        <input type="tel" class="full" id="cmd-momo-num" placeholder="Numéro MoMo" inputmode="tel">
       </div>
-      <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.4;">Vous recevrez le lien de suivi de votre mission directement sur WhatsApp.</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.4;">Si rempli : tu recevras le lien de suivi sur WhatsApp.</div>
     </div>
 
   </div>
@@ -796,6 +796,8 @@ textarea.full{min-height:60px;resize:vertical;}
       <span class="sticky-price-d" id="prix-detail">8 000 × 0.85 × 1.00 × 1.20 × 1.03</span>
     </div>
     <button class="sticky-cta" onclick="submitMissionOnly()">Valider →</button>
+    <!-- FIX Sprint 13 hotfix (F-passager) : bouton dédié skip pour non-connectés -->
+    <button id="cta-skip-signup" onclick="submitMissionOnly(true)" style="display:none;background:transparent;color:var(--t2);border:1px solid var(--cardb);padding:10px;border-radius:10px;font-size:12px;font-weight:600;width:100%;margin-top:8px;cursor:pointer;">Continuer sans inscription →</button>
   </div>
 </section>
 
@@ -1817,6 +1819,21 @@ textarea.full{min-height:60px;resize:vertical;}
         <div class="adkpi" style="text-align:center;padding:14px;"><div class="s7-card-t" style="margin-bottom:4px;">Crédit parrainage</div><div class="adkpi-v" id="s11-credit" style="color:var(--co);font-size:24px;">0</div></div>
       </div>
 
+      <!-- FIX Sprint 13 hotfix : carte Photo de profil -->
+      <div class="s7-card" id="s11-profile-card" style="margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div id="s11-big-avatar" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--cb),var(--cb2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;color:#fff;flex-shrink:0;background-size:cover;background-position:center;">—</div>
+        <div style="flex:1;min-width:180px;">
+          <div style="font-weight:800;font-size:14px;margin-bottom:4px;" id="s11-profile-title">Ma photo de profil</div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.4;margin-bottom:10px;" id="s11-profile-hint">Ajoute une photo pour personnaliser ton compte. Visible uniquement par les prestataires lors d'une mission.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label for="s11-avatar-input" style="padding:8px 14px;border-radius:50px;background:var(--cy);color:#000;font-family:inherit;font-weight:700;font-size:11px;cursor:pointer;display:inline-block;">📷 Ajouter / Modifier</label>
+            <button id="s11-avatar-remove" onclick="removeAvatar()" style="padding:8px 14px;border-radius:50px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:11px;cursor:pointer;display:none;">Supprimer</button>
+            <input type="file" id="s11-avatar-input" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handleAvatarUpload(this)">
+          </div>
+          <div id="s11-avatar-status" style="font-size:11px;color:var(--t2);margin-top:6px;display:none;"></div>
+        </div>
+      </div>
+
       <!-- Mission en cours -->
       <div id="s11-active-mission-card" class="s7-card" style="margin-bottom:14px;border-left:4px solid var(--cg);display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
@@ -2303,8 +2320,17 @@ async function handleAuth(event){
           id: data.user.id, nom, prenom, telephone, email, quartier, referred_by: referrer_id, role: 'client'
         });
       }
-      showAuthMsg('success', '✓ Compte créé !');
-      setTimeout(closeAuthModal, 1500);
+      // FIX Sprint 13 hotfix : redirection automatique vers s11 (Mon Compte) après signup
+      // pour que le nouveau membre puisse configurer son profil (photo, etc.).
+      closeAuthModal();
+      // Petite attente pour que onAuthStateChange + loadProfile soient terminés
+      await new Promise(r => setTimeout(r, 400));
+      showSuccessModal(
+        'Bienvenue ' + (prenom || 'à toi') + ' !',
+        'Ton compte est créé. Complète ton profil (photo, coordonnées) pour une meilleure expérience.',
+        function(){ goto(11); }
+      );
+      return;
     } else {
       const { error } = await _supabaseClient.auth.signInWithPassword({ email, password });
       if(error) throw error;
@@ -2411,7 +2437,16 @@ function goto(n, _skipHistory){
   document.querySelectorAll('.mockbar-btn[data-s]').forEach(b=>b.classList.toggle('on',+b.dataset.s===n));
   window.scrollTo(0,0);
   // Hooks chargement async par écran
-  if(n===2 && _currentUser) checkOrphanMission();
+  if(n===2){
+    if(_currentUser) checkOrphanMission();
+    // FIX Sprint 13 hotfix (F-passager) : afficher/masquer la section coordonnées invité
+    // ET le bouton "Continuer sans inscription" selon que l'utilisateur est connecté.
+    // AUCUN blocage : tout le monde peut commander.
+    const _secCoord = document.getElementById('sec-coordonnees');
+    const _btnSkip = document.getElementById('cta-skip-signup');
+    if(_secCoord) _secCoord.style.display = _currentUser ? 'none' : 'block';
+    if(_btnSkip) _btnSkip.style.display = _currentUser ? 'none' : 'block';
+  }
   if(n===3 && !_currentMission){
     // Garde-fou : on n'arrive jamais sur s3 sans mission. Tentative de reprise puis redirection s2 si échec.
     tryRecoverMissionFromStorage().then(ok=>{ if(!ok){alert('Aucune mission en cours. Recommence ta commande.');goto(2);} });
@@ -2847,7 +2882,7 @@ const _hhLieuAC=(function(){
   return {init,pick};
 })();
 
-async function submitMissionOnly(){
+async function submitMissionOnly(skipValidation){
   // 1. Lire valeurs formulaire
   const quartier=document.getElementById('cmd-quartier').value;
   const lieudit=(document.getElementById('cmd-lieudit').value||'').trim();
@@ -2869,10 +2904,28 @@ async function submitMissionOnly(){
   }
   if(!dateStr||!timeStr){alert('Choisis une date et une heure.');return;}
 
-  // 3. Guard authentification obligatoire
-  if(!_currentUser){
-    showAuthModal('signin');
-    return;
+  // 3. FIX Sprint 13 hotfix (F-passager) : pas de guard auth bloquant.
+  // Si non connecté + skipValidation=false, on recommande de remplir les coordonnées
+  // mais on ne BLOQUE pas. Si l'utilisateur clique "Continuer sans inscription"
+  // (skipValidation=true) on passe directement même avec champs vides.
+  if(!_currentUser && !skipValidation){
+    const champsManquants = [];
+    if(!nom || nom.length < 2) champsManquants.push('Nom complet');
+    if(!whatsapp || whatsapp.length < 9) champsManquants.push('WhatsApp');
+    if(!momoOp) champsManquants.push('Opérateur MoMo');
+    if(!momoNum || momoNum.length < 9) champsManquants.push('Numéro MoMo');
+    if(champsManquants.length){
+      const ok = confirm(
+        '⚠️ Tu n as pas rempli :\n\n• ' + champsManquants.join('\n• ') +
+        '\n\nSans ces infos, le prestataire ne pourra pas te contacter et le suivi de mission sera limité.\n\n' +
+        'OK = continuer quand même (sans inscription)\nAnnuler = remplir maintenant'
+      );
+      if(!ok){
+        const firstEmpty = !nom ? 'cmd-nom' : !whatsapp ? 'cmd-whatsapp' : !momoOp ? 'cmd-momo-op' : 'cmd-momo-num';
+        document.getElementById(firstEmpty)?.focus();
+        return;
+      }
+    }
   }
 
   const dateISO=new Date(dateStr+'T'+timeStr+':00').toISOString();
@@ -2892,14 +2945,24 @@ async function submitMissionOnly(){
       if(error)throw error;
       m=Array.isArray(data)?data[0]:data;
     } else {
-      // Flow invité (client sans compte)
+      // FIX Sprint 13 hotfix (F-passager) : flow invité avec valeurs sentinelles
+      // si l'utilisateur a choisi "Continuer sans inscription" avec champs vides.
+      // Le RPC create_guest_mission exige minimum 2 chars nom, 9 chars whatsapp, op valide.
+      // Le vrai numéro MoMo sera capté à l'étape paiement (s3) via la preuve uploadée.
+      const _ts = Date.now().toString(36).slice(-4).toUpperCase();
+      const safe_nom       = (nom && nom.length>=2) ? nom : ('Invité-' + _ts);
+      const safe_whatsapp  = (whatsapp && whatsapp.length>=9) ? whatsapp : '000000000';
+      const safe_momoOp    = (momoOp==='orange'||momoOp==='mtn') ? momoOp : 'orange';
+      const safe_momoNum   = (momoNum && momoNum.length>=9) ? momoNum : '000000000';
       const {data,error}=await _supabaseClient.rpc('create_guest_mission',{
-        p_nom:nom,p_whatsapp:whatsapp,p_momo_operateur:momoOp,p_momo_numero:momoNum,
+        p_nom:safe_nom,p_whatsapp:safe_whatsapp,p_momo_operateur:safe_momoOp,p_momo_numero:safe_momoNum,
         p_service_id:_cmd.service,p_caracteristique_id:_cmd.carac_id,
         p_quartier_id:quartier,p_adresse_complete:adresseComplete,p_date_souhaitee:dateISO
       });
       if(error)throw error;
       m=Array.isArray(data)?data[0]:data;
+      // Marquer côté frontend si on est en mode "skip" pour identification admin
+      if(safe_nom.startsWith('Invité-')) m._skipSignup = true;
       // Stocker token pour suivi local sans relire WhatsApp
       try{
         const tokens=JSON.parse(localStorage.getItem('hh_guest_tokens')||'[]');
@@ -5810,6 +5873,83 @@ async function submitSoonInterest(){
   closeSoonModal();
 }
 
+// FIX Sprint 13 hotfix : gestion photo de profil ─────────────────
+async function handleAvatarUpload(inputEl){
+  if(!_currentUser || !_supabaseClient){
+    alert('Tu dois être connecté pour ajouter une photo.');
+    return;
+  }
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  const validTypes = ['image/jpeg','image/png','image/webp'];
+  if(!validTypes.includes(file.type)){
+    alert('Format non supporté. Utilise JPEG, PNG ou WebP.');
+    inputEl.value = ''; return;
+  }
+  if(file.size > 2*1024*1024){
+    alert('Fichier trop lourd (max 2 Mo). Compresse l image avant.');
+    inputEl.value = ''; return;
+  }
+  const statusEl = document.getElementById('s11-avatar-status');
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--t2)';
+  statusEl.textContent = 'Upload en cours...';
+  try{
+    const ext = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g,'') || 'jpg';
+    const filePath = _currentUser.id + '/avatar.' + ext;
+    // Upload (upsert pour remplacer l ancienne)
+    const { error: upErr } = await _supabaseClient.storage
+      .from('avatars').upload(filePath, file, { upsert: true, cacheControl: '3600', contentType: file.type });
+    if(upErr) throw upErr;
+    // URL publique
+    const { data: urlData } = _supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+    const publicUrl = urlData.publicUrl + '?v=' + Date.now(); // cache bust
+    // Update profile
+    const { error: profErr } = await _supabaseClient.from('profiles')
+      .update({ avatar_url: publicUrl }).eq('id', _currentUser.id);
+    if(profErr) throw profErr;
+    // Recharger l UI
+    if(_currentProfile) _currentProfile.avatar_url = publicUrl;
+    statusEl.style.color = 'var(--cg)';
+    statusEl.textContent = '✓ Photo mise à jour';
+    setTimeout(()=>{ statusEl.style.display = 'none'; }, 2500);
+    if(typeof loadClientDashboard === 'function') loadClientDashboard();
+  }catch(e){
+    statusEl.style.color = 'var(--cr)';
+    statusEl.textContent = '⚠ Erreur : ' + (e.message || 'upload échoué');
+  }finally{
+    inputEl.value = '';
+  }
+}
+
+async function removeAvatar(){
+  if(!_currentUser || !_supabaseClient) return;
+  if(!confirm('Supprimer ta photo de profil ?')) return;
+  const statusEl = document.getElementById('s11-avatar-status');
+  statusEl.style.display = 'block';
+  statusEl.textContent = 'Suppression...';
+  try{
+    // Lister les fichiers existants pour suppression
+    const { data: files } = await _supabaseClient.storage.from('avatars').list(_currentUser.id);
+    if(files && files.length){
+      const paths = files.map(f => _currentUser.id + '/' + f.name);
+      await _supabaseClient.storage.from('avatars').remove(paths);
+    }
+    // Reset profil
+    const { error } = await _supabaseClient.from('profiles')
+      .update({ avatar_url: null }).eq('id', _currentUser.id);
+    if(error) throw error;
+    if(_currentProfile) _currentProfile.avatar_url = null;
+    statusEl.style.color = 'var(--cg)';
+    statusEl.textContent = '✓ Photo supprimée';
+    setTimeout(()=>{ statusEl.style.display = 'none'; }, 2000);
+    if(typeof loadClientDashboard === 'function') loadClientDashboard();
+  }catch(e){
+    statusEl.style.color = 'var(--cr)';
+    statusEl.textContent = '⚠ ' + (e.message || 'erreur');
+  }
+}
+
 // ─── s11 : Dashboard client complet ───
 async function loadClientDashboard(){
   const loading = document.getElementById('s11-loading');
@@ -5844,7 +5984,26 @@ async function loadClientDashboard(){
     // Header
     const nomComplet = ((p.prenom||'') + ' ' + (p.nom||'')).trim() || 'Utilisateur';
     document.getElementById('s11-nom-complet').textContent = nomComplet;
-    document.getElementById('s11-avatar').textContent = (p.prenom||p.nom||'?').charAt(0).toUpperCase();
+    const _initialLetter = (p.prenom||p.nom||'?').charAt(0).toUpperCase();
+    const _headerAvatar = document.getElementById('s11-avatar');
+    const _bigAvatar = document.getElementById('s11-big-avatar');
+    const _removeBtn = document.getElementById('s11-avatar-remove');
+    if(p.avatar_url){
+      // Photo chargée : afficher dans header + grande carte
+      _headerAvatar.textContent = '';
+      _headerAvatar.style.backgroundImage = 'url("' + p.avatar_url + '")';
+      _headerAvatar.style.backgroundSize = 'cover';
+      _headerAvatar.style.backgroundPosition = 'center';
+      _bigAvatar.textContent = '';
+      _bigAvatar.style.backgroundImage = 'url("' + p.avatar_url + '")';
+      if(_removeBtn) _removeBtn.style.display = 'inline-block';
+    } else {
+      _headerAvatar.textContent = _initialLetter;
+      _headerAvatar.style.backgroundImage = '';
+      _bigAvatar.textContent = _initialLetter;
+      _bigAvatar.style.backgroundImage = '';
+      if(_removeBtn) _removeBtn.style.display = 'none';
+    }
     document.getElementById('s11-statut-pill').textContent = p.membre_actif ? 'MEMBRE · -10% auto' : (p.role || 'CLIENT').toUpperCase();
     
     // Stats
@@ -6266,7 +6425,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.2.1 · Sprint 13 HOTFIX · 9 bugs frontend corrigés (F1-F12) · 19/05/2026
+  v3.2.2 · Sprint 13 HOTFIX v2 · Achat sans inscription + Photo profil + 9 bugs F1-F12 · 19/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

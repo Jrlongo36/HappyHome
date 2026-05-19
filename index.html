@@ -796,8 +796,6 @@ textarea.full{min-height:60px;resize:vertical;}
       <span class="sticky-price-d" id="prix-detail">8 000 × 0.85 × 1.00 × 1.20 × 1.03</span>
     </div>
     <button class="sticky-cta" onclick="submitMissionOnly()">Valider →</button>
-    <!-- FIX Sprint 13 hotfix (F-passager) : bouton dédié skip pour non-connectés -->
-    <button id="cta-skip-signup" onclick="submitMissionOnly(true)" style="display:none;background:transparent;color:var(--t2);border:1px solid var(--cardb);padding:10px;border-radius:10px;font-size:12px;font-weight:600;width:100%;margin-top:8px;cursor:pointer;">Continuer sans inscription →</button>
   </div>
 </section>
 
@@ -2226,6 +2224,18 @@ function closeAuthModal(){
   const m = document.getElementById('auth-modal');
   if(m) m.style.display = 'none';
 }
+
+// FIX Sprint 13 HOTFIX v3 : skip auth pour acheteur passager.
+// Ferme la modal et reprend l'achat en cours si applicable.
+function continuerSansEnregistrement(){
+  closeAuthModal();
+  // Si on était en train de commander (intention mémorisée) → continuer en mode invité
+  if(window._pendingOrderIntent && typeof submitMissionOnly === 'function'){
+    window._pendingOrderIntent = false;
+    // Petit délai pour que la modal se ferme visuellement avant l'alert éventuel
+    setTimeout(function(){ submitMissionOnly(true); }, 100);
+  }
+}
 function switchAuthTab(tab){
   const isSignup = tab === 'signup';
   document.getElementById('auth-title').textContent = isSignup ? 'Créer un compte' : 'Connexion';
@@ -2440,12 +2450,9 @@ function goto(n, _skipHistory){
   if(n===2){
     if(_currentUser) checkOrphanMission();
     // FIX Sprint 13 hotfix (F-passager) : afficher/masquer la section coordonnées invité
-    // ET le bouton "Continuer sans inscription" selon que l'utilisateur est connecté.
-    // AUCUN blocage : tout le monde peut commander.
+    // selon que l'utilisateur est connecté ou non. AUCUN blocage : tout le monde peut commander.
     const _secCoord = document.getElementById('sec-coordonnees');
-    const _btnSkip = document.getElementById('cta-skip-signup');
     if(_secCoord) _secCoord.style.display = _currentUser ? 'none' : 'block';
-    if(_btnSkip) _btnSkip.style.display = _currentUser ? 'none' : 'block';
   }
   if(n===3 && !_currentMission){
     // Garde-fou : on n'arrive jamais sur s3 sans mission. Tentative de reprise puis redirection s2 si échec.
@@ -2904,29 +2911,17 @@ async function submitMissionOnly(skipValidation){
   }
   if(!dateStr||!timeStr){alert('Choisis une date et une heure.');return;}
 
-  // 3. FIX Sprint 13 hotfix (F-passager) : pas de guard auth bloquant.
-  // Si non connecté + skipValidation=false, on recommande de remplir les coordonnées
-  // mais on ne BLOQUE pas. Si l'utilisateur clique "Continuer sans inscription"
-  // (skipValidation=true) on passe directement même avec champs vides.
+  // 3. FIX Sprint 13 HOTFIX v3 : si non connecté ET pas en mode skip, ouvrir la modal
+  // Connexion qui propose 3 options : Se connecter / S'inscrire / Continuer sans enregistrement.
+  // La modal n'est plus bloquante : l'utilisateur peut toujours skip via le 3e bouton.
   if(!_currentUser && !skipValidation){
-    const champsManquants = [];
-    if(!nom || nom.length < 2) champsManquants.push('Nom complet');
-    if(!whatsapp || whatsapp.length < 9) champsManquants.push('WhatsApp');
-    if(!momoOp) champsManquants.push('Opérateur MoMo');
-    if(!momoNum || momoNum.length < 9) champsManquants.push('Numéro MoMo');
-    if(champsManquants.length){
-      const ok = confirm(
-        '⚠️ Tu n as pas rempli :\n\n• ' + champsManquants.join('\n• ') +
-        '\n\nSans ces infos, le prestataire ne pourra pas te contacter et le suivi de mission sera limité.\n\n' +
-        'OK = continuer quand même (sans inscription)\nAnnuler = remplir maintenant'
-      );
-      if(!ok){
-        const firstEmpty = !nom ? 'cmd-nom' : !whatsapp ? 'cmd-whatsapp' : !momoOp ? 'cmd-momo-op' : 'cmd-momo-num';
-        document.getElementById(firstEmpty)?.focus();
-        return;
-      }
-    }
+    // Mémoriser l'intention d'achat pour que "Continuer sans enregistrement" puisse relancer
+    window._pendingOrderIntent = true;
+    showAuthModal('signin');
+    return;
   }
+  // Reset l'intention si on est arrivé ici par skip
+  window._pendingOrderIntent = false;
 
   const dateISO=new Date(dateStr+'T'+timeStr+':00').toISOString();
   const adresseComplete=hasLieudit&&hasAdresse?(lieudit+' — '+adresse):(hasLieudit?lieudit:adresse);
@@ -2945,13 +2940,14 @@ async function submitMissionOnly(skipValidation){
       if(error)throw error;
       m=Array.isArray(data)?data[0]:data;
     } else {
-      // FIX Sprint 13 hotfix (F-passager) : flow invité avec valeurs sentinelles
-      // si l'utilisateur a choisi "Continuer sans inscription" avec champs vides.
+      // FIX Sprint 13 HOTFIX v3 : flow invité avec valeurs sentinelles propres
+      // si l'utilisateur a choisi "Continuer sans enregistrement" avec champs vides.
       // Le RPC create_guest_mission exige minimum 2 chars nom, 9 chars whatsapp, op valide.
       // Le vrai numéro MoMo sera capté à l'étape paiement (s3) via la preuve uploadée.
+      // L'admin verra "Passager #XXXX" clairement identifiable comme commande anonyme.
       const _ts = Date.now().toString(36).slice(-4).toUpperCase();
-      const safe_nom       = (nom && nom.length>=2) ? nom : ('Invité-' + _ts);
-      const safe_whatsapp  = (whatsapp && whatsapp.length>=9) ? whatsapp : '000000000';
+      const safe_nom       = (nom && nom.length>=2) ? nom : ('Passager #' + _ts);
+      const safe_whatsapp  = (whatsapp && whatsapp.length>=9) ? whatsapp : '237000000000';
       const safe_momoOp    = (momoOp==='orange'||momoOp==='mtn') ? momoOp : 'orange';
       const safe_momoNum   = (momoNum && momoNum.length>=9) ? momoNum : '000000000';
       const {data,error}=await _supabaseClient.rpc('create_guest_mission',{
@@ -2962,7 +2958,7 @@ async function submitMissionOnly(skipValidation){
       if(error)throw error;
       m=Array.isArray(data)?data[0]:data;
       // Marquer côté frontend si on est en mode "skip" pour identification admin
-      if(safe_nom.startsWith('Invité-')) m._skipSignup = true;
+      if(safe_nom.startsWith('Passager #')) m._skipSignup = true;
       // Stocker token pour suivi local sans relire WhatsApp
       try{
         const tokens=JSON.parse(localStorage.getItem('hh_guest_tokens')||'[]');
@@ -4634,7 +4630,9 @@ async function rejeterSub(subId){
 let _adminPayChannel=null;
 
 async function loadPaiementsAdmin(){
-  if(!_supabaseClient||!_currentProfile||_currentProfile.role!=='admin'){
+  // FIX Sprint 13 HOTFIX v3 : accepter les 4 rôles admin
+  const _ADMIN_ROLES = ['admin','superadmin','operateur','comptable'];
+  if(!_supabaseClient||!_currentProfile||!_ADMIN_ROLES.includes(_currentProfile.role)){
     document.getElementById('paiements-list').innerHTML='<div style="color:var(--cr);font-size:13px;text-align:center;padding:30px;">Accès admin requis.</div>';
     return;
   }
@@ -4705,7 +4703,9 @@ let _kycAdminChannel=null;
 // KYC ADMIN v2 — OCR Gemini + Score confiance + SMS ETECH
 // ════════════════════════════════════════════════════════
 async function loadKycAdmin(){
-  if(!_supabaseClient||!_currentProfile||_currentProfile.role!=='admin'){
+  // FIX Sprint 13 HOTFIX v3 : accepter les 4 rôles admin
+  const _ADMIN_ROLES = ['admin','superadmin','operateur','comptable'];
+  if(!_supabaseClient||!_currentProfile||!_ADMIN_ROLES.includes(_currentProfile.role)){
     document.getElementById('kyc-list').innerHTML='<div style="color:var(--cr);font-size:13px;text-align:center;padding:30px;">Accès admin requis.</div>';
     return;
   }
@@ -4841,7 +4841,10 @@ async function rejectKycAdmin(prestaId,nom){
 // ╚══════════════════════════════════════════════════════════════════╝
 
 function _adminCheckAccess(targetId, msg){
-  if(!_supabaseClient || !_currentProfile || _currentProfile.role!=='admin'){
+  // FIX Sprint 13 HOTFIX v3 : accepter les 4 rôles admin (pas seulement 'admin' strict).
+  // Bug bloquait les superadmins sur Prestataires/KYC/Paiements/Compta/Litiges.
+  const _ADMIN_ROLES = ['admin','superadmin','operateur','comptable'];
+  if(!_supabaseClient || !_currentProfile || !_ADMIN_ROLES.includes(_currentProfile.role)){
     const el = document.getElementById(targetId);
     if(el) el.innerHTML = '<div style="color:var(--cr);font-size:13px;text-align:center;padding:30px;">Accès admin requis.</div>';
     return false;
@@ -6392,6 +6395,11 @@ recalc();
         <div id="auth-pwd-strength" style="font-size:12px;margin-top:-8px;display:none;"></div>
       <button type="submit" id="auth-submit" style="padding:14px;border-radius:10px;border:none;background:var(--cy,#FFC107);color:#000;font-family:inherit;font-weight:900;font-size:15px;cursor:pointer;margin-top:6px;">Se connecter</button>
     </form>
+    <!-- FIX Sprint 13 HOTFIX v3 : bouton skip dans la modal pour acheteurs qui ne veulent pas s'enregistrer -->
+    <div style="margin-top:12px;padding-top:14px;border-top:1px solid var(--cardb,#333);">
+      <div style="font-size:11px;color:var(--t3,#888);text-align:center;margin-bottom:8px;">Tu veux juste commander une seule fois ?</div>
+      <button type="button" id="auth-skip-signup" onclick="continuerSansEnregistrement()" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:transparent;color:var(--t1,#fff);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">Continuer sans enregistrement →</button>
+    </div>
     <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--t3,#888);">En continuant, vous acceptez nos CGU.</div>
   </div>
 </div>
@@ -6425,7 +6433,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.2.2 · Sprint 13 HOTFIX v2 · Achat sans inscription + Photo profil + 9 bugs F1-F12 · 19/05/2026
+  v3.2.3 · Sprint 13 HOTFIX v3 · RLS admin + bouton skip modal + placeholders propres · 19/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

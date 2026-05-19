@@ -579,7 +579,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <!-- ═══════════════════════ ÉCRAN 5 — DEVENIR MEMBRE ═══════════════════════ -->
 <section class="screen" id="s5">
-  <div class="s2-hdr"><button class="s2-back" onclick="goto(1)">← Retour</button><div class="s2-title">Devenir Membre</div><div class="s2-spacer"></div></div>
+  <div class="s2-hdr"><button class="s2-back" onclick="goBack()">← Retour</button><div class="s2-title">Devenir Membre</div><div class="s2-spacer"></div></div>
   <div class="s5-wrap" style="padding-top:14px;">
     <div class="s5-hero">
       <div class="s5-hero-em">⭐</div>
@@ -971,7 +971,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <!-- ═══════════════════════ ÉCRAN 6 — DEVENIR PRESTATAIRE ═══════════════════════ -->
 <section class="screen" id="s6">
-  <div class="s2-hdr" style="background:rgba(0,0,0,.3);"><button class="s2-back" onclick="goto(1)">← Retour</button><div class="s2-title" style="color:white;">Devenir Prestataire</div><div class="s2-spacer"></div></div>
+  <div class="s2-hdr" style="background:rgba(0,0,0,.3);"><button class="s2-back" onclick="goBack()">← Retour</button><div class="s2-title" style="color:white;">Devenir Prestataire</div><div class="s2-spacer"></div></div>
   <div class="s6-hero">
     <div class="s6-badge">RECRUTEMENT OUVERT</div>
     <h1 class="s6-h1">Gagnez votre vie en faisant<br><span class="hl">ce que vous savez déjà faire.</span></h1>
@@ -1050,7 +1050,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <!-- ═══════════════════════ ÉCRAN 7 — ESPACE PRESTATAIRE (mini dashboard) ═══════════════════════ -->
 <section class="screen" id="s7">
-  <div class="s2-hdr"><button class="s2-back" onclick="goto(1)">← Accueil</button><div class="s2-title">Mon Espace Prestataire</div><div class="s2-spacer"></div></div>
+  <div class="s2-hdr"><button class="s2-back" onclick="goBack()">← Retour</button><div class="s2-title">Mon Espace Prestataire</div><div class="s2-spacer"></div></div>
   <div class="s7-wrap" style="padding-top:14px;">
     <div class="s7-greet">Bonjour Aïcha </div>
     <div class="s7-greet-sub">Vous êtes en service · 3 missions disponibles dans votre zone</div>
@@ -1612,16 +1612,18 @@ textarea.full{min-height:60px;resize:vertical;}
       <div style="font-size:13px;color:var(--t2);line-height:1.55;">Postulation traitée sous 48h ouvrées. Vous recevrez un SMS de confirmation.</div>
     </div>
 
-    <!-- Progress 7 sections -->
-    <div style="display:flex;gap:6px;margin-bottom:24px;">
-      <div style="flex:1;height:4px;border-radius:2px;background:var(--cy);"></div>
-      <div style="flex:1;height:4px;border-radius:2px;background:var(--cy);"></div>
-      <div style="flex:1;height:4px;border-radius:2px;background:var(--cy);"></div>
-      <div style="flex:1;height:4px;border-radius:2px;background:var(--cy);"></div>
-      <div style="flex:1;height:4px;border-radius:2px;background:var(--cardb);"></div>
-      <div style="flex:1;height:4px;border-radius:2px;background:var(--cardb);"></div>
-      <div style="flex:1;height:4px;border-radius:2px;background:var(--cardb);"></div>
+    <!-- Progress 7 sections (mis à jour dynamiquement par updateKycProgress) -->
+    <div id="kyc-progress-bar" style="display:flex;gap:6px;margin-bottom:8px;">
+      <div class="kyc-step" style="flex:1;height:4px;border-radius:2px;background:var(--cardb);transition:.3s;"></div>
+      <div class="kyc-step" style="flex:1;height:4px;border-radius:2px;background:var(--cardb);transition:.3s;"></div>
+      <div class="kyc-step" style="flex:1;height:4px;border-radius:2px;background:var(--cardb);transition:.3s;"></div>
+      <div class="kyc-step" style="flex:1;height:4px;border-radius:2px;background:var(--cardb);transition:.3s;"></div>
+      <div class="kyc-step" style="flex:1;height:4px;border-radius:2px;background:var(--cardb);transition:.3s;"></div>
+      <div class="kyc-step" style="flex:1;height:4px;border-radius:2px;background:var(--cardb);transition:.3s;"></div>
+      <div class="kyc-step" style="flex:1;height:4px;border-radius:2px;background:var(--cardb);transition:.3s;"></div>
+      <div class="kyc-step" style="flex:1;height:4px;border-radius:2px;background:var(--cardb);transition:.3s;"></div>
     </div>
+    <div id="kyc-progress-text" style="font-size:11px;color:var(--t2);text-align:right;margin-bottom:16px;">0/8 sections complétées</div>
 
     <div class="sec">
       <div class="sec-t"><span class="num">1</span>Identité</div>
@@ -1672,18 +1674,19 @@ textarea.full{min-height:60px;resize:vertical;}
 
     <div class="sec">
       <div class="sec-t"><span class="num">5</span>Disponibilités hebdomadaires</div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:10px;">Cliquez sur chaque jour pour <b>activer</b> (jaune) ou <b>désactiver</b> (gris). Tous activés par défaut sauf dimanche.</div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
-        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Lun</div></div>
-        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Mar</div></div>
-        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Mer</div></div>
-        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Jeu</div></div>
-        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Ven</div></div>
-        <div class="tier on" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Sam</div></div>
-        <div class="tier" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Dim</div></div>
+        <div class="tier on kyc-jour" data-jour="lun" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Lun</div></div>
+        <div class="tier on kyc-jour" data-jour="mar" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Mar</div></div>
+        <div class="tier on kyc-jour" data-jour="mer" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Mer</div></div>
+        <div class="tier on kyc-jour" data-jour="jeu" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Jeu</div></div>
+        <div class="tier on kyc-jour" data-jour="ven" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Ven</div></div>
+        <div class="tier on kyc-jour" data-jour="sam" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Sam</div></div>
+        <div class="tier kyc-jour" data-jour="dim" onclick="this.classList.toggle('on')" style="padding:8px 2px;cursor:pointer;user-select:none;"><div style="font-size:11px;font-weight:800;">Dim</div></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Heure début</label><input type="time" class="full" value="07:00"></div>
-        <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Heure fin</label><input type="time" class="full" value="18:00"></div>
+        <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Heure début</label><input type="time" id="kyc-heure-debut" class="full" value="07:00"></div>
+        <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Heure fin</label><input type="time" id="kyc-heure-fin" class="full" value="18:00"></div>
       </div>
     </div>
 
@@ -1786,7 +1789,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <section class="screen" id="s11">
   <div class="s2-hdr">
-    <button class="s2-back" onclick="goto(1)">← Accueil</button>
+    <button class="s2-back" onclick="goBack()">← Retour</button>
     <div style="display:flex;align-items:center;gap:10px;">
       <div class="ad-av" id="s11-avatar" style="background:linear-gradient(135deg,var(--cb),var(--cb2));width:36px;height:36px;font-size:14px;">—</div>
       <div>
@@ -1794,7 +1797,7 @@ textarea.full{min-height:60px;resize:vertical;}
         <div style="font-size:10px;color:var(--cy-text);font-weight:700;" id="s11-statut-pill">CLIENT</div>
       </div>
     </div>
-    <button class="s2-back" onclick="doSignOut()" title="Se déconnecter">↪</button>
+    <button class="s2-back" onclick="doSignOut()" title="Se déconnecter" style="font-size:11px;padding:6px 10px;">Déconnexion</button>
   </div>
   <div style="max-width:760px;margin:0 auto;padding:18px 20px 40px;">
 
@@ -1998,7 +2001,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <!-- ═══════════════════════ ÉCRAN 14 — LOGIN PRESTATAIRE (Sprint 12.6) ═══════════════════════ -->
 <section class="screen" id="s14">
-  <div class="s2-hdr"><button class="s2-back" onclick="goto(1)">← Retour</button><div class="s2-title">Espace Prestataire</div><div class="s2-spacer"></div></div>
+  <div class="s2-hdr"><button class="s2-back" onclick="goBack()">← Retour</button><div class="s2-title">Espace Prestataire</div><div class="s2-spacer"></div></div>
   <div style="max-width:420px;margin:0 auto;padding:40px 20px;">
     <div style="text-align:center;margin-bottom:32px;">
       <div style="font-size:54px;margin-bottom:8px;">🔧</div>
@@ -2138,11 +2141,10 @@ async function bootSupabase(){
       _currentUser = session.user;
       await loadProfile();
       closeAuthModal();
-      // Redirection automatique vers panel admin si rôle admin
-      const _ADMIN_ROLES = ['admin','superadmin','operateur','comptable'];
-      if(_currentProfile && _ADMIN_ROLES.includes(_currentProfile.role)){
-        if(typeof goto === 'function') goto(8);
-      }
+      // FIX Sprint 13 hotfix : NE PAS auto-rediriger ici. Chaque flow de login
+      // (handleAuth pour client, loginAdmin pour admin, loginPresta pour presta)
+      // gère sa propre redirection après vérification du rôle. Auto-rediriger ici
+      // créait une race condition qui bloquait loginAdmin sur "Vérification...".
     } else if(event === 'SIGNED_OUT'){
       _currentUser = null;
       _currentProfile = null;
@@ -2212,6 +2214,9 @@ function switchAuthTab(tab){
   document.getElementById('auth-title').textContent = isSignup ? 'Créer un compte' : 'Connexion';
   document.getElementById('signup-fields').style.display = isSignup ? 'flex' : 'none';
   document.getElementById('auth-submit').textContent = isSignup ? "S'inscrire" : 'Se connecter';
+  // FIX Sprint 13 hotfix (F7) : hint contextuel pour clarifier que l'inscription = compte client
+  const hint = document.getElementById('auth-signup-hint');
+  if(hint) hint.style.display = isSignup ? 'block' : 'none';
   const t1 = document.getElementById('tab-signin');
   const t2 = document.getElementById('tab-signup');
   t1.style.color = isSignup ? 'var(--t2)' : 'var(--cy)';
@@ -2303,8 +2308,25 @@ async function handleAuth(event){
     } else {
       const { error } = await _supabaseClient.auth.signInWithPassword({ email, password });
       if(error) throw error;
-      showAuthMsg('success', '✓ Connexion réussie');
-      setTimeout(closeAuthModal, 1000);
+      // FIX Sprint 13 hotfix : redirection contextuelle + toast bienvenue
+      // Attendre que loadProfile (déclenché par onAuthStateChange) soit terminé
+      // pour disposer du rôle.
+      closeAuthModal();
+      // Petite attente pour que onAuthStateChange + loadProfile aient peuplé _currentProfile
+      await new Promise(r => setTimeout(r, 250));
+      const role = _currentProfile && _currentProfile.role;
+      const prenom = (_currentProfile && _currentProfile.prenom) || 'à toi';
+      const _ADMIN_ROLES = ['admin','superadmin','operateur','comptable'];
+      if(_ADMIN_ROLES.includes(role)){
+        // Admin connecté via modal client → diriger vers le panel admin
+        showSuccessModal('Bienvenue '+prenom+' !', 'Tu es administrateur. Accès au panel admin.', function(){ goto(8); });
+      } else if(role === 'prestataire'){
+        showSuccessModal('Bienvenue '+prenom+' !', 'Accès à ton espace prestataire.', function(){ goto(7); });
+      } else {
+        // Client / membre par défaut
+        showSuccessModal('Bienvenue '+prenom+' !', 'Tu es connecté(e). Accès à ton compte.', function(){ goto(11); });
+      }
+      return;
     }
   } catch(e){
     showAuthMsg('error', e.message);
@@ -2345,7 +2367,24 @@ function registerSW(){
 // =========== FIN CONFIGURATION SUPABASE ===========
 
 let cur=1;
-function goto(n){
+// FIX Sprint 13 hotfix (F10) : stack history pour bouton Retour contextuel
+let _screenHistory = [];
+const _NO_HISTORY_SCREENS = new Set(['admin', 1]); // accueil et admin login = pas dans l'historique
+
+function goBack(){
+  // Si historique disponible → page précédente
+  while(_screenHistory.length){
+    const prev = _screenHistory.pop();
+    if(prev !== cur && prev !== undefined && prev !== null){
+      goto(prev, true); // true = ne pas push (pour éviter boucle)
+      return;
+    }
+  }
+  // Sinon → accueil par défaut
+  goto(1, true);
+}
+
+function goto(n, _skipHistory){
   // Protection admin : vérif role DB (pas juste un hash)
   if(n===8){
     if(!_currentUser || !_currentProfile){
@@ -2357,6 +2396,12 @@ function goto(n){
       console.warn('[HH] Accès admin refusé : role =', _currentProfile.role);
       return; // silencieux, pas de message qui révèle l'existence de l'admin
     }
+  }
+  
+  // Push history si transition légitime
+  if(!_skipHistory && cur !== n && !_NO_HISTORY_SCREENS.has(cur)){
+    _screenHistory.push(cur);
+    if(_screenHistory.length > 20) _screenHistory.shift(); // limite raisonnable
   }
   
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -3276,8 +3321,8 @@ function validatePinFormat(pin1, pin2){
   return null;
 }
 
-// ── Sprint 12.6 : sélecteur canal_notif dans le KYC s10 ───────────
-function selectKycCanal(canal){
+// ── Sprint 12.6 : sélecteur opérateur MoMo dans le KYC s10 ────────
+// FIX Sprint 13 hotfix : auparavant imbriquée dans selectKycCanal → inaccessible.
 function selectKycMomo(op, el){
   document.getElementById('kyc-momo-op').value = op;
   ['kyc-momo-om','kyc-momo-mtn'].forEach(id => {
@@ -3287,6 +3332,8 @@ function selectKycMomo(op, el){
   if(el) el.classList.add('on');
 }
 
+// ── Sprint 12.6 : sélecteur canal_notif dans le KYC s10 ───────────
+function selectKycCanal(canal){
   document.getElementById('kyc-canal-notif').value = canal;
   document.getElementById('kyc-canal-whatsapp').classList.toggle('on', canal==='whatsapp');
   document.getElementById('kyc-canal-sms').classList.toggle('on', canal==='sms');
@@ -5806,8 +5853,11 @@ async function loadClientDashboard(){
     document.getElementById('s11-credit').textContent = _fmtK(st.credit_referral);
     
     // CTA dynamiques
-    document.getElementById('s11-cta-perm').style.display    = p.membre_actif ? 'block' : 'none';
-    document.getElementById('s11-cta-membre').style.display  = p.membre_actif ? 'none' : 'block';
+    // FIX Sprint 13 hotfix : seuls les clients/membres voient les CTA d'abonnement.
+    // Les admins/prestas n'ont pas vocation à devenir membre client.
+    const _isClientLike = !p.role || ['client','membre'].includes(p.role);
+    document.getElementById('s11-cta-perm').style.display    = (_isClientLike && p.membre_actif) ? 'block' : 'none';
+    document.getElementById('s11-cta-membre').style.display  = (_isClientLike && !p.membre_actif) ? 'block' : 'none';
     
     // Code parrainage
     document.getElementById('s11-ref-code').textContent = p.referral_code || '—';
@@ -6146,6 +6196,10 @@ recalc();
       <button id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:10px;background:none;border:none;color:var(--t2,#aaa);font-family:inherit;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;">Inscription</button>
     </div>
     <div id="auth-msg" style="display:none;padding:10px;border-radius:8px;margin-bottom:12px;font-size:13px;"></div>
+    <div id="auth-signup-hint" style="display:none;padding:10px;border-radius:8px;margin-bottom:12px;font-size:12px;background:rgba(255,193,7,.08);border:1px solid rgba(255,193,7,.3);color:var(--t2);line-height:1.5;">
+      <b style="color:var(--cy-text);">Compte client</b> · Permet de commander un service (ménage, cuisine, nounou, etc.) chez toi.<br>
+      Tu veux <b>proposer des services</b> ? Ferme cette fenêtre puis clique sur <b>Espace Prestataire → Postuler</b>.
+    </div>
     <form id="auth-form" onsubmit="handleAuth(event)" style="display:flex;flex-direction:column;gap:12px;">
       <div id="signup-fields" style="display:none;flex-direction:column;gap:12px;">
         <label for="auth-nom" class="sr-only">Nom de famille</label>
@@ -6212,7 +6266,7 @@ recalc();
 
 <!-- ═══════════════════════ FOOTER VERSION ═══════════════════════ -->
 <div id="hh-version-footer" style="position:fixed;bottom:6px;left:8px;font-size:9px;color:rgba(255,255,255,.30);font-family:monospace;letter-spacing:.5px;pointer-events:none;z-index:5;user-select:none;">
-  v3.2.0 · Sprint 13 · ÉCRAN ADMIN DÉDIÉ (#admin + triple-clic logo) · password fort · 17/05/2026
+  v3.2.1 · Sprint 13 HOTFIX · 9 bugs frontend corrigés (F1-F12) · 19/05/2026
 </div>
 <style>
 [data-theme="light"] #hh-version-footer { color: rgba(15,38,140,.30); }

@@ -2359,8 +2359,14 @@ async function handleAuth(event){
       } else if(role === 'prestataire'){
         showSuccessModal('Bienvenue '+prenom+' !', 'Accès à ton espace prestataire.', function(){ goto(7); });
       } else {
-        // Client / membre par défaut
-        showSuccessModal('Bienvenue '+prenom+' !', 'Tu es connecté(e). Accès à ton compte.', function(){ goto(11); });
+        // Client : si commande en attente → reprendre l'achat, sinon Mon Espace
+        if(window._pendingOrderIntent && typeof submitMissionOnly === 'function'){
+          window._pendingOrderIntent = false;
+          closeAuthModal();
+          setTimeout(function(){ submitMissionOnly(true); }, 300);
+        } else {
+          showSuccessModal('Bienvenue '+prenom+' !', 'Tu es connecté(e). Accès à ton compte.', function(){ goto(11); });
+        }
       }
       return;
     }
@@ -2588,11 +2594,11 @@ async function checkOrphanMission(){
         _currentMission={mission_id:data.id, reference:data.reference, prix_total:data.prix_total, type_mission:data.type_mission, status:data.status};
         // Pré-remplir s3
         const sv=SERVICES[data.service_id]||{nm:data.service_id};
-        document.getElementById('s3-ref').textContent=data.reference;
+        document.getElementById('s3-ref').textContent=(data.reference||'').replace(/-/g,'');
         document.getElementById('s3-service').textContent=sv.nm;
         document.getElementById('s3-tot').textContent=(data.prix_total||0).toLocaleString('fr-FR')+' FCFA';
         document.getElementById('s3-info-montant').textContent=(data.prix_total||0).toLocaleString('fr-FR')+' FCFA';
-        document.getElementById('s3-info-ref').textContent=data.reference;
+        document.getElementById('s3-info-ref').textContent=(data.reference||'').replace(/-/g,'');
         goto(3);
       } else {
         // Annulation explicite
@@ -2971,7 +2977,7 @@ async function submitMissionOnly(skipValidation){
 
     // 5. Récap s3
     const sv=SERVICES[_cmd.service]||{nm:_cmd.service};
-    document.getElementById('s3-ref').textContent=m.reference;
+    document.getElementById('s3-ref').textContent=(m.reference||'').replace(/-/g,'');
     document.getElementById('s3-service').textContent=sv.nm+' · '+_cmd.duree+'h';
     document.getElementById('s3-quartier').textContent=document.getElementById('cmd-quartier').options[document.getElementById('cmd-quartier').selectedIndex].text;
     const dt=new Date(dateISO);
@@ -2980,7 +2986,7 @@ async function submitMissionOnly(skipValidation){
     document.getElementById('s3-type').textContent=typeLabel;
     document.getElementById('s3-tot').textContent=m.prix_total.toLocaleString('fr-FR')+' FCFA';
     document.getElementById('s3-info-montant').textContent=m.prix_total.toLocaleString('fr-FR')+' FCFA';
-    document.getElementById('s3-info-ref').textContent=m.reference;
+    document.getElementById('s3-info-ref').textContent=(m.reference||'').replace(/-/g,'');
 
     // Présélection opérateur basée sur choix invité
     _cmd.provider = !_currentUser && momoOp==='mtn' ? 'manual_mtn' : 'manual_om';
@@ -3267,8 +3273,7 @@ async function validateMissionClient(){
   });
   btn.disabled=false;
   if(error){alert('Erreur : '+error.message);return;}
-  alert('✓ Paiement libéré · Mission archivée.\nMerci pour ta note !');
-  goto(1);
+  showSuccessModal('Mission validée ! 🎉','Paiement libéré et mission archivée.\nMerci pour votre confiance — à très bientôt sur HappyHome !',function(){ goto(1); });
 }
 
 async function openLitigeFlow(){
@@ -3280,8 +3285,9 @@ async function openLitigeFlow(){
     p_mission_id:_currentMission.mission_id, p_motif:motif.trim(), p_description:desc||null
   });
   if(error){alert('Erreur : '+error.message);return;}
-  alert('Litige ouvert. L\'admin va te contacter sous 24h.\nLe paiement est gelé jusqu\'à résolution.');
-  goto(1);
+  goto(12);
+  const _waMsgLitige=encodeURIComponent('Bonjour HappyHome,\nJ\'ai un litige sur ma mission.\nRéf : '+(_currentMission?.mission_id||'—')+'\nMotif : '+motif.trim());
+  window.open('https://wa.me/237690384199?text='+_waMsgLitige,'_blank');
 }
 
 // Check-ins côté presta (à appeler depuis UI presta — Sprint 8 ajoutera l'écran dédié)
@@ -3576,6 +3582,8 @@ async function loginAdmin(){
 
     // 3. Succès → nettoyer URL + redirection panel admin
     document.getElementById('admin-login-pwd').value = '';
+    _currentUser = data.user;
+    _currentProfile = { id: data.user.id, role: prof.role, prenom: prof.prenom, nom: prof.nom };
     showSuccessModal('Bienvenue '+(prof.prenom||'Admin')+' !', 'Connexion admin réussie.', function(){
       try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e){}
       goto(8);
@@ -6624,5 +6632,503 @@ async function _initClientMap() {
 // ── FIN CARTE CLIENT ─────────────────────────────────────────────────────
 </script>
 
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- ▼▼▼ WIDGET TEST HAPPYHOME — AJOUTÉ POUR PHASE TEST UTILISATEUR ▼▼▼ -->
+<!-- Bloc 100% autonome, scoped en .hht-*, zéro impact sur le code existant -->
+<!-- À retirer simplement en supprimant ce bloc entre les marqueurs HHT-START / HHT-END -->
+<!-- HHT-START -->
+<style>
+/* ── Reset scoped ── */
+.hht-fab, .hht-panel, .hht-panel *, .hht-toast { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+/* ── Bouton flottant ── */
+.hht-fab {
+  position: fixed; bottom: 18px; right: 18px; z-index: 99998;
+  width: 62px; height: 62px; border-radius: 50%;
+  background: #FCD116; color: #111; border: 3px solid #111;
+  font-size: 28px; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .15s ease;
+}
+.hht-fab:hover { transform: scale(1.06); }
+.hht-fab:active { transform: scale(.96); }
+.hht-fab-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: #D32F2F; color: #fff; font-size: 12px; font-weight: 900;
+  min-width: 22px; height: 22px; border-radius: 11px; padding: 0 6px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid #fff;
+}
+.hht-fab-badge.hht-hidden { display: none; }
+
+/* ── Overlay + Panel ── */
+.hht-overlay {
+  position: fixed; inset: 0; z-index: 99997;
+  background: rgba(0,0,0,.45); display: none;
+}
+.hht-overlay.hht-open { display: block; }
+
+.hht-panel {
+  position: fixed; z-index: 99999;
+  bottom: 0; left: 0; right: 0;
+  max-height: 88vh; background: #FFFFFF;
+  border-top-left-radius: 20px; border-top-right-radius: 20px;
+  box-shadow: 0 -8px 24px rgba(0,0,0,.18);
+  display: none; flex-direction: column;
+  overflow: hidden;
+}
+.hht-panel.hht-open { display: flex; }
+
+@media (min-width: 700px) {
+  .hht-panel { left: auto; right: 18px; bottom: 88px; width: 440px; max-height: 78vh; border-radius: 18px; }
+}
+
+/* ── Header panel ── */
+.hht-header {
+  background: #0F268C; color: #fff;
+  padding: 14px 16px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 3px solid #FCD116;
+}
+.hht-header-title { flex: 1; font-weight: 800; font-size: 15px; line-height: 1.3; }
+.hht-header-title small { display: block; font-weight: 400; font-size: 11px; opacity: .85; margin-top: 2px; }
+.hht-close {
+  background: transparent; color: #fff; border: 2px solid #fff;
+  width: 32px; height: 32px; border-radius: 50%;
+  font-size: 18px; font-weight: 900; cursor: pointer; line-height: 1;
+}
+
+/* ── Body panel ── */
+.hht-body { padding: 14px 16px; overflow-y: auto; flex: 1; background: #F4F5F7; }
+
+.hht-intro {
+  font-size: 12px; color: #555; line-height: 1.5;
+  background: #FFF9E0; border-left: 4px solid #FCD116;
+  padding: 10px 12px; border-radius: 6px; margin-bottom: 14px;
+}
+
+.hht-textarea {
+  width: 100%; min-height: 90px;
+  padding: 12px; border: 2px solid #E0E0E0; border-radius: 10px;
+  font-size: 14px; font-family: inherit; resize: vertical;
+  background: #fff; color: #111;
+}
+.hht-textarea:focus { outline: none; border-color: #0F268C; }
+
+.hht-quick-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px;
+}
+.hht-quick {
+  padding: 12px 6px; border: none; border-radius: 10px;
+  font-weight: 800; font-size: 13px; cursor: pointer; color: #fff;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  line-height: 1.1;
+}
+.hht-quick:active { transform: scale(.95); }
+.hht-quick.hht-pb { background: #D32F2F; }
+.hht-quick.hht-am { background: #F57C00; }
+.hht-quick.hht-id { background: #1976D2; }
+.hht-quick-emoji { font-size: 20px; }
+
+/* ── Notes list ── */
+.hht-list-title {
+  font-size: 12px; font-weight: 800; color: #555; text-transform: uppercase;
+  letter-spacing: .5px; margin: 18px 0 8px;
+}
+.hht-empty {
+  text-align: center; padding: 18px 10px; color: #888; font-size: 13px;
+  background: #fff; border-radius: 10px; border: 2px dashed #DDD;
+}
+.hht-note {
+  background: #fff; border-radius: 10px; padding: 10px 12px;
+  margin-bottom: 8px; border-left: 4px solid #ccc;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.hht-note.hht-t-pb { border-left-color: #D32F2F; }
+.hht-note.hht-t-am { border-left-color: #F57C00; }
+.hht-note.hht-t-id { border-left-color: #1976D2; }
+.hht-note-content { flex: 1; min-width: 0; }
+.hht-note-tag {
+  display: inline-block; font-size: 10px; font-weight: 900;
+  padding: 2px 7px; border-radius: 4px; color: #fff; margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: .3px;
+}
+.hht-note-tag.hht-t-pb { background: #D32F2F; }
+.hht-note-tag.hht-t-am { background: #F57C00; }
+.hht-note-tag.hht-t-id { background: #1976D2; }
+.hht-note-text { font-size: 14px; color: #111; line-height: 1.4; word-break: break-word; white-space: pre-wrap; }
+.hht-note-time { font-size: 10px; color: #888; margin-top: 4px; }
+.hht-note-del {
+  background: transparent; border: none; color: #888; cursor: pointer;
+  font-size: 18px; padding: 4px 8px; border-radius: 6px; line-height: 1;
+}
+.hht-note-del:hover { background: #FFEBEE; color: #D32F2F; }
+
+/* ── Footer panel ── */
+.hht-footer {
+  padding: 12px 14px; background: #fff; border-top: 1px solid #E0E0E0;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+}
+.hht-foot-btn {
+  padding: 10px 6px; border: 2px solid #111; border-radius: 8px;
+  background: #fff; color: #111; font-weight: 800; font-size: 11px;
+  cursor: pointer; line-height: 1.2;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.hht-foot-btn:active { transform: scale(.96); }
+.hht-foot-btn.hht-primary { background: #FCD116; }
+.hht-foot-emoji { font-size: 18px; }
+
+/* ── Stats globales ── */
+.hht-stats {
+  font-size: 11px; color: #666; text-align: center;
+  padding: 8px 0 4px; font-weight: 700;
+}
+
+/* ── Toast ── */
+.hht-toast {
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+  background: #111; color: #fff; padding: 12px 20px; border-radius: 24px;
+  font-size: 13px; font-weight: 700; z-index: 100000;
+  opacity: 0; transition: opacity .25s ease;
+  pointer-events: none; max-width: 90%; text-align: center;
+}
+.hht-toast.hht-show { opacity: 1; }
+</style>
+
+<button class="hht-fab" id="hht-fab" aria-label="Ouvrir notes de test" title="Mes notes de test">
+  📝<span class="hht-fab-badge hht-hidden" id="hht-badge">0</span>
+</button>
+
+<div class="hht-overlay" id="hht-overlay"></div>
+
+<div class="hht-panel" id="hht-panel" role="dialog" aria-label="Notes de test">
+  <div class="hht-header">
+    <div class="hht-header-title">
+      Mes notes pour cet écran
+      <small id="hht-screen-label">— Accueil</small>
+    </div>
+    <button class="hht-close" id="hht-close" aria-label="Fermer">×</button>
+  </div>
+
+  <div class="hht-body">
+    <div class="hht-intro">
+      <strong>👋 Bienvenue ma chérie.</strong> Sur chaque écran, écris ce que tu remarques (ce qui ne va pas, ce qui pourrait être mieux, une idée). Choisis ensuite la couleur qui correspond. Tes notes sont gardées automatiquement.
+    </div>
+
+    <textarea class="hht-textarea" id="hht-textarea" placeholder="Écris ici ce que tu remarques sur cet écran..."></textarea>
+
+    <div class="hht-quick-row">
+      <button class="hht-quick hht-pb" data-type="pb" type="button">
+        <span class="hht-quick-emoji">🔴</span>Problème
+      </button>
+      <button class="hht-quick hht-am" data-type="am" type="button">
+        <span class="hht-quick-emoji">🟠</span>À améliorer
+      </button>
+      <button class="hht-quick hht-id" data-type="id" type="button">
+        <span class="hht-quick-emoji">💡</span>Idée
+      </button>
+    </div>
+
+    <div class="hht-list-title" id="hht-list-title">Mes notes sur cet écran</div>
+    <div id="hht-list"></div>
+
+    <div class="hht-stats" id="hht-stats">Aucune note pour l'instant</div>
+  </div>
+
+  <div class="hht-footer">
+    <button class="hht-foot-btn hht-primary" id="hht-copy" type="button">
+      <span class="hht-foot-emoji">📋</span>Copier tout pour Junior
+    </button>
+    <button class="hht-foot-btn" id="hht-export" type="button">
+      <span class="hht-foot-emoji">💾</span>Sauver dans un fichier
+    </button>
+    <button class="hht-foot-btn" id="hht-import" type="button">
+      <span class="hht-foot-emoji">📂</span>Reprendre un fichier
+    </button>
+  </div>
+</div>
+
+<input type="file" id="hht-file-input" accept=".json,application/json" style="display:none">
+
+<div class="hht-toast" id="hht-toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ── Mapping écran → nom simple en français ──
+  var SCREEN_NAMES = {
+    's1':       'Accueil',
+    's2':       'Commander un service',
+    's3':       'Paiement',
+    's4':       'Suivi de la mission',
+    's5':       'Devenir Membre',
+    's6':       'Devenir Prestataire',
+    's7':       'Espace Prestataire',
+    's8':       'Administration',
+    's10':      'Postulation Prestataire (KYC)',
+    's11':      'Mon Espace',
+    's12':      'Litige / Chat',
+    's13':      'Catalogue Permanents',
+    's14':      'Connexion Prestataire',
+    's-admin':  'Connexion Admin'
+  };
+  var TYPE_LABELS = { pb: 'Problème', am: 'À améliorer', id: 'Idée' };
+  var STORAGE_KEY = 'hh_test_notes_v1';
+
+  // ── État ──
+  var notes = [];            // array de {id, screen, type, text, ts}
+  var currentScreen = 's1';
+
+  // ── DOM refs ──
+  var fab        = document.getElementById('hht-fab');
+  var badge      = document.getElementById('hht-badge');
+  var overlay    = document.getElementById('hht-overlay');
+  var panel      = document.getElementById('hht-panel');
+  var closeBtn   = document.getElementById('hht-close');
+  var screenLbl  = document.getElementById('hht-screen-label');
+  var textarea   = document.getElementById('hht-textarea');
+  var listEl     = document.getElementById('hht-list');
+  var statsEl    = document.getElementById('hht-stats');
+  var copyBtn    = document.getElementById('hht-copy');
+  var exportBtn  = document.getElementById('hht-export');
+  var importBtn  = document.getElementById('hht-import');
+  var fileInput  = document.getElementById('hht-file-input');
+  var toast      = document.getElementById('hht-toast');
+
+  // ── Persistance ──
+  function load(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      notes = raw ? JSON.parse(raw) : [];
+      if(!Array.isArray(notes)) notes = [];
+    } catch(e){ notes = []; }
+  }
+  function save(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }
+    catch(e){ showToast('⚠️ Sauvegarde impossible'); }
+  }
+
+  // ── Détection écran actif ──
+  function detectScreen(){
+    var active = document.querySelector('.screen.active');
+    var id = active ? active.id : null;
+    if(id && id !== currentScreen){
+      currentScreen = id;
+      renderScreen();
+    } else if(id){
+      currentScreen = id;
+    }
+  }
+  function screenLabel(id){ return SCREEN_NAMES[id] || ('Écran ' + id); }
+
+  // ── Rendu ──
+  function renderScreen(){
+    screenLbl.textContent = '— ' + screenLabel(currentScreen);
+    renderList();
+  }
+  function renderList(){
+    var mine = notes.filter(function(n){ return n.screen === currentScreen; });
+    if(mine.length === 0){
+      listEl.innerHTML = '<div class="hht-empty">Aucune note pour cet écran.<br>Écris quelque chose et choisis une couleur ci-dessus.</div>';
+      statsEl.textContent = 'Total général : ' + notes.length + ' note(s)';
+    } else {
+      listEl.innerHTML = mine.map(function(n){
+        return '<div class="hht-note hht-t-' + n.type + '">' +
+          '<div class="hht-note-content">' +
+            '<span class="hht-note-tag hht-t-' + n.type + '">' + TYPE_LABELS[n.type] + '</span>' +
+            '<div class="hht-note-text"></div>' +
+            '<div class="hht-note-time"></div>' +
+          '</div>' +
+          '<button class="hht-note-del" data-id="' + n.id + '" aria-label="Supprimer">🗑️</button>' +
+        '</div>';
+      }).join('');
+      // Injecter texte/time de façon sûre (textContent, anti-XSS)
+      var nodes = listEl.querySelectorAll('.hht-note');
+      mine.forEach(function(n, i){
+        nodes[i].querySelector('.hht-note-text').textContent = n.text;
+        nodes[i].querySelector('.hht-note-time').textContent = formatTime(n.ts);
+      });
+      statsEl.textContent = mine.length + ' note(s) sur cet écran · ' + notes.length + ' au total';
+    }
+    updateBadge();
+  }
+  function updateBadge(){
+    if(notes.length === 0){ badge.classList.add('hht-hidden'); }
+    else { badge.classList.remove('hht-hidden'); badge.textContent = notes.length > 99 ? '99+' : notes.length; }
+  }
+  function formatTime(ts){
+    try {
+      var d = new Date(ts);
+      return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    } catch(e){ return ''; }
+  }
+
+  // ── Actions ──
+  function addNote(type){
+    var txt = textarea.value.trim();
+    if(!txt){
+      showToast('✍️ Écris d\'abord ton idée');
+      textarea.focus();
+      return;
+    }
+    notes.push({
+      id: 'n_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      screen: currentScreen,
+      type: type,
+      text: txt,
+      ts: Date.now()
+    });
+    save();
+    textarea.value = '';
+    renderList();
+    showToast('✅ Note ajoutée');
+  }
+  function delNote(id){
+    if(!confirm('Supprimer cette note ?')) return;
+    notes = notes.filter(function(n){ return n.id !== id; });
+    save();
+    renderList();
+    showToast('🗑️ Supprimée');
+  }
+
+  // ── Export ──
+  function copyAll(){
+    if(notes.length === 0){ showToast('Aucune note à copier'); return; }
+    var byScreen = {};
+    notes.forEach(function(n){
+      if(!byScreen[n.screen]) byScreen[n.screen] = [];
+      byScreen[n.screen].push(n);
+    });
+    var lines = [];
+    lines.push('═══ NOTES DE TEST HAPPYHOME ═══');
+    lines.push('Date export : ' + new Date().toLocaleString('fr-FR'));
+    lines.push('Total : ' + notes.length + ' note(s)');
+    lines.push('');
+    Object.keys(byScreen).forEach(function(sid){
+      lines.push('── ÉCRAN : ' + screenLabel(sid) + ' (' + sid + ') ──');
+      byScreen[sid].forEach(function(n){
+        lines.push('• [' + TYPE_LABELS[n.type].toUpperCase() + '] ' + n.text);
+      });
+      lines.push('');
+    });
+    var txt = lines.join('\n');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){
+        showToast('📋 Copié ! Colle dans le chat à Junior');
+      }).catch(function(){ fallbackCopy(txt); });
+    } else { fallbackCopy(txt); }
+  }
+  function fallbackCopy(txt){
+    var ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showToast('📋 Copié !'); }
+    catch(e){ showToast('⚠️ Copie impossible'); }
+    document.body.removeChild(ta);
+  }
+  function exportJSON(){
+    if(notes.length === 0){ showToast('Aucune note à sauver'); return; }
+    var data = { version:1, exportedAt: new Date().toISOString(), notes: notes };
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
+    a.href = url; a.download = 'happyhome_notes_' + ts + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('💾 Fichier sauvegardé');
+  }
+  function importJSON(file){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      try {
+        var data = JSON.parse(e.target.result);
+        var imported = Array.isArray(data) ? data : (data.notes || []);
+        if(!Array.isArray(imported)) throw new Error('format');
+        // Fusion sans doublons par id
+        var existingIds = {};
+        notes.forEach(function(n){ existingIds[n.id]=true; });
+        var added = 0;
+        imported.forEach(function(n){
+          if(n && n.id && n.screen && n.type && n.text && !existingIds[n.id]){
+            notes.push(n); added++;
+          }
+        });
+        save(); renderList();
+        showToast('📂 ' + added + ' note(s) importée(s)');
+      } catch(err){
+        showToast('⚠️ Fichier illisible');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ── Toast ──
+  var toastTimer = null;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('hht-show');
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('hht-show'); }, 2200);
+  }
+
+  // ── Ouvrir/Fermer panel ──
+  function openPanel(){
+    detectScreen();
+    renderScreen();
+    panel.classList.add('hht-open');
+    overlay.classList.add('hht-open');
+    setTimeout(function(){ textarea.focus(); }, 200);
+  }
+  function closePanel(){
+    panel.classList.remove('hht-open');
+    overlay.classList.remove('hht-open');
+  }
+
+  // ── Wiring ──
+  fab.addEventListener('click', openPanel);
+  closeBtn.addEventListener('click', closePanel);
+  overlay.addEventListener('click', closePanel);
+
+  document.querySelectorAll('.hht-quick').forEach(function(btn){
+    btn.addEventListener('click', function(){ addNote(btn.dataset.type); });
+  });
+
+  listEl.addEventListener('click', function(e){
+    var b = e.target.closest('.hht-note-del');
+    if(b) delNote(b.dataset.id);
+  });
+
+  copyBtn.addEventListener('click', copyAll);
+  exportBtn.addEventListener('click', exportJSON);
+  importBtn.addEventListener('click', function(){ fileInput.click(); });
+  fileInput.addEventListener('change', function(e){
+    if(e.target.files && e.target.files[0]) importJSON(e.target.files[0]);
+    e.target.value = '';
+  });
+
+  // Détecter changement d'écran (l'app appelle goto() qui change .active)
+  var observer = new MutationObserver(detectScreen);
+  document.querySelectorAll('.screen').forEach(function(sec){
+    observer.observe(sec, { attributes: true, attributeFilter: ['class'] });
+  });
+
+  // ── Init ──
+  load();
+  detectScreen();
+  updateBadge();
+
+  // Échap pour fermer
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && panel.classList.contains('hht-open')) closePanel();
+  });
+})();
+</script>
+<!-- HHT-END -->
+<!-- ▲▲▲ FIN WIDGET TEST HAPPYHOME ▲▲▲ -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 </body>
 </html>

@@ -11,7 +11,6 @@ Mise en relation entre particuliers et prestataires de services ménagers vérif
 - **Backend** : Supabase (PostgreSQL + Auth REST API)
 - **Déploiement** : Cloudflare Pages
 - **Paiement** : Orange Money · MTN Mobile Money (intégration CinetPay prévue)
-
 ---
 
 ## Architecture

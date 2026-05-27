@@ -2946,7 +2946,7 @@ window.addEventListener('DOMContentLoaded', () => {
 function registerSW(){
   if(!('serviceWorker' in navigator))return;
   // SW externe (./sw.js) requis pour scope racine — déployé via repo GitHub
-  navigator.serviceWorker.getRegistrations().then(regs=>{regs.forEach(r=>r.unregister());if(regs.length)console.log('[HH] SW:',regs.length);});if('caches' in window){caches.keys().then(keys=>{keys.forEach(k=>caches.delete(k));if(keys.length)console.log('[HH] Caches:',keys.length);});}
+  navigator.serviceWorker.register('./sw.js').then(()=>console.log('[HH] SW passthrough OK')).catch(e=>console.warn('[HH] SW:',e.message));
     
 }
 // =========== FIN CONFIGURATION SUPABASE ===========

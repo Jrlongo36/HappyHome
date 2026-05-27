@@ -1,33 +1,12 @@
-// HappyHome Service Worker v5 â€” offline-first PWA
-// StratÃ©gie : cache-first pour app shell, network-only pour Supabase API
-const CACHE = 'happyhome-v5';
-const ASSETS = ['./', './index.html'];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
-  self.skipWaiting();
-});
-
+// HappyHome Ñ Kill Switch SW v2 Ñ MODE ONLINE TOTAL
+// Vide tous les caches et se supprime dfinitivement
+self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-  // Network-only pour Supabase (jamais cacher API/Storage)
-  if(url.hostname.includes('supabase.co') || url.hostname.includes('supabase.in')) return;
-  e.respondWith(
-    caches.match(e.request).then(cached =>
-      cached || fetch(e.request).then(resp => {
-        if(resp.ok && e.request.method === 'GET'){
-          const clone = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
-        return resp;
-      }).catch(() => cached)
-    )
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.map(k => caches.delete(k))))
+      .then(() => self.registration.unregister())
+      .then(() => self.clients.matchAll())
+      .then(clients => clients.forEach(c => c.navigate(c.url)))
   );
 });

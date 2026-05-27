@@ -2,6 +2,9 @@
 <html lang="fr" data-theme="light">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#0F268C">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2926,7 +2929,8 @@ async function doSignOut(){
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  bootSupabase(); registerSW(); _loadServiceImages();
+  bootSupabase(); (function(){var V=2;if(localStorage.getItem('hh_ver')!==String(V)){['hh_svc_img_menage','hh_svc_img_cuisine','hh_svc_img_nounou','hh_svc_img_courses','hh_svc_img_lessive','hh_svc_img_repassage','hh_svc_img_fete','hh_svc_img_soin','hh_svc_img_clim','hh_svc_img_shamp','hh_svc_img_elec','hh_svc_img_demenag'].forEach(function(x){try{localStorage.removeItem(x)}catch(e){}});localStorage.setItem('hh_ver',String(V));console.log('[HH] Cache purge v'+V);}}());
+ _loadServiceImages();
   // Date par défaut = maintenant + 2h pour éviter FLASH par défaut
   const now2h = new Date(Date.now() + 2*60*60*1000);
   const pad = n => String(n).padStart(2,'0');

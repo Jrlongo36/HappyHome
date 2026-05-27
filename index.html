@@ -442,7 +442,7 @@ textarea.full{min-height:60px;resize:vertical;}
     </a>
     <div class="s1-actions">
       <button class="s1-action-btn member" onclick="goto(5)">Devenir membre</button>
-      <a href="#" class="s1-already" onclick="goto(11);return false;">Mon compte</a>
+      <a href="#" class="s1-already" onclick="clientLoginOrBypass();return false;">Mon compte</a>
     </div>
   </div>
 
@@ -771,7 +771,7 @@ textarea.full{min-height:60px;resize:vertical;}
           <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-top:1px solid var(--divider);"><span style="color:var(--t2);">Statut</span><span class="ad-pill orange">⏳ En attente</span></div>
         </div>
 
-        <button class="s5-cta" onclick="goto(11)" style="padding:14px;font-size:14px;margin-bottom:10px;">Accéder à mon espace membre →</button>
+        <button class="s5-cta" onclick="goto(15)" style="padding:14px;font-size:14px;margin-bottom:10px;">Accéder à mon espace membre →</button>
         <div style="font-size:12px;color:var(--t2);">Un souci ? <a href="#" onclick="event.preventDefault();openWhatsAppSupport();" style="color:var(--cy-text);font-weight:700;text-decoration:none;">Contacte le support WhatsApp</a></div>
       </div>
     </div>
@@ -946,7 +946,12 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <!-- ═══════════════════════ ÉCRAN 3 — PAIEMENT ═══════════════════════ -->
 <section class="screen" id="s3">
-  <div class="s3-wrap">
+  <div class="s2-hdr">
+    <button class="s2-back" onclick="goBack()">← Retour</button>
+    <div class="s2-title">Paiement</div>
+    <div class="s2-spacer"></div>
+  </div>
+  <div class="s3-wrap" style="padding-top:14px;">
     <div class="s3-title">Paiement sécurisé</div>
     <div class="s3-sub">Escrow protégé · Libération après mission validée</div>
     <div class="s3-recap">
@@ -960,12 +965,12 @@ textarea.full{min-height:60px;resize:vertical;}
     <div style="font-size:13px;font-weight:800;margin-bottom:10px;">Choisir mon opérateur</div>
     <div class="s3-method">
       <div class="s3-mbtn on" data-provider="manual_om" onclick="setMethod(this)">
-        <div style="font-size:28px;"></div>
+        <div style="background:#FF6600;color:white;font-weight:900;font-size:9px;font-family:sans-serif;padding:4px 8px;border-radius:4px;display:inline-block;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;width:fit-content;margin:0 auto 6px;box-shadow:0 2px 4px rgba(255,102,0,0.25);">orange</div>
         <div class="s3-mbtn-lab">Orange Money</div>
         <div class="s3-mbtn-num" id="s3-num-om">690 384 199</div>
       </div>
       <div class="s3-mbtn" data-provider="manual_mtn" onclick="setMethod(this)">
-        <div style="font-size:28px;"></div>
+        <div style="background:#FFCC00;color:#003366;font-weight:900;font-size:9px;font-family:sans-serif;padding:4px 8px;border-radius:4px;display:inline-block;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;width:fit-content;margin:0 auto 6px;box-shadow:0 2px 4px rgba(255,204,0,0.25);">MTN MoMo</div>
         <div class="s3-mbtn-lab">MTN MoMo</div>
         <div class="s3-mbtn-num" id="s3-num-mtn">653 571 659</div>
       </div>
@@ -985,7 +990,12 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <!-- ═══════════════════════ ÉCRAN 4 — SUIVI ═══════════════════════ -->
 <section class="screen" id="s4">
-  <div class="s4-wrap">
+  <div class="s2-hdr">
+    <button class="s2-back" onclick="goBack()">← Retour</button>
+    <div class="s2-title">Suivi de ma mission</div>
+    <div class="s2-spacer"></div>
+  </div>
+  <div class="s4-wrap" style="padding-top:14px;">
     <div class="s4-states">
       <button class="s4-state-btn on" onclick="setSuiviStep(1)">1. Recherche</button>
       <button class="s4-state-btn" onclick="setSuiviStep(2)">2. Arrive</button>
@@ -1114,6 +1124,26 @@ textarea.full{min-height:60px;resize:vertical;}
   </div>
 </div>
 
+<!-- Modal de configuration de l'agenda hebdomadaire prestataire -->
+<div id="presta-schedule-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:300;align-items:center;justify-content:center;padding:20px;overflow-y:auto;">
+  <div style="background:var(--card);border:1px solid var(--cardb);border-radius:18px;padding:24px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.5);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-size:20px;font-weight:900;">📅 Mon Agenda Hebdomadaire</div>
+      <button onclick="closeSchedule()" style="background:transparent;border:none;color:var(--t2);font-size:20px;cursor:pointer;font-weight:800;">&times;</button>
+    </div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:18px;line-height:1.5;">Paramétrez vos jours et heures de disponibilité pour recevoir des propositions de missions adaptées.</div>
+    
+    <div id="schedule-days-list" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+      <!-- Rempli dynamiquement en JS pour les 7 jours de la semaine -->
+    </div>
+    
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeSchedule()" style="flex:1;padding:12px;border-radius:50px;background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">Annuler</button>
+      <button onclick="saveSchedule()" style="flex:1;padding:12px;border-radius:50px;background:var(--cy);color:#1a1a1a;border:none;font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════ ÉCRAN 6 — DEVENIR PRESTATAIRE ═══════════════════════ -->
 <section class="screen" id="s6">
   <div class="s2-hdr" style="background:rgba(0,0,0,.3);"><button class="s2-back" onclick="goBack()">← Retour</button><div class="s2-title" style="color:white;">Devenir Prestataire</div><div class="s2-spacer"></div></div>
@@ -1195,7 +1225,12 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <!-- ═══════════════════════ ÉCRAN 7 — ESPACE PRESTATAIRE (mini dashboard) ═══════════════════════ -->
 <section class="screen" id="s7">
-  <div class="s2-hdr"><button class="s2-back" onclick="goBack()">← Retour</button><div class="s2-title">Mon Espace Prestataire</div><div class="s2-spacer"></div></div>
+  <div class="s2-hdr">
+    <button class="s2-back" onclick="goBack()">← Retour</button>
+    <div class="s2-title">Mon Espace Prestataire</div>
+    <button class="s2-back" id="s7-logout-btn" onclick="doSignOut()" title="Se déconnecter" style="font-size:11px;padding:6px 10px;display:none;">Déconnexion</button>
+    <div class="s2-spacer" id="s7-spacer"></div>
+  </div>
   <div class="s7-wrap" style="padding-top:14px;">
     <div class="s7-greet" id="s7-greet">Bonjour</div>
     <div class="s7-greet-sub" id="s7-greet-sub">Connectez-vous pour voir vos missions disponibles.</div>
@@ -1235,22 +1270,28 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
 
       <div class="s7-card">
-        <div class="s7-card-t">🟢 Disponibilités</div>
+        <div class="s7-card-t" id="s7-dispo-title">🟢 Disponibilités</div>
         <div class="s7-dispo">
           <div><div style="font-weight:700;font-size:13px;">Disponible maintenant</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">Vous recevez les notifications</div></div>
-          <div class="dispo-toggle" onclick="this.classList.toggle('off')"></div>
+          <div class="dispo-toggle" onclick="togglePrestaDispo(this)"></div>
         </div>
         <button class="s5-cta" style="padding:10px;font-size:12px;background:var(--card);color:var(--text);border:1px solid var(--cardb);" onclick="openSchedule()">Configurer mes horaires hebdo</button>
       </div>
 
       <div class="s7-card">
         <div class="s7-card-t">Mon profil</div>
-        <div class="s7-profile">
-          <div class="s7-profile-av" style="background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlOGVhZjAiLz4KPGNpcmNsZSBjeD0iNTAiIGN5PSIzOCIgcj0iMTgiIGZpbGw9IiM5MGE0YWUiLz4KPHBhdGggZD0iTSAyMCAxMDAgUSAyMCA3MCA1MCA3MCBRIDgwIDcwIDgwIDEwMCBaIiBmaWxsPSIjOTBhNGFlIi8+CjxyZWN0IHg9IjAiIHk9IjkyIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjMiIGZpbGw9IiNjZmQ4ZGMiLz4KPHRleHQgeD0iNTAiIHk9Ijk4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZpbGw9IiM3ODkwOWMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPklELVZFUklGSUVEPC90ZXh0Pgo8L3N2Zz4=) center/cover;font-size:0;"></div>
-          <div>
-            <div class="s7-profile-n" id="s7-profile-name">Prestataire</div>
-            <div class="s7-profile-r" id="s7-profile-status">KYC non soumis · 0 mission</div>
-            <div class="s7-specs" id="s7-profile-specialties">
+        <div class="s7-profile" style="display:flex;align-items:center;gap:12px;">
+          <div class="s7-profile-av" id="s7-profile-avatar" style="width:70px;height:70px;border-radius:50%;background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlOGVhZjAiLz4KPGNpcmNsZSBjeD0iNTAiIGN5PSIzOCIgcj0iMTgiIGZpbGw9IiM5MGE0YWUiLz4KPHBhdGggZD0iTSAyMCAxMDAgUSAyMCA3MCA1MCA3MCBRIDgwIDcwIDgwIDEwMCBaIiBmaWxsPSIjOTBhNGFlIi8+CjxyZWN0IHg9IjAiIHk9IjkyIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjMiIGZpbGw9IiNjZmQ4ZGMiLz4KPHRleHQgeD0iNTAiIHk9Ijk4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZpbGw9IiM3ODkwOWMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPklELVZFUklGSUVEPC90ZXh0Pgo8L3N2Zz4=) center/cover;font-size:0;flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div class="s7-profile-n" id="s7-profile-name" style="font-weight:800;font-size:15px;margin-bottom:2px;">Prestataire</div>
+            <div class="s7-profile-r" id="s7-profile-status" style="font-size:11px;color:var(--t2);margin-bottom:6px;">KYC non soumis · 0 mission</div>
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;">
+              <label for="s7-avatar-input" style="padding:6px 10px;border-radius:50px;background:var(--cy);color:#000;font-family:inherit;font-weight:700;font-size:10px;cursor:pointer;display:inline-block;">📷 Modifier</label>
+              <button id="s7-avatar-remove" onclick="removePrestaAvatar()" style="padding:6px 10px;border-radius:50px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:10px;cursor:pointer;display:none;">Supprimer</button>
+              <input type="file" id="s7-avatar-input" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handlePrestaAvatarUpload(this)">
+            </div>
+            <div id="s7-avatar-status" style="font-size:10px;color:var(--t2);margin-top:4px;display:none;"></div>
+            <div class="s7-specs" id="s7-profile-specialties" style="margin-top:6px;">
               <span class="s7-spec">—</span>
             </div>
           </div>
@@ -1733,6 +1774,16 @@ textarea.full{min-height:60px;resize:vertical;}
   </div>
 </section>
 
+<!-- ═══════════════════════ MODAL PRÉVIEW DOCUMENTS KYC (Admin) ═══════════════════════ -->
+<div id="admin-doc-preview-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10000;backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeDocPreview()">
+  <div style="background:var(--bg);border:1px solid var(--cardb);border-radius:20px;width:min(90vw,640px);padding:24px;display:flex;flex-direction:column;align-items:center;box-shadow:0 24px 60px rgba(0,0,0,.6);position:relative;">
+    <button onclick="closeDocPreview()" style="position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;">✕</button>
+    <div style="font-size:16px;font-weight:800;margin-bottom:14px;color:var(--text);" id="admin-preview-title">Document</div>
+    <div id="admin-preview-loading" style="color:var(--t2);font-size:13px;margin:40px 0;display:flex;align-items:center;gap:10px;"><div class="spinner" style="width:20px;height:20px;margin:0;border-width:2px;border-top-color:var(--cy);"></div>Chargement du document…</div>
+    <img id="admin-preview-img" style="max-width:100%;max-height:70vh;border-radius:10px;display:none;object-fit:contain;border:1px solid var(--cardb);" alt="CNI Preview">
+  </div>
+</div>
+
 
 <!-- ═══════════════════════ ÉCRAN 9 — KYC CLIENT (formulaire complet) ═══════════════════════ -->
 <!-- s9 supprimé (Sprint 12) : doublon mort — le bandeau KYC du s2 fait déjà le travail -->
@@ -1740,7 +1791,7 @@ textarea.full{min-height:60px;resize:vertical;}
 <!-- ═══════════════════════ ÉCRAN 10 — KYC PRESTATAIRE (postulation complète) ═══════════════════════ -->
 <section class="screen" id="s10">
   <div class="s2-hdr">
-    <button class="s2-back" onclick="goto(6)">← Retour</button>
+    <button class="s2-back" onclick="goto(6, true)">← Retour</button>
     <div class="s2-title">Postulation Prestataire</div>
     <div class="s2-spacer"></div>
   </div>
@@ -1949,6 +2000,17 @@ textarea.full{min-height:60px;resize:vertical;}
     <!-- Contenu chargé -->
     <div id="s11-content" style="display:none;">
 
+      <!-- ══ SIMULATION VIP MEMBRE ══ -->
+      <div class="s7-card" style="background:linear-gradient(135deg,rgba(255,193,7,.06),rgba(255,255,255,.02));border:1px solid var(--cardb);padding:12px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;border-radius:12px;">
+        <div style="flex:1;padding-right:12px;">
+          <div style="font-weight:800;font-size:12px;color:var(--cy-text);display:flex;align-items:center;gap:6px;">👑 Simuler le statut VIP Membre (-10%)</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px;">Activez pour tester les parcours et prix exclusifs membres. Désactivez pour tester le parcours client simple.</div>
+        </div>
+        <div class="sw-btn" id="s11-vip-toggle" onclick="toggleVipSimulation(this)" style="width:42px;height:24px;background:var(--inp-bg);border:1px solid var(--cardb);border-radius:12px;position:relative;cursor:pointer;transition:.2s;flex-shrink:0;">
+          <div class="sw-dot" style="width:18px;height:18px;background:var(--t3);border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;"></div>
+        </div>
+      </div>
+
       <!-- ══ HUB CENTRAL — Navigation rapide ══ -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;">
         <div id="s11-cmd-card" onclick="goto(2)" class="s7-card" style="cursor:pointer;text-align:center;padding:18px 12px;transition:.2s;border:1px solid var(--cardb);" onmouseover="this.style.borderColor='var(--cy-text)'" onmouseout="this.style.borderColor='var(--cardb)'">
@@ -2060,7 +2122,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
       <!-- Actions rapides -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <button class="s5-cta" onclick="goto(2)" style="padding:14px;font-size:13px;">＋ Nouvelle commande</button>
+        <button class="s5-cta" id="s11-new-cmd-btn" onclick="goto(2)" style="padding:14px;font-size:13px;">＋ Nouvelle commande</button>
         <button onclick="openWhatsAppSupport()" style="padding:14px;border-radius:50px;background:#25D366;color:#fff;border:none;font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.595 5.488l-.999 3.648 3.893-.835z"/></svg>
           Support WhatsApp
@@ -2086,7 +2148,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <section class="screen" id="s12">
   <div class="s2-hdr">
-    <button class="s2-back" onclick="goto(4)">← Retour au suivi</button>
+    <button class="s2-back" onclick="handleChatBack()">← Retour</button>
     <div class="s2-title">Discuter avec le prestataire</div>
     <div class="s2-spacer"></div>
   </div>
@@ -2095,7 +2157,7 @@ textarea.full{min-height:60px;resize:vertical;}
     <div style="font-size:80px;margin-bottom:16px;">💬</div>
 
     <div style="font-size:24px;font-weight:900;margin-bottom:10px;">Discute sur WhatsApp</div>
-    <div style="font-size:14px;color:var(--t2);line-height:1.6;margin-bottom:24px;">
+    <div id="s12-desc" style="font-size:14px;color:var(--t2);line-height:1.6;margin-bottom:24px;">
       Pour coordonner ton arrivée, signaler un détail ou demander une précision, ouvre WhatsApp avec ton prestataire en un clic. Le message est pré-rempli avec ta référence mission.
     </div>
 
@@ -2117,7 +2179,7 @@ textarea.full{min-height:60px;resize:vertical;}
     </button>
 
     <!-- Bouton support si pas de presta -->
-    <div style="font-size:12px;color:var(--t2);margin-bottom:14px;">Ton prestataire n'est pas encore affecté ? Contacte le support :</div>
+    <div id="s12-support-label" style="font-size:12px;color:var(--t2);margin-bottom:14px;">Ton prestataire n'est pas encore affecté ? Contacte le support :</div>
     <button onclick="openWhatsAppSupport()" style="width:100%;padding:14px;border-radius:50px;background:var(--card);color:var(--text);border:1px solid var(--cardb);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">
       Support HappyHome WhatsApp
     </button>
@@ -2132,7 +2194,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
 <section class="screen" id="s13">
   <div class="s2-hdr">
-    <button class="s2-back" onclick="goto(11)">← Retour</button>
+    <button class="s2-back" onclick="goBack()">← Retour</button>
     <div class="s2-title">Prestataires permanents</div>
     <div class="s2-spacer"></div>
   </div>
@@ -2206,21 +2268,18 @@ textarea.full{min-height:60px;resize:vertical;}
 
     <div style="text-align:center;font-size:12px;color:var(--t2);line-height:1.6;">
       <a href="#" onclick="event.preventDefault();showSuccessModal('PIN oublié','Contacte l\'admin HappyHome par WhatsApp au +237 6 90 38 41 99 avec une photo de ta CNI.\n\nL\'admin pourra réinitialiser ton PIN sous 24h ouvrées.','OK')" style="color:var(--cy-text);text-decoration:none;font-weight:700;">PIN oublié ?</a>
-      <div style="margin-top:14px;">
-        Pas encore prestataire ?
-        <a href="#" onclick="event.preventDefault();goto(6)" style="color:var(--cy-text);text-decoration:none;font-weight:700;">Postuler →</a>
-      </div>
     </div>
   </div>
 </section>
 
 <!-- ═══════════════════════ SCREEN ADMIN (Sprint 13 - Accès caché : #admin ou triple-clic logo) ═══════════════════════ -->
 <section class="screen" id="s-admin">
-  <div style="max-width:440px;margin:0 auto;padding:60px 24px 40px;">
-    <a href="#" onclick="event.preventDefault();window.location.hash='';goto(1);return false;"
-       style="display:inline-block;color:var(--t2);text-decoration:none;font-size:14px;margin-bottom:24px;font-weight:600;">
-      ← Retour
-    </a>
+  <div class="s2-hdr">
+    <button class="s2-back" onclick="window.location.hash='';goto(1)">← Retour</button>
+    <div class="s2-title">Espace Admin</div>
+    <div class="s2-spacer"></div>
+  </div>
+  <div style="max-width:440px;margin:0 auto;padding:40px 24px 40px;">
 
     <div style="text-align:center;margin-bottom:32px;">
       <div style="font-size:54px;margin-bottom:10px;">🔐</div>
@@ -2259,11 +2318,11 @@ textarea.full{min-height:60px;resize:vertical;}
 <!-- ═══════════════════════ ÉCRAN 15 — COMMANDE MEMBRE ═══════════════════════ -->
 <section class="screen" id="s15">
   <div class="s2-hdr">
-    <button class="s2-back" onclick="goto(11)">← Retour</button>
+    <button class="s2-back" onclick="goBack()">← Retour</button>
     <div class="s2-title">Espace Membre · Commande</div>
     <div class="s2-spacer"></div>
   </div>
-  <div class="s2-wrap" style="padding: 16px 20px;">
+  <div class="s2-wrap" style="padding: 16px 20px 100px;">
     <div style="background:linear-gradient(135deg,rgba(255,193,7,.15),rgba(15,38,140,.2));border:1px solid var(--cy);border-radius:14px;padding:16px;margin-bottom:18px;text-align:center;">
       <span style="font-size:32px;">💎</span>
       <h2 style="font-size:18px;font-weight:900;margin-top:6px;color:var(--cy-text);">Tarif Privilège Membre</h2>
@@ -2378,12 +2437,12 @@ textarea.full{min-height:60px;resize:vertical;}
     <!-- Mode de paiement -->
     <div class="s3-method">
       <div class="s3-mbtn on" id="s17-op-om" onclick="setMembrePaymentMethod('manual_om')">
-        <div style="font-size:24px;">🍊</div>
+        <div style="background:#FF6600;color:white;font-weight:900;font-size:9px;font-family:sans-serif;padding:4px 8px;border-radius:4px;display:inline-block;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;width:fit-content;margin:0 auto 6px;box-shadow:0 2px 4px rgba(255,102,0,0.25);">orange</div>
         <div class="s3-mbtn-lab">Orange Money</div>
         <div class="s3-mbtn-num" id="s17-num-om">690 384 199</div>
       </div>
       <div class="s3-mbtn" id="s17-op-mtn" onclick="setMembrePaymentMethod('manual_mtn')">
-        <div style="font-size:24px;">💛</div>
+        <div style="background:#FFCC00;color:#003366;font-weight:900;font-size:9px;font-family:sans-serif;padding:4px 8px;border-radius:4px;display:inline-block;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;width:fit-content;margin:0 auto 6px;box-shadow:0 2px 4px rgba(255,204,0,0.25);">MTN MoMo</div>
         <div class="s3-mbtn-lab">MTN MoMo</div>
         <div class="s3-mbtn-num" id="s17-num-mtn">653 571 659</div>
       </div>
@@ -2415,7 +2474,7 @@ textarea.full{min-height:60px;resize:vertical;}
 <!-- ═══════════════════════ ÉCRAN 16 — CONTRAT AGENT PERMANENT ═══════════════════════ -->
 <section class="screen" id="s16">
   <div class="s2-hdr">
-    <button class="s2-back" onclick="goto(11)">← Retour</button>
+    <button class="s2-back" onclick="goBack()">← Retour</button>
     <div class="s2-title">Mon Agent Permanent</div>
     <div class="s2-spacer"></div>
   </div>
@@ -2461,16 +2520,44 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
     </div>
 
-    <!-- Détail Contrat -->
-    <div class="s7-card">
-      <div class="s7-card-t">Détails du contrat</div>
-      <div class="s7-active-mission">
-        <div class="s7-mission-row"><span class="lbl">Formule</span><span class="v">Résidente (vit chez vous)</span></div>
-        <div class="s7-mission-row"><span class="lbl">Fréquence</span><span class="v">6 jours sur 7</span></div>
-        <div class="s7-mission-row"><span class="lbl">Mensualité</span><span class="v" style="color:var(--cy-text);">180 000 FCFA</span></div>
-        <div class="s7-mission-row"><span class="lbl">Prochain Paiement</span><span class="v">01 Juin 2026 (Auto)</span></div>
+    <!-- Suivi du Contrat & Compte à rebours -->
+    <div class="s7-card" style="margin-bottom:18px;background:linear-gradient(135deg,rgba(15,38,140,.05),rgba(255,193,7,.05));border:1px solid var(--cardb);">
+      <div class="s7-card-t" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span>📄 Suivi de Contrat</span>
+        <span class="ad-pill yellow" id="s16-contrat-type" style="font-weight:800;font-size:10px;">PERMANENT RÉSIDENT</span>
       </div>
-      <button class="s5-cta" style="width:100%;margin-top:14px;background:var(--inp-bg);color:var(--text);border:1px solid var(--cardb);" onclick="goto(13)">Voir les autres agents disponibles (Catalogue) →</button>
+      
+      <!-- Type details -->
+      <div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.4;">
+        Type de formule : <strong style="color:var(--text);" id="s16-formule-val">Résidente (vit chez vous · 6j/7)</strong>
+      </div>
+      
+      <!-- Countdown timer -->
+      <div style="background:var(--inp-bg);border:1px solid var(--cardb);border-radius:12px;padding:14px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;font-weight:700;">Temps restant avant renouvellement</div>
+        <div id="s16-countdown" style="font-size:15px;font-weight:900;color:var(--cy-text);margin-top:6px;font-family:monospace;">8 jours 14 heures 23 minutes</div>
+        
+        <!-- Progress bar -->
+        <div style="width:100%;height:6px;background:var(--cardb);border-radius:3px;margin-top:10px;overflow:hidden;">
+          <div id="s16-progress" style="width:72%;height:100%;background:linear-gradient(90deg,var(--cy),var(--cy-text));border-radius:3px;transition:width 1s;"></div>
+        </div>
+      </div>
+
+      <!-- Action litige contextuelle -->
+      <div id="s16-litige-container" style="text-align:center;margin-bottom:14px;">
+        <button id="s16-litige-btn" onclick="declarerLitige()" style="width:100%;padding:12px;border-radius:50px;background:rgba(244,67,54,.1);border:1px solid rgba(244,67,54,.3);color:#f44336;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;" onmouseover="this.style.background='rgba(244,67,54,.25)'" onmouseout="this.style.background='rgba(244,67,54,.1)'">
+          ⚠️ Déclarer un litige / Signaler un problème
+        </button>
+      </div>
+
+      <!-- Sélecteur Formule pour Test/Demo -->
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--t2);border-top:1px solid var(--cardb);padding-top:10px;">
+        <span>Simuler un type de contrat :</span>
+        <select id="s16-sim-type" onchange="changeSimulatedContract(this.value)" style="background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);border-radius:6px;padding:2px 6px;font-size:11px;font-family:inherit;cursor:pointer;">
+          <option value="resident" selected>Permanent Résident</option>
+          <option value="non-resident">Permanent Non-Résident</option>
+        </select>
+      </div>
     </div>
   </div>
 </section>
@@ -2561,10 +2648,30 @@ async function bootSupabase(){
 
 async function loadProfile(){
   if(!_supabaseClient || !_currentUser) return;
+  if(window._BYPASS_VALIDATIONS === true){
+    // Mode offline/bypass immédiat : charge le profil local instantanément
+    _currentProfile = {
+      id: _currentUser.id,
+      role: 'client',
+      prenom: 'Junior',
+      nom: 'LONGO',
+      telephone: '699000000',
+      email: _currentUser.email || 'junior.longo@gmail.com',
+      quartier: 'bonapriso',
+      adresse_principale: 'Carrefour Bonapriso',
+      membre_actif: false,
+      kyc_valide: true,
+      kyc_taux: 100
+    };
+    refreshMembreBanner();
+    if(typeof recalc==='function') recalc();
+    console.log('[HH] Profile bypass chargé:', _currentProfile.prenom, _currentProfile.nom);
+    return;
+  }
   const { data, error } = await _supabaseClient.from('profiles').select('*').eq('id', _currentUser.id).single();
   if(error){ console.error('[HH] loadProfile:', error.message); return; }
   _currentProfile = data;
-  _membreActif = (data.membre_actif === true);
+  _membreActif = (data.membre_actif === true || data.role === 'membre');
   refreshMembreBanner();
   if(typeof recalc==='function')recalc();
   if(data.role==='prestataire')startPrestaListener();
@@ -2629,9 +2736,9 @@ function switchAuthTab(tab){
   if(hint) hint.style.display = isSignup ? 'block' : 'none';
   const t1 = document.getElementById('tab-signin');
   const t2 = document.getElementById('tab-signup');
-  t1.style.color = isSignup ? 'var(--t2)' : 'var(--cy)';
+  t1.style.color = isSignup ? 'var(--t2)' : 'var(--cy-text)';
   t1.style.borderBottomColor = isSignup ? 'transparent' : 'var(--cy)';
-  t2.style.color = isSignup ? 'var(--cy)' : 'var(--t2)';
+  t2.style.color = isSignup ? 'var(--cy-text)' : 'var(--t2)';
   t2.style.borderBottomColor = isSignup ? 'var(--cy)' : 'transparent';
 }
 function showAuthMsg(type, text){
@@ -2640,7 +2747,7 @@ function showAuthMsg(type, text){
   m.style.display='block';
   m.textContent=text;
   const bg = type==='error' ? 'rgba(244,67,54,.15)' : type==='success' ? 'rgba(76,175,80,.15)' : 'rgba(255,193,7,.10)';
-  const fg = type==='error' ? '#f44336' : type==='success' ? '#4caf50' : '#FFC107';
+  const fg = type==='error' ? '#f44336' : type==='success' ? '#4caf50' : 'var(--cy-text)';
   m.style.background=bg; m.style.color=fg; m.style.border='1px solid '+fg+'4D';
 }
 
@@ -2671,12 +2778,58 @@ function hhCheckPwd(input){
     box.style.color = '#4caf50';
   } else {
     box.textContent = v.msg;
-    box.style.color = '#FFC107';
+    box.style.color = 'var(--cy-text)';
   }
 }
 
 async function handleAuth(event){
   event.preventDefault();
+  
+  if(window._BYPASS_VALIDATIONS){
+    const email = document.getElementById('auth-email').value.trim() || 'test@happyhome.cm';
+    const isSignup = document.getElementById('auth-title').textContent.includes('Créer');
+    
+    // Simuler la connexion/inscription en peuplant le profil mocké
+    _currentUser = { id: 'test-user-id', email };
+    
+    // Déterminer le rôle simulé selon l'email
+    let role = 'client';
+    if(email.includes('admin')) role = 'admin';
+    else if(email.includes('presta')) role = 'prestataire';
+    
+    _currentProfile = {
+      id: 'test-user-id',
+      role: role,
+      prenom: 'Test',
+      nom: 'User',
+      telephone: '699000000',
+      email: email,
+      quartier: 'bonapriso',
+      adresse_principale: 'Carrefour Bonapriso',
+      membre_actif: true,
+      kyc_valide: true,
+      kyc_taux: 100
+    };
+    
+    _membreActif = true;
+    closeAuthModal();
+    
+    // Redirection directe selon le rôle simulé
+    if(role === 'admin'){
+      showSuccessModal('Bienvenue Admin !', 'Mode simulation activé.', function(){ goto(8); });
+    } else if(role === 'prestataire'){
+      showSuccessModal('Bienvenue Prestataire !', 'Mode simulation activé.', function(){ goto(7); });
+    } else {
+      if(window._pendingOrderIntent && typeof submitMissionOnly === 'function'){
+        window._pendingOrderIntent = false;
+        setTimeout(function(){ submitMissionOnly(true); }, 300);
+      } else {
+        showSuccessModal('Bienvenue Client !', 'Mode simulation activé.', function(){ goto(11); });
+      }
+    }
+    return;
+  }
+
   if(!_supabaseClient){ showAuthMsg('error','Supabase non initialisé'); return; }
   const isSignup = document.getElementById('auth-title').textContent.includes('Créer');
   const email = document.getElementById('auth-email').value.trim();
@@ -2762,9 +2915,13 @@ async function handleAuth(event){
 }
 
 async function doSignOut(){
-  if(!_supabaseClient) return;
   if(!confirm('Se déconnecter ?')) return;
-  await _supabaseClient.auth.signOut();
+  if(_supabaseClient) {
+    try { await _supabaseClient.auth.signOut(); } catch(e){}
+  }
+  _currentUser = null;
+  _currentProfile = null;
+  _membreActif = false;
   if(typeof goto==='function') goto(1);
 }
 
@@ -2790,32 +2947,92 @@ function registerSW(){
     .catch(e => console.warn('[HH] SW:', e.message));
 }
 // =========== FIN CONFIGURATION SUPABASE ===========
+// TODO 30 JUIN — mettre false avant push Cloudflare
+window._BYPASS_VALIDATIONS = false; // Mode test sans blocages (KYC, GPS, Téléphone)
 
 let cur=1;
 // FIX Sprint 13 hotfix (F10) : stack history pour bouton Retour contextuel
 let _screenHistory = [];
-const _NO_HISTORY_SCREENS = new Set(['admin', 1]); // accueil et admin login = pas dans l'historique
+const _NO_HISTORY_SCREENS = new Set(['admin', 1, 4, 12]); // accueil, admin login, suivi mission, et chat = pas dans l'historique
+
+function getPathwayForScreen(n) {
+  if ([2, 3].includes(n)) return 'client';
+  if ([4].includes(n)) return 'universel';
+  if ([15, 16, 17, 13].includes(n)) return 'membre'; // S13 catalogue perm. membres
+  if ([7, 12].includes(n)) return 'prestataire';
+  if ([8].includes(n)) return 'admin';
+  return 'public'; // S1, S5, S6, S14
+}
 
 function goBack(){
-  // Si historique disponible → page précédente
-  while(_screenHistory.length){
+  const currentPathway = getPathwayForScreen(cur);
+  
+  // Règle stricte : filtre l'historique pour ne conserver que les écrans du MÊME univers ou publics
+  _screenHistory = _screenHistory.filter(x => {
+    if (x === cur || x === undefined || x === null) return false;
+    const path = getPathwayForScreen(x);
+    return path === currentPathway || path === 'public';
+  });
+  
+  if(_screenHistory.length){
     const prev = _screenHistory.pop();
-    if(prev !== cur && prev !== undefined && prev !== null){
-      goto(prev, true); // true = ne pas push (pour éviter boucle)
-      return;
-    }
+    goto(prev, true);
+    return;
   }
-  // Sinon → historique contextuel intelligent
-  if(cur === 14) {
-    goto(7, true);
-  } else if(cur === 7 || cur === 6 || cur === 11) {
-    goto(1, true);
+  
+  // Retour de secours (n-1) strict et étanche par univers
+  if (cur === 3) {
+    goto(2, true); // Facturation standard -> Configurer commande standard
+  } else if (cur === 17) {
+    goto(15, true); // Paiement membre -> Commande membre
+  } else if (cur === 15 || cur === 16) {
+    goto(1, true); // Espace Membre/Agent Permanent -> Accueil Landing
+  } else if (cur === 10) {
+    goto(1, true); // Postulation/KYC -> Accueil Landing
+  } else if (cur === 12 || cur === 13) {
+    goto(7, true); // Chat/Catalogue -> Mon Espace Prestataire
+  } else if (cur === 6) {
+    goto(1, true); // Devenir Prestataire -> Accueil Landing
+  } else if (cur === 7 || cur === 11 || cur === 2 || cur === 5) {
+    goto(1, true); // Dashboards/Formulaires -> Accueil Landing Page
   } else {
-    goto(1, true);
+    goto(1, true); // Par défaut -> Accueil Landing Page
   }
 }
 
 function goto(n, _skipHistory){
+  // --- ROBUST PATHWAY ROUTING GUARD ---
+  const screenPathway = getPathwayForScreen(n);
+  const isVIP = (_membreActif === true || (_currentUser && _currentProfile && (_currentProfile.role === 'membre' || _currentProfile.membre_actif === true)));
+  const currentRole = _currentUser && _currentProfile ? _currentProfile.role : 'public';
+
+  if (screenPathway === 'membre' && !isVIP) {
+    console.warn(`[HH Guard] Ecran membre ${n} non-VIP redirect S5`);
+    goto(5, _skipHistory);
+    return;
+  }
+  
+  if (screenPathway === 'client' && isVIP) {
+    console.warn(`[HH Guard] Redirection de l'écran client ${n} vers l'écran membre privilège 15`);
+    goto(15, _skipHistory);
+    return;
+  }
+  
+  if (screenPathway === 'prestataire' && currentRole !== 'prestataire') {
+    console.warn(`[HH Guard] Ecran presta ${n} non-presta`);
+    if (n === 7) { goto(14, _skipHistory); } else { goto(1, _skipHistory); }
+    return;
+  }
+
+  if (n !== 16 && typeof _s16Interval !== 'undefined' && _s16Interval) {
+    clearInterval(_s16Interval);
+    _s16Interval = null;
+  }
+  // Si on entre dans l'espace prestataire (S6, S10, S14), on nettoie l'historique client pour éviter les retours bizarres
+  if(n === 6 || n === 10 || n === 14){
+    _screenHistory = _screenHistory.filter(x => x !== 2 && x !== 3 && x !== 5 && x !== 11);
+  }
+
   // Protection admin par rôle
   if(n===8){
     if(!_currentUser || !_currentProfile || !['admin','superadmin','operateur','comptable'].includes(_currentProfile.role)){
@@ -2905,8 +3122,8 @@ function kycPreviewFile(input, previewId){
 
 async function submitKycClient(){
   // MODE TEST OFFLINE : bypass
-  if(!_supabaseClient || !_currentUser){
-    showSuccessModal('KYC client soumis (mode test)','Dossier enregistré en démo.');
+  if(window._BYPASS_VALIDATIONS || !_supabaseClient || !_currentUser){
+    showSuccessModal('KYC client soumis (mode test)','Dossier enregistré en démo.', function(){ goto(1); });
     return;
   }
   const dob = document.getElementById('kyc-dob').value;
@@ -2959,7 +3176,7 @@ async function submitKycClient(){
     document.getElementById('kyc-label').textContent = 'KYC en attente · Vérification 24-48h';
     document.getElementById('kyc-motif-rejet').style.display = 'none';
     btn.textContent = '✓ Dossier soumis';
-    setTimeout(()=>document.getElementById('kyc-band').classList.remove('open'), 1500);
+    showSuccessModal('KYC client soumis ✓', 'Votre dossier est en cours de validation par l\'admin.', function(){ goto(1); });
   } catch(e) {
     alert('Erreur : ' + e.message);
     btn.disabled = false;
@@ -3065,6 +3282,7 @@ async function loadKycClientStatus(){
 
 // Bloque commande si KYC pas validé
 function kycGateBeforeOrder(){
+  if(window._BYPASS_VALIDATIONS) return true; // BYPASS MODE
   if(!_currentProfile) return true; // pas connecté = gestion auth ailleurs
   if(_currentProfile.kyc_valide === true) return true;
   alert('KYC requis avant commande. Complétez votre dossier dans la bannière en haut.');
@@ -3105,6 +3323,12 @@ let _PRICING = {
 };
 
 function selectService(id){
+  const isMembre = (_membreActif === true || (_currentUser && _currentProfile && (_currentProfile.role === 'membre' || _currentProfile.membre_actif === true)));
+  if(isMembre){
+    updateMembreService(id);
+    goto(15);
+    return;
+  }
   const sv=SERVICES[id];
   _cmd.service=id;_cmd.base=sv.base;_cmd.carac=sv.tiers[0][1];_cmd.carac_id=sv.tiers[0][2]??null;_cmd.couverts=1.00;
   document.getElementById('cmd-name').textContent=sv.nm;
@@ -3302,8 +3526,18 @@ const _hhLieuAC=(function(){
 })();
 
 async function submitMissionOnly(skipValidation){
+  if(window._BYPASS_VALIDATIONS){
+    // Remplir des valeurs par défaut pour éviter tout blocage
+    if(!document.getElementById('cmd-quartier').value) document.getElementById('cmd-quartier').value = 'bonapriso';
+    if(!document.getElementById('cmd-lieudit').value) document.getElementById('cmd-lieudit').value = 'Carrefour';
+    if(!document.getElementById('cmd-date').value) {
+      const now2h = new Date(Date.now() + 2*60*60*1000);
+      document.getElementById('cmd-date').value = now2h.getFullYear()+'-'+String(now2h.getMonth()+1).padStart(2,'0')+'-'+String(now2h.getDate()).padStart(2,'0');
+    }
+    if(!document.getElementById('cmd-time').value) document.getElementById('cmd-time').value = '14:00';
+  }
   // MODE TEST OFFLINE : bypass toutes les validations, aller direct à S3
-  if(!_supabaseClient || !_currentUser){
+  if(!window._BYPASS_VALIDATIONS && (!_supabaseClient || !_currentUser)){
     goto(3); // Aller au paiement (mode démo)
     return;
   }
@@ -3351,7 +3585,8 @@ async function submitMissionOnly(skipValidation){
       // Flow authentifié (presta admin / membre)
       const {data,error}=await _supabaseClient.rpc('create_mission',{
         p_service_id:_cmd.service,p_caracteristique_id:_cmd.carac_id,
-        p_quartier_id:quartier,p_adresse:adresseComplete,p_date_souhaitee:dateISO
+        p_quartier_id:quartier,p_adresse:adresseComplete,p_date_souhaitee:dateISO,
+        p_client_lat:null,p_client_lng:null
       });
       if(error)throw error;
       m=Array.isArray(data)?data[0]:data;
@@ -3416,6 +3651,21 @@ async function submitMissionOnly(skipValidation){
 function setSuiviStep(n){
   document.querySelectorAll('#s4 .s4-state-btn').forEach((b,i)=>b.classList.toggle('on',i+1===n));
   document.querySelectorAll('.s4-step').forEach((s,i)=>s.classList.toggle('active',i+1===n));
+  
+  if(window._BYPASS_VALIDATIONS){
+    // Remplir dynamiquement les données pour les étapes si en mode bypass
+    const nom = 'Aïcha M.';
+    const meta = '4.9 · 87 missions';
+    const nE = document.getElementById('s4-presta-nom'); if(nE) nE.textContent = nom;
+    const mE = document.getElementById('s4-presta-meta'); if(mE) mE.textContent = meta;
+    const nE2 = document.getElementById('s4-step2-nom'); if(nE2) nE2.textContent = nom;
+    const mE2 = document.getElementById('s4-step2-rating'); if(mE2) mE2.textContent = meta;
+    
+    const btn = document.getElementById('s4-validate-montant');
+    if(btn && (!btn.textContent || btn.textContent === '— FCFA')) {
+      btn.textContent = '4 597 FCFA';
+    }
+  }
 }
 
 // ╔══════════════════════════════════════════════════════════════════╗
@@ -3472,8 +3722,37 @@ function loadPrestaSpace(){
     if(greetEl) greetEl.textContent = 'Bonjour ' + name;
     if(greetSubEl) greetSubEl.textContent = _currentProfile.kyc_valide ? 'Vous êtes en service · En attente de missions' : 'Veuillez finaliser votre KYC';
     
+    const toggleEl = document.querySelector('#s7 .dispo-toggle');
+    const dispoTitleEl = document.getElementById('s7-dispo-title');
+    if(toggleEl){
+      if(_currentProfile.disponible === false){
+        toggleEl.classList.add('off');
+        if(dispoTitleEl) dispoTitleEl.textContent = '🔴 Disponibilités';
+        if(greetSubEl) greetSubEl.textContent = 'Hors service · Indisponible pour recevoir des missions';
+      } else {
+        toggleEl.classList.remove('off');
+        if(dispoTitleEl) dispoTitleEl.textContent = '🟢 Disponibilités';
+        _currentProfile.disponible = true;
+      }
+    }
+
     if(profileNameEl) profileNameEl.textContent = (name + ' ' + (_currentProfile.nom || '')).trim();
     if(profileSubEl) profileSubEl.textContent = (_currentProfile.kyc_valide ? 'KYC validé' : 'KYC en attente') + ' · ' + (_currentProfile.missions_total || 0) + ' missions';
+    
+    // Rendre l'avatar prestataire
+    const avEl = document.getElementById('s7-profile-avatar');
+    const removeBtn = document.getElementById('s7-avatar-remove');
+    if(avEl){
+      if(_currentProfile.avatar_url){
+        avEl.style.backgroundImage = 'url('+_currentProfile.avatar_url+')';
+        avEl.style.backgroundSize = 'cover';
+        avEl.style.backgroundPosition = 'center';
+        if(removeBtn) removeBtn.style.display = 'inline-block';
+      } else {
+        avEl.style.backgroundImage = 'url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlOGVhZjAiLz4KPGNpcmNsZSBjeD0iNTAiIGN5PSIzOCIgcj0iMTgiIGZpbGw9IiM5MGE0YWUiLz4KPHBhdGggZD0iTSAyMCAxMDAgUSAyMCA3MCA1MCA3MCBRIDgwIDcwIDgwIDEwMCBaIiBmaWxsPSIjOTBhNGFlIi8+CjxyZWN0IHg9IjAiIHk9IjkyIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjMiIGZpbGw9IiNjZmQ4ZGMiLz4KPHRleHQgeD0iNTAiIHk9Ijk4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZpbGw9IiM3ODkwOWMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPklELVZFUklGSUVEPC90ZXh0Pgo8L3N2Zz4=)';
+        if(removeBtn) removeBtn.style.display = 'none';
+      }
+    }
     
     // Configurer les spécialités de manière dynamique
     if(specsEl){
@@ -3492,13 +3771,28 @@ function loadPrestaSpace(){
     if(statCompletion) statCompletion.textContent = (_currentProfile.taux_completion || 100) + '%';
     
     checkPrestaActiveMission();
+    const logoutBtn = document.getElementById('s7-logout-btn');
+    const spacerEl = document.getElementById('s7-spacer');
+    if(logoutBtn) logoutBtn.style.display = 'inline-block';
+    if(spacerEl) spacerEl.style.display = 'none';
   } else {
     // Mode vierge / première utilisation (Déconnecté ou non prestataire)
     if(greetEl) greetEl.textContent = 'Bonjour Prestataire';
     if(greetSubEl) greetSubEl.textContent = 'Connecte-toi pour voir tes missions disponibles.';
     
+    const toggleEl = document.querySelector('#s7 .dispo-toggle');
+    const dispoTitleEl = document.getElementById('s7-dispo-title');
+    if(toggleEl) toggleEl.classList.add('off');
+    if(dispoTitleEl) dispoTitleEl.textContent = '🔴 Disponibilités';
+
     if(profileNameEl) profileNameEl.textContent = 'Prestataire';
     if(profileSubEl) profileSubEl.textContent = 'KYC non soumis · 0 mission';
+    const avEl = document.getElementById('s7-profile-avatar');
+    const removeBtn = document.getElementById('s7-avatar-remove');
+    if(avEl){
+      avEl.style.backgroundImage = 'url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlOGVhZjAiLz4KPGNpcmNsZSBjeD0iNTAiIGN5PSIzOCIgcj0iMTgiIGZpbGw9IiM5MGE0YWUiLz4KPHBhdGggZD0iTSAyMCAxMDAgUSAyMCA3MCA1MCA3MCBRIDgwIDcwIDgwIDEwMCBaIiBmaWxsPSIjOTBhNGFlIi8+CjxyZWN0IHg9IjAiIHk9IjkyIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjMiIGZpbGw9IiNjZmQ4ZGMiLz4KPHRleHQgeD0iNTAiIHk9Ijk4IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjYiIGZpbGw9IiM3ODkwOWMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPklELVZFUklGSUVEPC90ZXh0Pgo8L3N2Zz4=)';
+      if(removeBtn) removeBtn.style.display = 'none';
+    }
     
     if(specsEl) specsEl.innerHTML = '<span class="s7-spec">—</span>';
     
@@ -3507,6 +3801,10 @@ function loadPrestaSpace(){
     if(statGains) statGains.textContent = '0k';
     if(statRating) statRating.textContent = '—';
     if(statCompletion) statCompletion.textContent = '100%';
+    const logoutBtn = document.getElementById('s7-logout-btn');
+    const spacerEl = document.getElementById('s7-spacer');
+    if(logoutBtn) logoutBtn.style.display = 'none';
+    if(spacerEl) spacerEl.style.display = 'block';
     
     // Nettoyer la carte de mission active et ajouter un CTA de connexion premium
     const detailsEl = document.getElementById('s7-active-mission-details');
@@ -3518,7 +3816,6 @@ function loadPrestaSpace(){
           <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Accès réservé aux prestataires</div>
           <div style="color:var(--t2);font-size:12px;margin-bottom:16px;line-height:1.4;">Pour consulter ton tableau de bord et accepter des missions, connecte-toi avec tes identifiants.</div>
           <button class="s5-cta" style="width:100%;padding:12px;font-size:13px;font-weight:800;margin-bottom:10px;" onclick="goto(14)">Se connecter</button>
-          <a href="#" onclick="event.preventDefault();goto(6);" style="color:var(--cy-text);text-decoration:none;font-weight:700;font-size:12px;display:inline-block;margin-top:4px;">Devenir prestataire / Postuler →</a>
         </div>
       `;
     }
@@ -3530,6 +3827,29 @@ function loadPrestaSpace(){
 }
 
 async function checkPrestaActiveMission(){
+  if(window._BYPASS_VALIDATIONS){
+    const card = document.getElementById('gps-mission-card');
+    const detailsEl = document.getElementById('s7-active-mission-details');
+    const detailBtn = document.getElementById('s7-active-chat-btn');
+    if(card) {
+      card.style.display='block';
+      card.dataset.missionId='mock-presta-mission-id';
+    }
+    if(detailsEl){
+      detailsEl.innerHTML = `
+        <div class="s7-mission-row"><span class="lbl">Client</span><span class="v">Junior L.</span></div>
+        <div class="s7-mission-row"><span class="lbl">Service</span><span class="v">🧹 Ménage régulier</span></div>
+        <div class="s7-mission-row"><span class="lbl">Quartier</span><span class="v">Bonapriso</span></div>
+        <div class="s7-mission-row"><span class="lbl">Statut</span><span class="v" style="color:var(--cg);">En cours</span></div>
+        <div class="s7-mission-row"><span class="lbl">Vous toucherez</span><span class="v" style="color:var(--cy-text);">4 597 FCFA</span></div>
+      `;
+    }
+    if(detailBtn) {
+      detailBtn.style.display = 'block';
+      detailBtn.setAttribute('onclick', `_currentMission={mission_id:'mock-presta-mission-id'}; goto(12);`);
+    }
+    return;
+  }
   if(!_supabaseClient||!_currentUser||!_currentProfile||_currentProfile.role!=='prestataire')return;
   
   // On récupère la mission active avec les détails du client
@@ -3761,6 +4081,35 @@ function setRate(n){
 }
 
 async function loadActiveMissionForClient(){
+  if(window._BYPASS_VALIDATIONS){
+    console.log('[HH] loadActiveMissionForClient Mode Bypass actif.');
+    // S'assurer qu'on a toujours une mission mockée si vide
+    if(!_currentMission){
+      _currentMission = {
+        id: 'mock-mission-id',
+        mission_id: 'mock-mission-id',
+        status: 'payee_recherche',
+        prix_total: 4597,
+        type_mission: 'Ménage régulier',
+        created_at: new Date().toISOString()
+      };
+    }
+    // Mocker les infos de mission et prestataire pour l'UI
+    const mockData = {
+      ..._currentMission,
+      status: _currentMission.status || 'payee_recherche',
+      profiles: {
+        prenom: 'Aïcha',
+        nom: 'M.',
+        telephone: '690384199',
+        rating_moyen: '4.9',
+        missions_total: 87
+      }
+    };
+    _currentMission = mockData;
+    syncMissionUI(mockData);
+    return;
+  }
   if(!_currentUser){
     // Si client invité avec une mission active en mémoire
     if(_currentMission && _currentMission.guest_token){
@@ -3823,6 +4172,19 @@ function subscribeClientMission(missionId){
 }
 
 async function validateMissionClient(){
+  if(window._BYPASS_VALIDATIONS){
+    const btn=document.getElementById('s4-validate-btn');
+    btn.disabled=true;
+    btn.textContent='Validation...';
+    setTimeout(() => {
+      btn.disabled=false;
+      btn.textContent='✓ Valider et libérer';
+      showSuccessModal('Mission validée ! 🎉','Paiement libéré et mission archivée.\nMerci pour votre confiance !',function(){
+        goto(1); // Retour à l'accueil
+      });
+    }, 800);
+    return;
+  }
   if(!_currentMission)return;
   if(_rateValue<1){alert('Sélectionne 1 à 5 étoiles avant de valider.');return;}
   const com=document.getElementById('s4-commentaire').value||null;
@@ -3893,8 +4255,8 @@ async function uploadKycFile(slot){
 
 async function submitKycPresta(){
   // MODE TEST OFFLINE : bypass toutes les validations, simuler succès
-  if(!_supabaseClient || !_currentUser){
-    showSuccessModal('KYC soumis (mode test)','Dossier enregistré en mode démo.\nEn production : validation admin sous 24h.');
+  if(window._BYPASS_VALIDATIONS || !_supabaseClient || !_currentUser){
+    showSuccessModal('KYC soumis (mode test)','Dossier enregistré en mode démo.\nEn production : validation admin sous 24h.', function(){ goto(1); });
     return;
   }
   if(!_kycFiles.recto||!_kycFiles.verso||!_kycFiles.selfie){alert('Les 3 documents sont obligatoires (CNI recto, verso, selfie).');return;}
@@ -3939,7 +4301,7 @@ async function submitKycPresta(){
     showSuccessModal(
       'KYC soumis ✓',
       "Ton dossier est en cours de validation par l'admin (sous 24h).\n\nIDENTIFIANTS DE CONNEXION (à retenir) :\n• Numéro : "+numeroLoginRaw+"\n• PIN : "+pin1+"\n\nUne fois ton KYC validé, tu pourras te connecter sur l'écran Espace Prestataire.\n\nTu seras notifié(e) par "+(canalNotif==='whatsapp'?'WhatsApp':'SMS')+".",
-      function(){ goto(11); }
+      function(){ goto(1); }
     );
   }catch(e){
     alert('Erreur soumission KYC : '+e.message);
@@ -3977,6 +4339,17 @@ function selectKycCanal(canal){
 }
 
 // ── Sprint 12.6 : Login presta (numéro MoMo + PIN) ────────────────
+function clientLoginOrBypass(){
+  if(window._BYPASS_VALIDATIONS && !_currentUser){
+    _currentUser={id:'bypass-client',email:'test@happyhome.cm'};
+    _currentProfile={id:'bypass-client',role:'client',prenom:'Jean',nom:'Tester',
+      telephone:'699000000',email:'test@happyhome.cm',membre_actif:false,
+      kyc_valide:false,referral_code:'HH-TEST01',commandes_count:3,economies_total:4500};
+    goto(11);
+  } else if(!_currentUser){
+    showAuthModal('signin');
+  } else { goto(11); }
+}
 async function loginPresta(){
   const numero = (document.getElementById('login-presta-numero').value||'').replace(/\D/g,'');
   const pin = (document.getElementById('login-presta-pin').value||'').trim();
@@ -3984,6 +4357,27 @@ async function loginPresta(){
   const btn = document.getElementById('login-presta-btn');
   
   msgEl.style.display = 'none';
+  
+  if(window._BYPASS_VALIDATIONS){
+    _currentUser = { id: 'mock-presta-id', email: 'presta@happyhome.cm' };
+    _currentProfile = {
+      id: 'mock-presta-id',
+      prenom: 'Catherine',
+      nom: 'N.',
+      role: 'prestataire',
+      kyc_valide: true,
+      telephone: numero,
+      quartier: 'Bonapriso',
+      avatar_url: null,
+      specialites: ['Ménage régulier', 'Repassage', 'Cuisine & Repas'],
+      missions_total: 112,
+      gains_total: 450000,
+      rating_moyen: '4.95',
+      taux_completion: 100
+    };
+    showSuccessModal('Bienvenue Catherine !', 'Connexion réussie. Active le bouton EN LIGNE pour commencer à recevoir des missions.', function(){ goto(7); });
+    return;
+  }
   
   if(numero.length < 9){
     msgEl.style.color = 'var(--cr)';
@@ -4044,7 +4438,7 @@ async function loginPresta(){
       msgEl.style.display = 'block';
       return;
     }
-    if(!prof.kyc_valide){
+    if(!prof.kyc_valide && window._BYPASS_VALIDATIONS !== true){
       await _supabaseClient.auth.signOut();
       msgEl.style.color = 'var(--co,#FF9800)';
       msgEl.textContent = 'KYC en attente de validation admin. Patience, tu seras notifié(e) dès activation.';
@@ -4095,6 +4489,16 @@ async function loginAdmin(){
   const btn = document.getElementById('admin-login-btn');
 
   msgEl.style.display = 'none';
+
+  if(window._BYPASS_VALIDATIONS){
+    _currentUser = { id: 'mock-admin-id', email: email || 'admin@happyhome.com' };
+    _currentProfile = { id: 'mock-admin-id', role: 'admin', prenom: 'Admin', nom: 'Bypass' };
+    showSuccessModal('Bienvenue Admin !', 'Connexion admin réussie (Bypass actif).', function(){
+      try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e){}
+      goto(8);
+    });
+    return;
+  }
 
   // Validation email
   if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
@@ -4373,6 +4777,18 @@ async function uploadProof(paymentId){
 
 async function confirmPaymentFlow(){
   // ── 0. PRÉ-CHECKS ─────────────────────────────────────────
+  if(window._BYPASS_VALIDATIONS){
+    if(!_currentMission || !_currentMission.mission_id){
+      _currentMission = {
+        mission_id: 'mock_m_' + Math.random().toString(36).substring(7),
+        reference: 'HH-MOCK-' + Math.random().toString(36).substring(3, 7).toUpperCase(),
+        prix_total: 4597
+      };
+    }
+    if(!document.getElementById('cmd-numero-client').value) document.getElementById('cmd-numero-client').value = '690384199';
+    if(!document.getElementById('cmd-txn-id').value) document.getElementById('cmd-txn-id').value = 'TXN123456789';
+  }
+
   if(!_currentMission||!_currentMission.mission_id){
     // Tentative de reprise depuis localStorage si jamais on a perdu _currentMission
     const recovered = await tryRecoverMissionFromStorage();
@@ -4382,10 +4798,16 @@ async function confirmPaymentFlow(){
       return;
     }
   }
-  const txnId=(document.getElementById('cmd-txn-id').value||'').trim();
-  const numClient=(document.getElementById('cmd-numero-client').value||'').trim().replace(/\s+/g,'');
-  if(numClient.replace(/\D/g,'').length<9){alert('Saisis ton numéro MoMo complet (9 chiffres min).');document.getElementById('cmd-numero-client').focus();return;}
-  if(txnId.length<5){alert('Saisis l\'identifiant TXN reçu après envoi MoMo (min 5 caractères).');document.getElementById('cmd-numero-client').focus();return;}
+  let txnId=(document.getElementById('cmd-txn-id').value||'').trim();
+  let numClient=(document.getElementById('cmd-numero-client').value||'').trim().replace(/\s+/g,'');
+  
+  if (window._BYPASS_VALIDATIONS === true) {
+    if (!numClient) { numClient = '690384199'; document.getElementById('cmd-numero-client').value = numClient; }
+    if (!txnId) { txnId = 'TXN_CLIENT_MOCK_' + Math.floor(Math.random() * 100000); document.getElementById('cmd-txn-id').value = txnId; }
+  } else {
+    if(numClient.replace(/\D/g,'').length<9){alert('Saisis ton numéro MoMo complet (9 chiffres min).');document.getElementById('cmd-numero-client').focus();return;}
+    if(txnId.length<5){alert('Saisis l\'identifiant TXN reçu après envoi MoMo (min 5 caractères).');document.getElementById('cmd-numero-client').focus();return;}
+  }
 
   const btn=document.getElementById('btn-confirm-payment');
   const oldTxt=btn.textContent;
@@ -4435,6 +4857,14 @@ async function confirmPaymentFlow(){
   };
 
   try{
+    if(window._BYPASS_VALIDATIONS){
+      showSuccessModal(
+        'Paiement enregistré (mode démo)',
+        "Recherche d'un prestataire en cours (max 5 min).\nTu seras prévenu(e) sur WhatsApp dès qu'un prestataire accepte ta mission.",
+        function(){ goto(4); }
+      );
+      return;
+    }
 
     // ── 2. FLOW INVITÉ ────────────────────────────────────────
     if(!_currentUser && _currentMission.guest_token){
@@ -4796,13 +5226,270 @@ function reservePermanent(btn){
   }
 }
 
+// Agenda Hebdomadaire Prestataire
+let _prestaSchedule = {
+  lun: { active: true, start: '07:00', end: '18:00' },
+  mar: { active: true, start: '07:00', end: '18:00' },
+  mer: { active: true, start: '07:00', end: '18:00' },
+  jeu: { active: true, start: '07:00', end: '18:00' },
+  ven: { active: true, start: '07:00', end: '18:00' },
+  sam: { active: true, start: '08:00', end: '14:00' },
+  dim: { active: false, start: '08:00', end: '14:00' }
+};
+
+const _DAY_LABELS = {
+  lun: 'Lundi', mar: 'Mardi', mer: 'Mercredi', jeu: 'Jeudi', ven: 'Vendredi', sam: 'Samedi', dim: 'Dimanche'
+};
+
+function toggleVipSimulation(toggleEl) {
+  const dot = toggleEl.querySelector('.sw-dot');
+  if (_membreActif) {
+    // Turn off simulation
+    toggleEl.style.background = 'var(--inp-bg)';
+    if (dot) { dot.style.left = '2px'; dot.style.background = 'var(--t3)'; }
+    _membreActif = false;
+    if (_currentProfile) {
+      _currentProfile.membre_actif = false;
+      _currentProfile.role = 'client';
+    }
+  } else {
+    // Turn on simulation
+    toggleEl.style.background = 'var(--cy)';
+    if (dot) { dot.style.left = '20px'; dot.style.background = '#000'; }
+    _membreActif = true;
+    if (_currentProfile) {
+      _currentProfile.membre_actif = true;
+      _currentProfile.role = 'membre';
+    }
+  }
+  refreshMembreBanner();
+  if (typeof loadClientDashboard === 'function') loadClientDashboard();
+}
+
+function togglePrestaDispo(el) {
+  if (!_currentUser || !_currentProfile || _currentProfile.role !== 'prestataire') {
+    showSuccessModal('Accès refusé', 'Veuillez vous connecter pour modifier vos disponibilités.', 'OK');
+    return;
+  }
+  el.classList.toggle('off');
+  const isOff = el.classList.contains('off');
+  _currentProfile.disponible = !isOff;
+  
+  const dispoTitleEl = document.getElementById('s7-dispo-title');
+  if (dispoTitleEl) {
+    dispoTitleEl.textContent = !isOff ? '🟢 Disponibilités' : '🔴 Disponibilités';
+  }
+  
+  const greetSubEl = document.getElementById('s7-greet-sub');
+  if (greetSubEl) {
+    if (_currentProfile.kyc_valide) {
+      greetSubEl.textContent = !isOff ? 'Vous êtes en service · En attente de missions' : 'Hors service · Indisponible pour recevoir des missions';
+    } else {
+      greetSubEl.textContent = 'Veuillez finaliser votre KYC';
+    }
+  }
+}
+
 function openSchedule(){
-  alert('📅 Configurer mes horaires hebdomadaires\n\nLundi-Vendredi : 07h00 - 18h00 ✓\nSamedi : 08h00 - 14h00 ✓\nDimanche : Indisponible\n\n(Édition complète dans la version production)');
+  if (!_currentUser || !_currentProfile || _currentProfile.role !== 'prestataire') {
+    showSuccessModal('Accès refusé', 'Veuillez vous connecter pour configurer votre agenda hebdomadaire.', 'OK');
+    return;
+  }
+  // Charger depuis le localStorage si existant
+  const saved = localStorage.getItem('presta_weekly_schedule');
+  if(saved){
+    try { _prestaSchedule = JSON.parse(saved); } catch(e){}
+  }
+  
+  const container = document.getElementById('schedule-days-list');
+  if(container){
+    container.innerHTML = '';
+    Object.keys(_prestaSchedule).forEach(day => {
+      const d = _prestaSchedule[day];
+      const dayRow = document.createElement('div');
+      dayRow.style.display = 'flex';
+      dayRow.style.alignItems = 'center';
+      dayRow.style.justifyContent = 'space-between';
+      dayRow.style.background = 'var(--inp-bg)';
+      dayRow.style.border = '1px solid var(--cardb)';
+      dayRow.style.borderRadius = '12px';
+      dayRow.style.padding = '10px 14px';
+      dayRow.style.gap = '10px';
+      
+      dayRow.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;flex:1;">
+          <input type="checkbox" id="sched-check-${day}" ${d.active ? 'checked' : ''} onchange="toggleDaySched('${day}', this.checked)" style="width:18px;height:18px;accent-color:var(--cy);cursor:pointer;">
+          <label for="sched-check-${day}" style="font-weight:700;font-size:13px;cursor:pointer;min-width:70px;user-select:none;">${_DAY_LABELS[day]}</label>
+        </div>
+        <div id="sched-hours-${day}" style="display:flex;align-items:center;gap:6px;visibility: ${d.active ? 'visible' : 'hidden'};">
+          <input type="time" id="sched-start-${day}" value="${d.start || '07:00'}" style="background:var(--card);border:1px solid var(--cardb);color:var(--text);padding:4px 8px;border-radius:6px;font-family:inherit;font-size:12px;">
+          <span style="font-size:11px;color:var(--t2);">à</span>
+          <input type="time" id="sched-end-${day}" value="${d.end || '18:00'}" style="background:var(--card);border:1px solid var(--cardb);color:var(--text);padding:4px 8px;border-radius:6px;font-family:inherit;font-size:12px;">
+        </div>
+      `;
+      container.appendChild(dayRow);
+    });
+  }
+  
+  const modal = document.getElementById('presta-schedule-modal');
+  if(modal) {
+    modal.style.display = 'flex';
+  }
+}
+
+function toggleDaySched(day, checked){
+  const el = document.getElementById(`sched-hours-${day}`);
+  if(el){
+    el.style.visibility = checked ? 'visible' : 'hidden';
+  }
+}
+
+function closeSchedule(){
+  const modal = document.getElementById('presta-schedule-modal');
+  if(modal) modal.style.display = 'none';
+}
+
+function saveSchedule(){
+  Object.keys(_prestaSchedule).forEach(day => {
+    const chk = document.getElementById(`sched-check-${day}`);
+    const startInput = document.getElementById(`sched-start-${day}`);
+    const endInput = document.getElementById(`sched-end-${day}`);
+    
+    if(chk){
+      _prestaSchedule[day].active = chk.checked;
+    }
+    if(startInput){
+      _prestaSchedule[day].start = startInput.value;
+    }
+    if(endInput){
+      _prestaSchedule[day].end = endInput.value;
+    }
+  });
+  
+  localStorage.setItem('presta_weekly_schedule', JSON.stringify(_prestaSchedule));
+  
+  closeSchedule();
+  showSuccessModal('Agenda sauvegardé ! 📅', 'Vos disponibilités hebdomadaires ont été mises à jour en local et seront synchronisées.');
+}
+
+async function handlePrestaAvatarUpload(inputEl){
+  if (!_currentUser || !_currentProfile || _currentProfile.role !== 'prestataire') {
+    showSuccessModal('Accès refusé', 'Veuillez vous connecter pour modifier votre photo de profil.', 'OK');
+    inputEl.value = '';
+    return;
+  }
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  const validTypes = ['image/jpeg','image/png','image/webp'];
+  if(!validTypes.includes(file.type)){
+    alert('Format non supporté. Utilise JPEG, PNG ou WebP.');
+    inputEl.value = ''; return;
+  }
+  if(file.size > 2*1024*1024){
+    alert('Fichier trop lourd (max 2 Mo). Compresse l\'image avant.');
+    inputEl.value = ''; return;
+  }
+  
+  if(window._BYPASS_VALIDATIONS){
+    const statusEl = document.getElementById('s7-avatar-status');
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--t2)';
+    statusEl.textContent = 'Upload en cours...';
+    setTimeout(() => {
+      const mockUrl = URL.createObjectURL(file);
+      if(_currentProfile) _currentProfile.avatar_url = mockUrl;
+      statusEl.style.color = 'var(--cg)';
+      statusEl.textContent = '✓ Photo mise à jour (simulation)';
+      setTimeout(()=>{ statusEl.style.display = 'none'; }, 2500);
+      loadPrestaSpace();
+    }, 800);
+    return;
+  }
+  
+  if(!_currentUser || !_supabaseClient){
+    alert('Tu dois être connecté pour ajouter une photo.');
+    return;
+  }
+  const statusEl = document.getElementById('s7-avatar-status');
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--t2)';
+  statusEl.textContent = 'Upload en cours...';
+  try{
+    const ext = file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g,'') || 'jpg';
+    const filePath = _currentUser.id + '/presta_avatar.' + ext;
+    // Upload
+    const { error: upErr } = await _supabaseClient.storage
+      .from('avatars').upload(filePath, file, { upsert: true, cacheControl: '3600', contentType: file.type });
+    if(upErr) throw upErr;
+    // URL publique
+    const { data: urlData } = _supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+    const publicUrl = urlData.publicUrl + '?v=' + Date.now(); // cache bust
+    // Update profile
+    const { error: profErr } = await _supabaseClient.from('profiles')
+      .update({ avatar_url: publicUrl }).eq('id', _currentUser.id);
+    if(profErr) throw profErr;
+    // Recharger l'UI
+    if(_currentProfile) _currentProfile.avatar_url = publicUrl;
+    statusEl.style.color = 'var(--cg)';
+    statusEl.textContent = '✓ Photo mise à jour';
+    setTimeout(()=>{ statusEl.style.display = 'none'; }, 2500);
+    if(typeof loadPrestaSpace === 'function') loadPrestaSpace();
+  }catch(e){
+    statusEl.style.color = 'var(--cr)';
+    statusEl.textContent = '⚠ Erreur : ' + (e.message || 'upload échoué');
+  }finally{
+    inputEl.value = '';
+  }
+}
+
+async function removePrestaAvatar(){
+  if (!_currentUser || !_currentProfile || _currentProfile.role !== 'prestataire') {
+    showSuccessModal('Accès refusé', 'Veuillez vous connecter pour modifier votre photo de profil.', 'OK');
+    return;
+  }
+  if(window._BYPASS_VALIDATIONS){
+    const statusEl = document.getElementById('s7-avatar-status');
+    statusEl.style.display = 'block';
+    statusEl.textContent = 'Suppression...';
+    setTimeout(() => {
+      if(_currentProfile) _currentProfile.avatar_url = null;
+      statusEl.style.color = 'var(--cg)';
+      statusEl.textContent = '✓ Photo supprimée (simulation)';
+      setTimeout(()=>{ statusEl.style.display = 'none'; }, 2000);
+      loadPrestaSpace();
+    }, 500);
+    return;
+  }
+  if(!_currentUser || !_supabaseClient) return;
+  if(!confirm('Supprimer ta photo de profil ?')) return;
+  const statusEl = document.getElementById('s7-avatar-status');
+  statusEl.style.display = 'block';
+  statusEl.textContent = 'Suppression...';
+  try{
+    // Lister
+    const { data: files } = await _supabaseClient.storage.from('avatars').list(_currentUser.id);
+    if(files && files.length){
+      const paths = files.map(f => _currentUser.id + '/' + f.name);
+      await _supabaseClient.storage.from('avatars').remove(paths);
+    }
+    // Reset
+    const { error } = await _supabaseClient.from('profiles')
+      .update({ avatar_url: null }).eq('id', _currentUser.id);
+    if(error) throw error;
+    if(_currentProfile) _currentProfile.avatar_url = null;
+    statusEl.style.color = 'var(--cg)';
+    statusEl.textContent = '✓ Photo supprimée';
+    setTimeout(()=>{ statusEl.style.display = 'none'; }, 2000);
+    if(typeof loadPrestaSpace === 'function') loadPrestaSpace();
+  }catch(e){
+    statusEl.style.color = 'var(--cr)';
+    statusEl.textContent = '⚠ ' + (e.message || 'erreur');
+  }
 }
 
 function confirmKycPresta(){
   alert('✓ Candidature soumise avec succès\n\n• Notre équipe vérifie votre dossier sous 48h ouvrées\n• Vous recevrez un SMS sur 6XX XXX XXX\n• Vous pouvez vérifier le statut de votre dossier à tout moment depuis cette page\n• Tous vos garants seront contactés pour confirmation');
-  goto(7);
+  goto(1);
 }
 
 function _toggleMembre_unused(){
@@ -4864,7 +5551,7 @@ function filterKyc(type){
 }
 
 // Avantage membre -10% auto - modifier recalc existant
-let _membreActif=false; // false par défaut en prod // simuler statut membre pour démo
+let _membreActif=false; // false par défaut pour simuler le parcours client simple. Activable via l'interrupteur VIP
 const _oldRecalc=window.recalc;
 
 function setAdminTab(t){
@@ -5122,6 +5809,8 @@ async function s5SubmitPaiement(){
     // Bouton passe à étape 4 manuellement
     btn.disabled = false;
     btn.textContent = 'Voir la confirmation →';
+    _membreActif = true; // PATCH — activer VIP avant acces S15
+    if (_currentProfile) { _currentProfile.membre_actif = true; _currentProfile.role = 'membre'; }
     btn.onclick = function(){ s5GoStep(4); };
 
   } catch(e){
@@ -5553,7 +6242,40 @@ async function viewKycDoc(path,label){
   if(!path){alert('Document manquant (non uploadé)');return;}
   const {data,error}=await _supabaseClient.storage.from('kyc-documents').createSignedUrl(path,300);
   if(error){alert('Erreur: '+error.message);return;}
-  window.open(data.signedUrl,'_blank');
+  openDocPreview(data.signedUrl, label||'Document KYC');
+}
+
+function openDocPreview(url, title){
+  const modal = document.getElementById('admin-doc-preview-modal');
+  const img   = document.getElementById('admin-preview-img');
+  const loader= document.getElementById('admin-preview-loading');
+  const titleEl = modal.querySelector('#admin-preview-title');
+  if(titleEl) titleEl.textContent = title || 'Document KYC';
+  // reset state
+  img.style.display = 'none';
+  loader.style.display = 'flex';
+  img.src = '';
+  // show modal
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  // load image
+  img.onload = () => { loader.style.display='none'; img.style.display='block'; };
+  img.onerror= () => {
+    loader.style.display='none';
+    img.style.display='none';
+    // fallback: open in new tab if image fails (e.g. PDF)
+    window.open(url,'_blank');
+    closeDocPreview();
+  };
+  img.src = url;
+}
+
+function closeDocPreview(){
+  const modal = document.getElementById('admin-doc-preview-modal');
+  const img   = document.getElementById('admin-preview-img');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+  img.src = '';
 }
 
 async function validateKycAdmin(prestaId,nom,telephone){
@@ -6393,21 +7115,61 @@ function openWhatsAppSupport(){
   window.open(url, '_blank');
 }
 
+function handleChatBack() {
+  if (_currentProfile && _currentProfile.role === 'prestataire') {
+    goto(7);
+  } else {
+    goto(4);
+  }
+}
+
 function refreshWhatsAppPrestaCard(){
   const m = _currentMission;
   const nE = document.getElementById('s12-presta-nom');
   const aE = document.getElementById('s12-presta-avatar');
   const rE = document.getElementById('s12-presta-ref');
   const rrE = document.getElementById('s12-ref-rappel');
-  if(m && m.profiles){
-    const p = m.profiles;
-    if(nE) nE.textContent = (p.prenom||'') + ' ' + (p.nom||'').charAt(0) + '.';
-    if(aE) aE.textContent = (p.prenom||'?').charAt(0).toUpperCase();
+  
+  const backBtn = document.querySelector('#s12 .s2-back');
+  const titleEl = document.querySelector('#s12 .s2-title');
+  const descEl = document.getElementById('s12-desc');
+  const labelEl = document.getElementById('s12-support-label');
+  
+  if(_currentProfile && _currentProfile.role === 'prestataire'){
+    if(backBtn) {
+      backBtn.textContent = '← Retour Espace Presta';
+      backBtn.setAttribute('onclick', 'handleChatBack()');
+    }
+    if(titleEl) titleEl.textContent = 'Discuter avec le client';
+    if(descEl) descEl.innerHTML = 'Ouvrez WhatsApp avec votre client en un clic pour coordonner votre arrivée ou demander des précisions. Le message est pré-rempli avec la référence de la mission.';
+    if(labelEl) labelEl.textContent = 'Besoin d\'aide ? Contactez le support :';
+    
+    if(m){
+      const clientName = m.profiles ? ((m.profiles.prenom||'') + ' ' + (m.profiles.nom||'')).trim() : 'Client';
+      if(nE) nE.textContent = clientName;
+      if(aE) aE.textContent = (clientName||'?').charAt(0).toUpperCase();
+      if(rE) rE.textContent = m.reference ? ('Mission ' + m.reference) : '—';
+    }
   } else {
-    if(nE) nE.textContent = 'Prestataire (non affecté)';
-    if(aE) aE.textContent = '?';
+    if(backBtn) {
+      backBtn.textContent = '← Retour au suivi';
+      backBtn.setAttribute('onclick', 'handleChatBack()');
+    }
+    if(titleEl) titleEl.textContent = 'Discuter avec le prestataire';
+    if(descEl) descEl.innerHTML = 'Pour coordonner ton arrivée, signaler un détail ou demander une précision, ouvre WhatsApp avec ton prestataire en un clic. Le message est pré-rempli avec ta référence mission.';
+    if(labelEl) labelEl.textContent = 'Ton prestataire n\'est pas encore affecté ? Contacte le support :';
+    
+    if(m && m.profiles){
+      const p = m.profiles;
+      if(nE) nE.textContent = (p.prenom||'') + ' ' + (p.nom||'').charAt(0) + '.';
+      if(aE) aE.textContent = (p.prenom||'?').charAt(0).toUpperCase();
+    } else {
+      if(nE) nE.textContent = 'Prestataire (non affecté)';
+      if(aE) aE.textContent = '?';
+    }
+    if(rE) rE.textContent = m && m.reference ? ('Mission '+m.reference) : '—';
   }
-  if(rE) rE.textContent = m && m.reference ? ('Mission '+m.reference) : '—';
+  
   if(rrE) rrE.textContent = m && m.reference ? m.reference : '—';
 }
 
@@ -6629,10 +7391,6 @@ async function submitSoonInterest(){
 
 // FIX Sprint 13 hotfix : gestion photo de profil ─────────────────
 async function handleAvatarUpload(inputEl){
-  if(!_currentUser || !_supabaseClient){
-    alert('Tu dois être connecté pour ajouter une photo.');
-    return;
-  }
   const file = inputEl.files && inputEl.files[0];
   if(!file) return;
   const validTypes = ['image/jpeg','image/png','image/webp'];
@@ -6643,6 +7401,27 @@ async function handleAvatarUpload(inputEl){
   if(file.size > 2*1024*1024){
     alert('Fichier trop lourd (max 2 Mo). Compresse l image avant.');
     inputEl.value = ''; return;
+  }
+
+  if(window._BYPASS_VALIDATIONS){
+    const statusEl = document.getElementById('s11-avatar-status');
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--t2)';
+    statusEl.textContent = 'Upload en cours...';
+    setTimeout(() => {
+      const mockUrl = URL.createObjectURL(file);
+      if(_currentProfile) _currentProfile.avatar_url = mockUrl;
+      statusEl.style.color = 'var(--cg)';
+      statusEl.textContent = '✓ Photo mise à jour (simulation)';
+      setTimeout(()=>{ statusEl.style.display = 'none'; }, 2500);
+      loadClientDashboard();
+    }, 800);
+    return;
+  }
+  
+  if(!_currentUser || !_supabaseClient){
+    alert('Tu dois être connecté pour ajouter une photo.');
+    return;
   }
   const statusEl = document.getElementById('s11-avatar-status');
   statusEl.style.display = 'block';
@@ -6677,6 +7456,19 @@ async function handleAvatarUpload(inputEl){
 }
 
 async function removeAvatar(){
+  if(window._BYPASS_VALIDATIONS){
+    const statusEl = document.getElementById('s11-avatar-status');
+    statusEl.style.display = 'block';
+    statusEl.textContent = 'Suppression...';
+    setTimeout(() => {
+      if(_currentProfile) _currentProfile.avatar_url = null;
+      statusEl.style.color = 'var(--cg)';
+      statusEl.textContent = '✓ Photo supprimée (simulation)';
+      setTimeout(()=>{ statusEl.style.display = 'none'; }, 2000);
+      loadClientDashboard();
+    }, 500);
+    return;
+  }
   if(!_currentUser || !_supabaseClient) return;
   if(!confirm('Supprimer ta photo de profil ?')) return;
   const statusEl = document.getElementById('s11-avatar-status');
@@ -6712,7 +7504,7 @@ async function loadClientDashboard(){
   try{
     let p, st, missionsList, refList;
 
-    if(_supabaseClient && _currentUser){
+    if(_supabaseClient && _currentUser && window._BYPASS_VALIDATIONS !== true){
       if(loading) loading.style.display = 'block';
       if(content) content.style.display = 'none';
       const [dashRes, missionsRes, refRes] = await Promise.all([
@@ -6728,9 +7520,20 @@ async function loadClientDashboard(){
       missionsList = (missionsRes.data && missionsRes.data.missions) || [];
       refList = (refRes.data && refRes.data.referrals) || [];
     } else {
-      // Mode offline : données propres d'un nouvel utilisateur vierge
-      p = { prenom:'', nom:'', role:'membre', membre_actif:false, kyc_valide:false, telephone:'', quartier:'', email:'', referral_code:'', avatar_url:null };
-      st = { nb_missions_mois:0, total_depense:0, credit_referral:0, filleuls_count:0, filleuls_valides:0 };
+      // Mode offline : données propres de Junior LONGO
+      p = { 
+        prenom: 'Junior', 
+        nom: 'LONGO', 
+        role: 'client', 
+        membre_actif: typeof _membreActif !== 'undefined' ? _membreActif : true, 
+        kyc_valide: true, 
+        telephone: '699000000', 
+        quartier: 'bonapriso', 
+        email: 'junior.longo@gmail.com', 
+        referral_code: 'JUNIOR123', 
+        avatar_url: null 
+      };
+      st = { nb_missions_mois: 3, total_depense: 45000, credit_referral: 5000, filleuls_count: 2, filleuls_valides: 1 };
       missionsList = [];
       refList = [];
     }
@@ -6741,15 +7544,39 @@ async function loadClientDashboard(){
     if(el) el.textContent = ((p.prenom||'') + ' ' + (p.nom||'')).trim() || 'Utilisateur';
     
     var initL = (p.prenom||p.nom||'?').charAt(0).toUpperCase();
-    el = document.getElementById('s11-avatar');
-    if(el){ el.textContent = initL; el.style.backgroundImage = ''; }
-    el = document.getElementById('s11-big-avatar');
-    if(el){ el.textContent = initL; el.style.backgroundImage = ''; }
-    el = document.getElementById('s11-avatar-remove');
-    if(el) el.style.display = 'none';
+    if(p.avatar_url){
+      el = document.getElementById('s11-avatar');
+      if(el){ el.textContent = ''; el.style.backgroundImage = 'url('+p.avatar_url+')'; el.style.backgroundSize = 'cover'; el.style.backgroundPosition = 'center'; }
+      el = document.getElementById('s11-big-avatar');
+      if(el){ el.textContent = ''; el.style.backgroundImage = 'url('+p.avatar_url+')'; el.style.backgroundSize = 'cover'; el.style.backgroundPosition = 'center'; }
+      el = document.getElementById('s11-avatar-remove');
+      if(el) el.style.display = 'inline-block';
+    } else {
+      el = document.getElementById('s11-avatar');
+      if(el){ el.textContent = initL; el.style.backgroundImage = ''; }
+      el = document.getElementById('s11-big-avatar');
+      if(el){ el.textContent = initL; el.style.backgroundImage = ''; }
+      el = document.getElementById('s11-avatar-remove');
+      if(el) el.style.display = 'none';
+    }
+    
+    const isMembre = (p.role === 'membre' || p.membre_actif === true || _membreActif === true);
+    
+    // Initialiser le commutateur VIP
+    const vipToggle = document.getElementById('s11-vip-toggle');
+    if(vipToggle){
+      const dot = vipToggle.querySelector('.sw-dot');
+      if(isMembre){
+        vipToggle.style.background = 'var(--cy)';
+        if(dot) { dot.style.left = '20px'; dot.style.background = '#000'; }
+      } else {
+        vipToggle.style.background = 'var(--inp-bg)';
+        if(dot) { dot.style.left = '2px'; dot.style.background = 'var(--t3)'; }
+      }
+    }
     
     el = document.getElementById('s11-statut-pill');
-    if(el) el.textContent = p.membre_actif ? 'MEMBRE · -10% auto' : 'MEMBRE';
+    if(el) el.textContent = isMembre ? 'MEMBRE · -10% auto' : 'CLIENT';
     
     // Stats
     el = document.getElementById('s11-nb-missions');
@@ -6761,13 +7588,13 @@ async function loadClientDashboard(){
     
     // CTA permanents
     el = document.getElementById('s11-cta-perm');
-    if(el) el.style.display = p.membre_actif ? 'block' : 'none';
+    if(el) el.style.display = isMembre ? 'block' : 'none';
     
     // Contrat permanent card (Mon Agent) et redirection Commande Membre
     const contratCard = document.getElementById('s11-contrat-card');
     if(contratCard) {
       contratCard.style.display = 'block';
-      if(p.membre_actif) {
+      if(isMembre) {
         contratCard.setAttribute('onclick', 'goto(16)');
         contratCard.innerHTML = `
           <div style="font-size:28px;margin-bottom:6px;">🤝</div>
@@ -6788,7 +7615,7 @@ async function loadClientDashboard(){
     
     const cmdCard = document.getElementById('s11-cmd-card');
     if(cmdCard) {
-      if(p.membre_actif) {
+      if(isMembre) {
         cmdCard.setAttribute('onclick', 'goto(15)');
         const titleEl = cmdCard.querySelector('.s11-cmd-title');
         const subEl = cmdCard.querySelector('.s11-cmd-subtitle');
@@ -6801,6 +7628,11 @@ async function loadClientDashboard(){
         if(titleEl) titleEl.textContent = 'Commander';
         if(subEl) subEl.textContent = 'Nouveau service';
       }
+    }
+
+    const newCmdBtn = document.getElementById('s11-new-cmd-btn');
+    if(newCmdBtn) {
+      newCmdBtn.setAttribute('onclick', isMembre ? 'goto(15)' : 'goto(2)');
     }
     
     // Code parrainage
@@ -6861,7 +7693,41 @@ async function loadClientDashboard(){
     
     // Mission active
     el = document.getElementById('s11-active-mission-card');
-    if(el) el.style.display = 'none';
+    if(el) {
+      if(!_currentMission && _currentUser) {
+        if(window._BYPASS_VALIDATIONS) {
+          _currentMission = {
+            id: 'mock-mission-id',
+            mission_id: 'mock-mission-id',
+            status: 'payee_recherche',
+            prix_total: 4597,
+            reference: 'MOCK-REF-892',
+            type_mission: 'Ménage régulier',
+            created_at: new Date().toISOString()
+          };
+        }
+      }
+      
+      if(_currentMission && _currentMission.status !== 'terminee' && _currentMission.status !== 'annulee' && _currentMission.status !== 'termine') {
+        el.style.display = 'block';
+        const statEl = document.getElementById('s11-active-status');
+        const detEl = document.getElementById('s11-active-detail');
+        
+        let label = 'Recherche en cours...';
+        if(_currentMission.status === 'presta_assigne') label = 'Prestataire trouvé';
+        if(_currentMission.status === 'en_cours') label = 'Travail / Service en cours';
+        if(_currentMission.status === 'terminee') label = 'Travail terminé';
+        
+        if(statEl) statEl.textContent = label;
+        if(detEl) {
+          detEl.innerHTML = `<strong>Service :</strong> ${_currentMission.type_mission || 'Ménage à domicile'}<br>
+                             <strong>Référence :</strong> ${_currentMission.reference || '—'}<br>
+                             <strong>Montant :</strong> ${_currentMission.prix_total ? _currentMission.prix_total.toLocaleString('fr-FR') + ' FCFA' : '—'}`;
+        }
+      } else {
+        el.style.display = 'none';
+      }
+    }
     
     // Profil
     el = document.getElementById('s11-kyc-statut');
@@ -7264,7 +8130,7 @@ async function _initClientMap() {
       // 1. Prestataires validés
       const { data: prestas, error: e1 } = await _supabaseClient
         .from('profiles')
-        .select('id, prenom, nom, is_dispo')
+        .select('id, prenom, nom, presta_en_ligne')
         .eq('role', 'presta')
         .eq('kyc_valide', true);
 
@@ -7319,7 +8185,7 @@ async function _initClientMap() {
         const q = qMap[qId];
         if (!q || !q.lat || !q.lng) return;
 
-        const hasDispo = pList.some(p => p.is_dispo);
+        const hasDispo = pList.some(p => p.presta_en_ligne);
         const count = pList.length;
         const color = hasDispo ? '#4CAF50' : '#FF9800';
         const bgColor = count > 1 ? '#0F268C' : color;
@@ -7352,7 +8218,7 @@ async function _initClientMap() {
         const prestaRows = pList.map(p =>
           `<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.07);">
             <span style="font-size:12px;font-weight:700;">${p.prenom || '—'}</span>
-            <span style="font-size:10px;font-weight:800;color:${p.is_dispo ? '#4CAF50' : '#FF9800'};">${p.is_dispo ? '🟢 Dispo' : '🟠 Mission'}</span>
+            <span style="font-size:10px;font-weight:800;color:${p.presta_en_ligne ? '#4CAF50' : '#FF9800'};">${p.presta_en_ligne ? '🟢 Dispo' : '🟠 Mission'}</span>
           </div>`
         ).join('');
 
@@ -7517,6 +8383,15 @@ function recalcMembre() {
 }
 
 async function submitMembreMission() {
+  if(window._BYPASS_VALIDATIONS){
+    if(!document.getElementById('cmd-membre-quartier').value) document.getElementById('cmd-membre-quartier').value = 'bonapriso';
+    if(!document.getElementById('cmd-membre-lieudit').value) document.getElementById('cmd-membre-lieudit').value = 'Carrefour';
+    if(!document.getElementById('cmd-membre-date').value) {
+      const now2h = new Date(Date.now() + 2*60*60*1000);
+      document.getElementById('cmd-membre-date').value = now2h.getFullYear()+'-'+String(now2h.getMonth()+1).padStart(2,'0')+'-'+String(now2h.getDate()).padStart(2,'0');
+    }
+    if(!document.getElementById('cmd-membre-time').value) document.getElementById('cmd-membre-time').value = '14:00';
+  }
   const quartier = document.getElementById('cmd-membre-quartier').value;
   const lieudit = (document.getElementById('cmd-membre-lieudit').value || '').trim();
   const adresse = (document.getElementById('cmd-membre-adresse').value || '').trim();
@@ -7558,7 +8433,9 @@ async function submitMembreMission() {
         p_caracteristique_id: _cmdMembre.carac_id,
         p_quartier_id: quartier,
         p_adresse: adresseComplete,
-        p_date_souhaitee: dateISO
+        p_date_souhaitee: dateISO,
+        p_client_lat: null,
+        p_client_lng: null
       });
       if (error) throw error;
       m = Array.isArray(data) ? data[0] : data;
@@ -7615,8 +8492,15 @@ function setMembrePaymentMethod(provider) {
 }
 
 async function confirmMembrePayment() {
-  const txId = document.getElementById('s17-txn-id').value.trim();
-  if (!txId) { alert('Veuillez saisir l\'identifiant de la transaction.'); return; }
+  let txId = document.getElementById('s17-txn-id').value.trim();
+  if (window._BYPASS_VALIDATIONS === true) {
+    if (!txId) {
+      txId = 'TXN_MEMBRE_MOCK_' + Math.floor(Math.random() * 100000);
+      document.getElementById('s17-txn-id').value = txId;
+    }
+  } else {
+    if (!txId) { alert('Veuillez saisir l\'identifiant de la transaction.'); return; }
+  }
   
   const btn = document.querySelector('#s17 .s3-confirm');
   const oldTxt = btn.textContent;
@@ -7624,6 +8508,12 @@ async function confirmMembrePayment() {
   btn.disabled = true;
   
   try {
+    if (window._BYPASS_VALIDATIONS === true) {
+      showSuccessModal('Paiement enregistré ! 🎉', 'Votre paiement (mode démo) est en cours de vérification.\nMatching prioritaire activé.\n\nRetour au Hub Membre.', function() {
+        goto(11);
+      });
+      return;
+    }
     if (_supabaseClient && _currentMission && _currentMission.mission_id) {
       const { error } = await _supabaseClient.from('paiements').insert({
         mission_id: _currentMission.mission_id,
@@ -7649,11 +8539,98 @@ async function confirmMembrePayment() {
 }
 
 let _s16Rating = 5;
+let _s16Interval = null;
 
 function initS16Flow() {
   setS16Rating(5);
   const feedbackInput = document.getElementById('s16-feedback');
   if (feedbackInput) feedbackInput.value = '';
+  
+  const simSelect = document.getElementById('s16-sim-type');
+  if (simSelect) {
+    simSelect.value = 'resident';
+    changeSimulatedContract('resident');
+  }
+
+  // Initialize countdown timer
+  if (_s16Interval) clearInterval(_s16Interval);
+  
+  // Set target renewal time to 8 days, 14 hours, 23 minutes from now
+  let targetTime = Date.now() + (8 * 24 * 3600 + 14 * 3600 + 23 * 60) * 1000;
+  
+  function updateTimer() {
+    let now = Date.now();
+    let diff = targetTime - now;
+    if (diff <= 0) {
+      const countEl = document.getElementById('s16-countdown');
+      if (countEl) countEl.textContent = "Contrat expiré / Renouvellement en cours";
+      const progEl = document.getElementById('s16-progress');
+      if (progEl) progEl.style.width = "0%";
+      clearInterval(_s16Interval);
+      return;
+    }
+    
+    let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    const countEl = document.getElementById('s16-countdown');
+    if (countEl) {
+      countEl.textContent = `${days} jours ${hours} heures ${minutes} minutes ${seconds} secondes`;
+    }
+    
+    // Progress bar based on 30 days total duration
+    let pct = (diff / (30 * 24 * 3600 * 1000)) * 100;
+    pct = Math.max(0, Math.min(100, pct));
+    const progEl = document.getElementById('s16-progress');
+    if (progEl) {
+      progEl.style.width = pct.toFixed(1) + "%";
+    }
+    
+    // Change Litige button style contextually when under 7 days
+    const litigeBtn = document.getElementById('s16-litige-btn');
+    if (litigeBtn) {
+      if (days < 7) {
+        litigeBtn.style.borderColor = 'var(--cr)';
+        litigeBtn.style.color = '#fff';
+        litigeBtn.style.background = 'rgba(244,67,54,.9)';
+      } else {
+        litigeBtn.style.borderColor = 'rgba(244,67,54,.3)';
+        litigeBtn.style.color = '#f44336';
+        litigeBtn.style.background = 'rgba(244,67,54,.1)';
+      }
+    }
+  }
+  
+  updateTimer();
+  _s16Interval = setInterval(updateTimer, 1000);
+}
+
+function changeSimulatedContract(val){
+  const typeEl = document.getElementById('s16-contrat-type');
+  const formuleEl = document.getElementById('s16-formule-val');
+  if(val === 'resident'){
+    if(typeEl) {
+      typeEl.textContent = 'PERMANENT RÉSIDENT';
+      typeEl.className = 'ad-pill yellow';
+    }
+    if(formuleEl) formuleEl.textContent = 'Résidente (vit chez vous · 6j/7)';
+  } else {
+    if(typeEl) {
+      typeEl.textContent = 'PERMANENT NON-RÉSIDENT';
+      typeEl.className = 'ad-pill gray';
+    }
+    if(formuleEl) formuleEl.textContent = 'Non-Résidente (journalière · 8h-17h · 5j/7)';
+  }
+}
+
+function declarerLitige() {
+  if (confirm("⚠️ Déclarer un litige / Signaler un problème\n\nSouhaitez-vous signaler un problème ou un désaccord concernant votre agent permanent Aïcha M. ?\n\nNotre équipe de conciliation prendra contact avec vous dans l'heure.")) {
+    showSuccessModal('Signalement enregistré ⚠️', 'Votre signalement a été transmis à notre service de conciliation et de support Premium HappyHome. Nous vous contactons sous peu.', function(){
+      // Signalement enregistré
+    });
+  }
 }
 
 function setS16Rating(rating) {
@@ -7673,16 +8650,7 @@ function submitS16Rating() {
 }
 </script>
 
-<!-- ═══════════════════════ UNIVERSAL FLOATING NAVIGATION BAR ═══════════════════════ -->
-<div id="global-nav-bar" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99998;font-family:'Outfit',sans-serif;display:none;align-items:center;gap:12px;padding:8px 16px;border-radius:50px;background:var(--sticky, rgba(7,17,46,0.95));border:1px solid var(--cardb, rgba(255,255,255,0.15));box-shadow:0 10px 30px rgba(0,0,0,0.3);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:all 0.3s ease;">
-  <button id="global-nav-back" onclick="goBack()" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:50px;background:var(--inp-bg, rgba(255,255,255,0.07));border:1px solid var(--inp-b, rgba(255,255,255,0.14));color:var(--text, #fff);font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s ease;outline:none;" onmouseover="this.style.background='var(--cardb, rgba(255,255,255,0.2))';this.style.borderColor='var(--cy-text, #ffc107)';" onmouseout="this.style.background='var(--inp-bg, rgba(255,255,255,0.07))';this.style.borderColor='var(--inp-b, rgba(255,255,255,0.14))';">
-    <span style="font-size:14px;">←</span> <span>Retour</span>
-  </button>
-  <div style="width:1px;height:20px;background:var(--divider, rgba(255,255,255,0.1));"></div>
-  <button id="global-nav-home" onclick="goto(1)" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:50px;background:linear-gradient(135deg, var(--cb, #0F268C), var(--cb2, #1a35b8));border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:12px;font-weight:800;cursor:pointer;transition:all 0.2s ease;outline:none;box-shadow:0 4px 12px rgba(15,38,140,0.3);" onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 6px 16px rgba(15,38,140,0.5)';" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 12px rgba(15,38,140,0.3)';">
-    <span style="font-size:14px;">🏠</span> <span>Accueil</span>
-  </button>
-</div>
+<!-- ═══════════════════════ UNIVERSAL FLOATING NAVIGATION BAR REMOVED ═══════════════════════ -->
 
 
 </body>

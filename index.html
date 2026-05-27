@@ -2942,9 +2942,8 @@ window.addEventListener('DOMContentLoaded', () => {
 function registerSW(){
   if(!('serviceWorker' in navigator))return;
   // SW externe (./sw.js) requis pour scope racine — déployé via repo GitHub
-  navigator.serviceWorker.register('./sw.js')
-    .then(r => console.log('[HH] SW actif scope:', r.scope))
-    .catch(e => console.warn('[HH] SW:', e.message));
+  navigator.serviceWorker.getRegistrations().then(regs=>{regs.forEach(r=>r.unregister());if(regs.length)console.log('[HH] SW:',regs.length);});if('caches' in window){caches.keys().then(keys=>{keys.forEach(k=>caches.delete(k));if(keys.length)console.log('[HH] Caches:',keys.length);});}
+    
 }
 // =========== FIN CONFIGURATION SUPABASE ===========
 // TODO 30 JUIN — mettre false avant push Cloudflare
@@ -5115,9 +5114,7 @@ async function _loadServiceImages(){
   const slugs=['menage','cuisine','nounou','courses','lessive','repassage','fete','soin','clim','shamp','elec','demenag'];
   // 1. Appliquer immédiatement les URLs en cache (affichage instantané)
   slugs.forEach(s=>{
-    const cached=localStorage.getItem('hh_svc_img_'+s);
-    if(cached) _applyServiceImage(s, cached);
-  });
+    // MODE ONLINE: no img cache  });
   // 2. Charger depuis hh_config (source de vérité cross-session)
   if(!_supabaseClient) return;
   try {
@@ -5132,7 +5129,7 @@ async function _loadServiceImages(){
       const url  = String(row.value).replace(/^"|"$/g, ''); // strip JSON quotes si besoin
       if(url && url.startsWith('http')){
         _applyServiceImage(slug, url);
-        localStorage.setItem('hh_svc_img_'+slug, url);
+        // img cache desactive MODE ONLINE
       }
     });
   } catch(e){ console.warn('[HH] _loadServiceImages:', e.message); }
@@ -5788,10 +5785,8 @@ async function s5SubmitPaiement(){
       subId = data.subscription_id || '';
       prix = data.prix || 0;
     } else {
-      // Mode offline : simulation
-      await new Promise(r=>setTimeout(r, 800));
-      subId = 'DEMO' + Date.now().toString(36).toUpperCase();
-      prix = _s5Plan === 'annuel' ? 18000 : 2000;
+      // MODE ONLINE TOTAL - aucune simulation
+      throw new Error('Connexion internet requise.');
     }
 
     // Affiche instructions

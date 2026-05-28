@@ -2951,7 +2951,7 @@ function registerSW(){
 }
 // =========== FIN CONFIGURATION SUPABASE ===========
 // TODO 30 JUIN — mettre false avant push Cloudflare
-window._BYPASS_VALIDATIONS = true; // Mode test sans blocages (KYC, GPS, Téléphone)
+window._BYPASS_VALIDATIONS = false; // Mode test sans blocages (KYC, GPS, Téléphone)
 
 let cur=1;
 // FIX Sprint 13 hotfix (F10) : stack history pour bouton Retour contextuel
@@ -6148,11 +6148,72 @@ async function loadKycAdmin(){
     document.getElementById('kyc-list').innerHTML='<div style="color:var(--cr);font-size:13px;text-align:center;padding:30px;">Accès admin requis.</div>';
     return;
   }
-  const {data,error}=await _supabaseClient
-    .from('kyc_presta')
-    .select('presta_id,date_naissance,cni_recto_path,cni_verso_path,selfie_path,status,soumis_le,motif_rejet,kyc_score,kyc_nom_extrait,kyc_prenom_extrait,kyc_num_cni,kyc_ocr_done,profiles!kyc_presta_presta_id_fkey(prenom,nom,telephone,email,quartier,kyc_valide,kyc_auto_active,kyc_taux)')
-    .in('status',['en_attente','en_cours'])
-    .order('soumis_le',{ascending:true});
+  
+  let data = [];
+  let error = null;
+  
+  if (window._BYPASS_VALIDATIONS && (!_supabaseClient || !_currentUser)) {
+    // Mode Bypass/Offline actif : Mock dynamique complet pour les dossiers KYC candidats
+    data = [
+      {
+        presta_id: 'mock-presta-aicha',
+        date_naissance: '1995-06-12',
+        cni_recto_path: 'mock/recto.png',
+        cni_verso_path: 'mock/verso.png',
+        selfie_path: 'mock/selfie.png',
+        status: 'en_attente',
+        soumis_le: new Date(Date.now() - 3600000).toISOString(), // soumis il y a 1h
+        kyc_score: 0,
+        kyc_nom_extrait: '',
+        kyc_prenom_extrait: '',
+        kyc_num_cni: '',
+        kyc_ocr_done: false,
+        profiles: {
+          prenom: 'Aïcha',
+          nom: 'Moussa',
+          telephone: '+237 690 38 41 99',
+          email: 'aicha.moussa@happyhome.cm',
+          quartier: 'bonapriso',
+          kyc_valide: false,
+          kyc_auto_active: false,
+          kyc_taux: 0
+        }
+      },
+      {
+        presta_id: 'mock-presta-samuel',
+        date_naissance: '1990-11-22',
+        cni_recto_path: 'mock/recto.png',
+        cni_verso_path: 'mock/verso.png',
+        selfie_path: 'mock/selfie.png',
+        status: 'en_attente',
+        soumis_le: new Date(Date.now() - 17200000).toISOString(),
+        kyc_score: 95,
+        kyc_nom_extrait: 'EBOA SAMUEL',
+        kyc_prenom_extrait: 'Samuel',
+        kyc_num_cni: '109988776655',
+        kyc_ocr_done: true,
+        profiles: {
+          prenom: 'Samuel',
+          nom: 'Eboa',
+          telephone: '+237 677 12 34 56',
+          email: 'samuel.eboa@happyhome.cm',
+          quartier: 'akwa',
+          kyc_valide: false,
+          kyc_auto_active: true,
+          kyc_taux: 95
+        }
+      }
+    ];
+  } else {
+    const res = await _supabaseClient
+      .from('kyc_presta')
+      .select('presta_id,date_naissance,cni_recto_path,cni_verso_path,selfie_path,status,soumis_le,motif_rejet,kyc_score,kyc_nom_extrait,kyc_prenom_extrait,kyc_num_cni,kyc_ocr_done,profiles!kyc_presta_presta_id_fkey(prenom,nom,telephone,email,quartier,kyc_valide,kyc_auto_active,kyc_taux)')
+      .in('status',['en_attente','en_cours'])
+      .order('soumis_le',{ascending:true});
+    data = res.data || [];
+    error = res.error;
+  }
+  
   const el=document.getElementById('kyc-list');
   if(error){el.innerHTML='<div style="color:var(--cr);font-size:13px;">Erreur: '+error.message+'</div>';return;}
   const badge=document.querySelector('button[data-tab="kyc"] .ad-badge');
@@ -6221,6 +6282,33 @@ async function loadKycAdmin(){
 async function triggerKycOcr(prestaId,btn){
   btn.disabled=true; btn.textContent='⏳ OCR en cours…';
   try {
+    if(window._BYPASS_VALIDATIONS) {
+      // Simulation OCR locale complète avec mock de score élevé
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Essaye de mettre à jour le score directement dans Supabase si connecté
+      if(_supabaseClient) {
+        try {
+          const { error } = await _supabaseClient.from('kyc_presta').update({
+            kyc_ocr_done: true,
+            kyc_score: 95,
+            kyc_nom_extrait: 'DEMO TEST',
+            kyc_prenom_extrait: 'Jean',
+            kyc_num_cni: '112233445566'
+          }).eq('presta_id', prestaId);
+          
+          if (error) console.warn('[HH OCR Bypass] Impossible de sauvegarder en DB:', error.message);
+        } catch(e) {
+          console.warn('[HH OCR Bypass] Erreur réseau Supabase ignorée en démo :', e.message);
+        }
+      }
+      
+      btn.textContent=`✓ Score : 95%`;
+      btn.style.background='rgba(76,175,80,.2)';
+      setTimeout(loadKycAdmin,800);
+      return;
+    }
+
     const resp=await fetch(`${SUPABASE_URL}/functions/v1/kyc-ocr`,{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},

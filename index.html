@@ -27,7 +27,7 @@
 <link rel="canonical" href="https://happyhome.pages.dev/" />
 <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22HappyHome%20-%20Services%20%C3%A0%20domicile%20Douala%22%2C%22short_name%22%3A%22HappyHome%22%2C%22start_url%22%3A%22.%2F%22%2C%22scope%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23030a1f%22%2C%22theme_color%22%3A%22%230F268C%22%2C%22description%22%3A%22Services%20%C3%A0%20domicile%20%C3%A0%20Douala%22%2C%22lang%22%3A%22fr%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzBGMjY4QyIvPjx0ZXh0IHg9IjI1NiIgeT0iMzIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAwIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5IUDwvdGV4dD48L3N2Zz4%3D%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
 <title>HappyHome — Services à domicile à Douala</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --cb:#0F268C;--cb2:#1a35b8;--cy:#FFC107;--cy-text:#FFC107;--co:#ff9800;--cg:#4CAF50;--cr:#F44336;
@@ -431,9 +431,8 @@ textarea.full{min-height:60px;resize:vertical;}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- MapLibre GL JS + MapTiler — Sprint 13 carte prestataires -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css">
-<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js"></script>
+<!-- MapLibre GL JS — lazy-load au premier appel carte -->
+<script>function _loadMapLibre(cb){if(typeof maplibregl!=='undefined'){cb();return;}if(window._mlLoading){(window._mlQ=window._mlQ||[]).push(cb);return;}window._mlLoading=true;var l=document.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css';document.head.appendChild(l);var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js';s.onload=function(){window._mlLoading=false;cb();(window._mlQ||[]).forEach(function(f){f();});window._mlQ=[];};document.head.appendChild(s);}</script>
 </head>
 <body data-theme="light">
 
@@ -7004,7 +7003,8 @@ async function loadGpsAdmin(){
   `;
 
   if(typeof maplibregl === 'undefined'){
-    document.getElementById('hh-map').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--t2);font-size:13px;text-align:center;padding:20px;">MapLibre GL non chargé.<br>Vérifiez votre connexion internet.</div>';
+    var _el=document.getElementById('hh-map');if(_el)_el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--t2);font-size:13px;text-align:center;padding:20px;">Chargement de la carte…</div>';
+    _loadMapLibre(function(){loadGpsAdmin();});
     return;
   }
 
@@ -8190,7 +8190,8 @@ async function _initClientMap() {
   const statusEl = document.getElementById('client-map-status');
 
   if (typeof maplibregl === 'undefined') {
-    statusEl.textContent = '⚠️ Carte non disponible — vérifiez votre connexion internet';
+    if(statusEl) statusEl.textContent = 'Chargement de la carte…';
+    _loadMapLibre(function(){_initClientMap();});
     return;
   }
 

@@ -5118,7 +5118,8 @@ async function _loadServiceImages(){
   const slugs=['menage','cuisine','nounou','courses','lessive','repassage','fete','soin','clim','shamp','elec','demenag'];
   // 1. Appliquer immédiatement les URLs en cache (affichage instantané)
   slugs.forEach(s=>{
-    // MODE ONLINE: no img cache  });
+    // MODE ONLINE: no img cache
+  });
   // 2. Charger depuis hh_config (source de vérité cross-session)
   if(!_supabaseClient) return;
   try {

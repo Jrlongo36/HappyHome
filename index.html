@@ -430,7 +430,7 @@ textarea.full{min-height:60px;resize:vertical;}
 .hh-ac-ok.show{display:block}
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <!-- MapLibre GL JS — lazy-load au premier appel carte -->
 <script>function _loadMapLibre(cb){if(typeof maplibregl!=='undefined'){cb();return;}if(window._mlLoading){(window._mlQ=window._mlQ||[]).push(cb);return;}window._mlLoading=true;var l=document.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css';document.head.appendChild(l);var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.js';s.onload=function(){window._mlLoading=false;cb();(window._mlQ||[]).forEach(function(f){f();});window._mlQ=[];};document.head.appendChild(s);}</script>
 </head>
@@ -444,6 +444,7 @@ textarea.full{min-height:60px;resize:vertical;}
     </a>
     <div class="s1-actions">
       <button class="s1-action-btn member" onclick="goto(5)">Devenir membre</button>
+      <button id="s1-admin-btn" class="s1-action-btn" onclick="goto(8)" style="display:none;background:var(--cb);color:#fff;border-color:var(--cb2);">Panel Admin</button>
       <a href="#" class="s1-already" onclick="clientLoginOrBypass();return false;">Mon compte</a>
     </div>
   </div>
@@ -2002,6 +2003,15 @@ textarea.full{min-height:60px;resize:vertical;}
     <!-- Contenu chargé -->
     <div id="s11-content" style="display:none;">
 
+      <!-- ══ ESPACE ADMIN ══ -->
+      <div id="s11-admin-section" class="s7-card" style="background:linear-gradient(135deg,rgba(15,38,140,0.1),rgba(255,255,255,0.02));border:1px solid var(--accent);padding:12px 16px;margin-bottom:14px;display:none;justify-content:space-between;align-items:center;border-radius:12px;">
+        <div style="flex:1;padding-right:12px;">
+          <div style="font-weight:800;font-size:12px;color:var(--accent);display:flex;align-items:center;gap:6px;">🛠️ Espace Administrateur</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px;">Vous êtes connecté en tant qu'administrateur HappyHome. Accédez au tableau de bord.</div>
+        </div>
+        <button class="s5-cta" onclick="goto(8)" style="width:auto;padding:8px 16px;font-size:11px;margin:0;">Accéder →</button>
+      </div>
+
       <!-- ══ SIMULATION VIP MEMBRE ══ -->
       <div class="s7-card" style="background:linear-gradient(135deg,rgba(255,193,7,.06),rgba(255,255,255,.02));border:1px solid var(--cardb);padding:12px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;border-radius:12px;">
         <div style="flex:1;padding-right:12px;">
@@ -2609,6 +2619,45 @@ let _supabaseClient = null;
 let _currentUser = null;
 let _currentProfile = null;
 
+function resetProfileToGuest() {
+  _currentProfile = {
+    id: 'guest',
+    role: 'public',
+    prenom: 'Invité',
+    nom: '',
+    telephone: '',
+    email: '',
+    quartier: '',
+    adresse: '',
+    adresse_principale: '',
+    membre_actif: false,
+    kyc_valide: false,
+    kyc_taux: 0,
+    disponible: false,
+    missions_total: 0,
+    gains_total: 0,
+    rating_moyen: null,
+    taux_completion: 100,
+    specialites: [],
+    avatar_url: null
+  };
+  refreshAdminControls();
+}
+
+function refreshAdminControls() {
+  const isAdmin = _currentUser && _currentProfile && ['admin','superadmin','operateur','comptable'].includes(_currentProfile.role);
+  
+  // Accueil
+  const s1Btn = document.getElementById('s1-admin-btn');
+  if(s1Btn) s1Btn.style.display = isAdmin ? 'inline-block' : 'none';
+  
+  // Profil Client
+  const s11Sec = document.getElementById('s11-admin-section');
+  if(s11Sec) s11Sec.style.display = isAdmin ? 'flex' : 'none';
+}
+
+resetProfileToGuest();
+
 async function bootSupabase(){
   if(typeof window.supabase === 'undefined'){
     console.warn('[HH] Supabase SDK non chargé - mode dégradé');
@@ -2634,7 +2683,7 @@ async function bootSupabase(){
       // créait une race condition qui bloquait loginAdmin sur "Vérification...".
     } else if(event === 'SIGNED_OUT'){
       _currentUser = null;
-      _currentProfile = null;
+      resetProfileToGuest();
       _membreActif = false;
       if(typeof refreshMembreBanner==='function')refreshMembreBanner();
       if(typeof recalc==='function')recalc();
@@ -2666,6 +2715,7 @@ async function loadProfile(){
       kyc_taux: 100
     };
     refreshMembreBanner();
+    refreshAdminControls();
     if(typeof recalc==='function') recalc();
     console.log('[HH] Profile bypass chargé:', _currentProfile.prenom, _currentProfile.nom);
     return;
@@ -2675,6 +2725,7 @@ async function loadProfile(){
   _currentProfile = data;
   _membreActif = (data.membre_actif === true || data.role === 'membre');
   refreshMembreBanner();
+  refreshAdminControls();
   if(typeof recalc==='function')recalc();
   if(data.role==='prestataire')startPrestaListener();
   loadKycClientStatus();
@@ -2922,7 +2973,7 @@ async function doSignOut(){
     try { await _supabaseClient.auth.signOut(); } catch(e){}
   }
   _currentUser = null;
-  _currentProfile = null;
+  resetProfileToGuest();
   _membreActif = false;
   if(typeof goto==='function') goto(1);
 }
@@ -3123,9 +3174,9 @@ function kycPreviewFile(input, previewId){
 }
 
 async function submitKycClient(){
-  // MODE TEST OFFLINE : bypass
-  if(window._BYPASS_VALIDATIONS || !_supabaseClient || !_currentUser){
-    showSuccessModal('KYC client soumis (mode test)','Dossier enregistré en démo.', function(){ goto(1); });
+  if(!_supabaseClient || !_currentUser){
+    alert('Connexion requise pour soumettre ton KYC. Reconnecte-toi.');
+    goto(1);
     return;
   }
   const dob = document.getElementById('kyc-dob').value;
@@ -4256,9 +4307,9 @@ async function uploadKycFile(slot){
 }
 
 async function submitKycPresta(){
-  // MODE TEST OFFLINE : bypass toutes les validations, simuler succès
-  if(window._BYPASS_VALIDATIONS || !_supabaseClient || !_currentUser){
-    showSuccessModal('KYC soumis (mode test)','Dossier enregistré en mode démo.\nEn production : validation admin sous 24h.', function(){ goto(1); });
+  if(!_supabaseClient || !_currentUser){
+    alert('Connexion requise pour soumettre ton KYC. Reconnecte-toi.');
+    goto(1);
     return;
   }
   if(!_kycFiles.recto||!_kycFiles.verso||!_kycFiles.selfie){alert('Les 3 documents sont obligatoires (CNI recto, verso, selfie).');return;}
@@ -7626,6 +7677,13 @@ async function loadClientDashboard(){
       refList = [];
     }
     
+    // Admin section
+    const adminSection = document.getElementById('s11-admin-section');
+    if(adminSection) {
+      const isAdmin = ['admin','superadmin','operateur','comptable'].includes(p.role);
+      adminSection.style.display = isAdmin ? 'flex' : 'none';
+    }
+
     // Header
     var el;
     el = document.getElementById('s11-nom-complet');

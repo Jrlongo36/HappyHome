@@ -754,7 +754,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
       <div style="display:flex;gap:10px;">
         <button onclick="s5GoStep(2)" style="flex:1;padding:14px;border-radius:50px;background:var(--card);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">← Retour</button>
-        <button class="s5-cta" style="flex:2;" id="s5-btn-payer" onclick="s5SubmitPaiement()">Confirmer la souscription</button>
+        <div style="font-size:11px;color:var(--t3);text-align:center;margin-bottom:10px;">En confirmant, vous acceptez les <a href="#" onclick="showCguModal('membre');return false;" style="color:var(--cy-text);text-decoration:none;font-weight:700;">conditions d'abonnement</a>.</div><button class="s5-cta" style="flex:2;" id="s5-btn-payer" onclick="s5SubmitPaiement()">Confirmer la souscription</button>
       </div>
     </div>
 
@@ -984,7 +984,7 @@ textarea.full{min-height:60px;resize:vertical;}
     <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;">Preuve de paiement (capture SMS) · optionnel mais recommandé</div>
     <label for="cmd-proof-file" style="display:block;padding:14px;border:1px dashed var(--cardb);border-radius:10px;background:var(--card);color:var(--t2);text-align:center;cursor:pointer;font-size:13px;margin-bottom:14px;" id="cmd-proof-lbl">📎 Choisir une image (max 5 Mo)</label>
     <input type="file" id="cmd-proof-file" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="onProofFileChange(this)">
-    <div class="s3-cgu">En cliquant Confirmer, vous acceptez les <a href="#">CGU</a> et la <a href="#">Politique de confidentialité</a>.</div>
+    <div class="s3-cgu">En cliquant Confirmer, vous acceptez les <a href="#" onclick="showCguModal('cgu_client');return false;">CGU</a> et la <a href="#" onclick="showCguModal('confidentialite');return false;">Politique de confidentialité</a>.</div>
     <button class="s3-confirm" id="btn-confirm-payment" onclick="confirmPaymentFlow()">Confirmer le paiement</button>
     <button id="btn-cancel-payment" style="display:none;width:100%;margin-top:10px;padding:12px;border-radius:50px;background:transparent;border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">Annuler la vérification</button>
     <button onclick="if(confirm('Annuler le paiement et revenir à la commande ?\\nTa mission sera supprimée.')) cancelMissionAndReturn()" style="width:100%;margin-top:10px;padding:10px;border-radius:50px;background:transparent;border:1px solid rgba(244,67,54,.3);color:var(--cr);font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;">← Pas encore payé ? Revenir à la commande</button>
@@ -1821,8 +1821,8 @@ textarea.full{min-height:60px;resize:vertical;}
     <div class="sec">
       <div class="sec-t"><span class="num">1</span>Identité</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-        <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Prénom</label><input type="text" class="full" placeholder="Marie"></div>
-        <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Nom (CNI)</label><input type="text" class="full" placeholder="Ngono"></div>
+        <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Prénom</label><input type="text" class="full" id="kyc-prenom" placeholder="Marie"></div>
+        <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Nom (CNI)</label><input type="text" class="full" id="kyc-nom" placeholder="Ngono"></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div><label style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">Date naissance</label><input type="date" class="full" id="kyc-date-naissance"></div>
@@ -1971,7 +1971,7 @@ textarea.full{min-height:60px;resize:vertical;}
 
     <label style="display:flex;gap:10px;font-size:12px;color:var(--t2);margin-bottom:18px;line-height:1.5;cursor:pointer;">
       <input type="checkbox" style="margin-top:2px;flex-shrink:0;">
-      J'accepte les <a href="#" style="color:var(--cy-text);">CGU prestataire</a>, le <a href="#" style="color:var(--cy-text);">code de conduite</a> et autorise les vérifications.
+      J'accepte les <a href="#" onclick="showCguModal('cgu');return false;" style="color:var(--cy-text);">CGU prestataire</a>, le <a href="#" onclick="showCguModal('conduite');return false;" style="color:var(--cy-text);">code de conduite</a> et autorise les vérifications.
     </label>
 
     <button class="s5-cta" id="kyc-submit-btn" onclick="submitKycPresta()">Soumettre pour validation</button>
@@ -2756,6 +2756,45 @@ function closeSuccessModal(){
   if(cb) try{ cb(); } catch(e){ console.warn('[HH] success modal callback err:', e); }
 }
 
+function showCguModal(type){
+  const TEXTS = {
+    cgu: "CGU PRESTATAIRE — HAPPYHOME\nVersion 1.0 — Juin 2026\n\nEn soumettant ce dossier KYC, vous acceptez sans réserve les présentes conditions.\n\n1. OBJET\nHappyHome est une plateforme de mise en relation entre clients et prestataires de services à domicile à Douala. HappyHome n'est pas employeur ; vous intervenez en qualité de prestataire indépendant.\n\n2. CONDITIONS D'ACCÈS\n• Avoir au moins 18 ans et être légalement autorisé(e) à travailler au Cameroun.\n• Fournir des documents d'identité valides (CNI recto/verso + selfie).\n• Soumettre un KYC complet et sincère. Tout faux document entraîne exclusion définitive.\n• Le compte est activé uniquement après validation admin sous 24-48h ouvrées.\n\n3. OBLIGATIONS DU PRESTATAIRE\n• Fournir des services de qualité conformément aux spécialités déclarées.\n• Respecter les horaires confirmés. Tout retard doit être signalé au moins 1h avant.\n• Ne jamais négocier ni encaisser de paiement directement avec le client.\n• Signaler toute annulation dans les 2h après acceptation de mission.\n• Accepter d'être évalué après chaque mission. Note < 3/5 sur 3 missions consécutives = suspension.\n\n4. RÉMUNÉRATION\n• HappyHome prélève une commission de 20% + frais réseau Mobile Money (3%) sur chaque mission.\n• Gains versés via Mobile Money sous 48h après validation de la mission par le client.\n• En cas de litige non résolu sous 24h, HappyHome tranche en dernier recours.\n\n5. IDENTIFIANTS\n• Identifiant = numéro de connexion saisi lors du KYC.\n• Mot de passe = PIN à 6 chiffres choisi lors du KYC.\n• Perte de PIN : contactez l'admin avec votre CNI au +237 6 90 38 41 99.\n\n6. SUSPENSIONS ET EXCLUSIONS\nSuspension immédiate : paiement direct client, faux documents, comportement violent, absence injustifiée × 3, note < 2.5/5.\nExclusion définitive : fraude, vol, agression, usurpation d'identité.\n\n7. DONNÉES PERSONNELLES\nVos données sont utilisées uniquement pour la gestion de la plateforme, jamais vendues. Suppression du compte possible à tout moment sur demande.\n\n8. DROIT APPLICABLE\nDroit camerounais — Tribunaux compétents de Douala.",
+    conduite: "CODE DE CONDUITE PRESTATAIRE — HAPPYHOME\nVersion 1.0 — Juin 2026\n\nCe code s'applique à chaque intervention. Non-respect = sanctions jusqu'à exclusion définitive.\n\nAVANT LA MISSION\n• Confirmer l'acceptation dans les 10 minutes après réception.\n• Vérifier l'adresse et le type de service demandé.\n• Préparer le matériel nécessaire selon votre spécialité.\n• Ne jamais contacter le client hors application.\n\nPENDANT LA MISSION\n• Arriver à l'heure convenue (tolérance 10 minutes maximum).\n• Se présenter propre, soigné(e) et en tenue appropriée.\n• Respecter le domicile : ne toucher à rien sans autorisation.\n• Ne pas utiliser son téléphone personnel sauf urgence réelle.\n• Ne jamais demander de paiement supplémentaire non prévu.\n• Ne jamais fumer, consommer alcool ou substances pendant une mission.\n• Attention particulière aux enfants et personnes âgées.\n\nAPRÈS LA MISSION\n• Attendre que le client valide la mission avant de partir.\n• Signaler tout incident via WhatsApp support : +237 6 90 38 41 99.\n• Confidentialité absolue sur l'adresse et les habitudes du client.\n\nCONDUITE GÉNÉRALE\n• Respect total des croyances, origines et modes de vie de chaque client.\n• Signaler tout comportement suspect ou demande illégale d'un client.\n• Maintenir une note moyenne d'au moins 3/5 pour rester actif.\n\nSANCTIONS\n• 1er manquement mineur : avertissement écrit.\n• 2e manquement ou grave : suspension temporaire (7-30 jours).\n• Fraude, vol, agression : exclusion définitive + signalement aux autorités.",
+    cgu_client: "CGU CLIENT — HAPPYHOME\nVersion 1.0 — Juin 2026\n\nEn utilisant HappyHome, vous acceptez les présentes conditions.\n\n1. OBJET\nHappyHome met en relation des clients avec des prestataires vérifiés à Douala. Elle garantit la sélection, le suivi et la sécurisation des paiements.\n\n2. COMMANDES\n• Toute commande est ferme dès validation du paiement Mobile Money.\n• Montant total = Prix base × type (FLASH ×1.25 / NORMALE ×1.00 / PLANIFIÉE ×0.90) × 1.20 × 1.03.\n• Paiement exclusivement via Orange Money ou MTN MoMo.\n\n3. ANNULATION ET REMBOURSEMENT\n• Annulation > 1h avant : remboursement intégral sous 48h.\n• Annulation < 1h avant : frais d'annulation de 20% retenus.\n• Absence du client à l'arrivée du prestataire : aucun remboursement.\n• Mission non réalisée par faute du prestataire : remboursement intégral garanti.\n\n4. ESCROW\nVotre paiement est sécurisé. Il est libéré au prestataire J+1 après votre validation, ou automatiquement après 24h sans signalement d'incident.\n\n5. ÉVALUATION\nNotez le prestataire après chaque mission (1-5 étoiles). Toute évaluation fausse ou malveillante entraîne suspension du compte.\n\n6. COMPORTEMENT\n• Traiter les prestataires avec respect. Comportement violent ou discriminatoire = suspension.\n• Ne jamais tenter un paiement direct avec le prestataire hors plateforme.\n\n7. DONNÉES PERSONNELLES\nVos coordonnées sont transmises au prestataire pour l'exécution de la mission uniquement. Jamais vendues. Suppression de compte sur demande.\n\n8. DROIT APPLICABLE\nDroit camerounais — Tribunaux compétents de Douala.",
+    confidentialite: "POLITIQUE DE CONFIDENTIALITÉ — HAPPYHOME\nVersion 1.0 — Juin 2026\n\n1. DONNÉES COLLECTÉES\n• Identité : nom, prénom, date de naissance, photo CNI, selfie.\n• Contact : numéro de téléphone, quartier, adresse de mission.\n• Paiement : numéro Mobile Money (jamais les codes secrets).\n• Usage : missions, évaluations, horodatages GPS de mission.\n\n2. UTILISATION\n• Mise en relation client-prestataire.\n• Vérification d'identité et prévention de la fraude (KYC).\n• Calcul et versement des rémunérations.\n• Amélioration du service et notifications.\n\n3. PARTAGE\n• Avec le prestataire assigné : prénom + adresse de mission uniquement.\n• Avec le client : prénom + spécialités du prestataire uniquement.\n• Jamais vendues ni cédées à des tiers commerciaux.\n• Aux autorités uniquement sur réquisition judiciaire.\n\n4. CONSERVATION\nDonnées conservées 2 ans après dernière activité. Documents KYC conservés 5 ans (obligation légale).\n\n5. VOS DROITS\nAccès, rectification, suppression : WhatsApp +237 6 90 38 41 99.\n\n6. SÉCURITÉ\nHébergement Supabase — chiffrement AES-256 — HTTPS. Accès admin restreint et journalisé.",
+    membre: "CONDITIONS ABONNEMENT MEMBRE — HAPPYHOME\nVersion 1.0 — Juin 2026\n\n1. AVANTAGES INCLUS\n• -10% sur toutes vos missions (appliqué automatiquement).\n• Priorité matching (prestataires mieux notés en priorité).\n• Annulation flexible jusqu'à 1h avant (standard : 2h).\n• Bonus parrainage premium : 2 500 FCFA crédités par filleul ayant complété sa 1ère mission.\n\n2. TARIFS\n• Mensuel : 2 000 FCFA / mois.\n• Annuel : 18 000 FCFA / an (économie de 6 000 FCFA).\n• Paiement via Orange Money ou MTN MoMo uniquement.\n\n3. ACTIVATION\nActivé sous 1-2h après confirmation de réception du paiement (validation manuelle).\n\n4. RENOUVELLEMENT ET RÉSILIATION\n• Pas de renouvellement automatique. À expiration : retour en mode standard.\n• Aucun remboursement après activation, quelle que soit la durée restante.\n• Résiliation = ne pas renouveler à expiration.\n\n5. SUSPENSION DE COMPTE\nSuspension ou exclusion pour manquement aux CGU : abonnement suspendu sans remboursement.\n\n6. ALTERNATIVE GRATUITE\n1 mois membre gratuit en parrainant 3 amis qui complètent chacun leur 1ère mission.\n\n7. DROIT APPLICABLE\nDroit camerounais — Tribunaux compétents de Douala."
+  };
+  const TITLES = {
+    cgu: 'CGU Prestataire',
+    conduite: 'Code de conduite',
+    cgu_client: 'CGU Client',
+    confidentialite: 'Politique de confidentialité',
+    membre: 'Abonnement Membre'
+  };
+  const txt = TEXTS[type] || TEXTS.cgu_client;
+  const title = TITLES[type] || 'Conditions';
+  const el = document.getElementById('success-modal');
+  const titleEl = document.getElementById('success-title');
+  const msgEl = document.getElementById('success-msg');
+  const btnEl = document.getElementById('success-ok-btn');
+  if(!el||!titleEl||!msgEl||!btnEl) return;
+  titleEl.textContent = title;
+  titleEl.style.color = 'var(--cy-text)';
+  msgEl.textContent = txt;
+  msgEl.style.fontSize = '11px';
+  msgEl.style.maxHeight = '55vh';
+  msgEl.style.overflowY = 'auto';
+  btnEl.textContent = "J'AI LU ET J'ACCEPTE";
+  btnEl.style.background = 'var(--cb)';
+  _successModalCallback = function(){
+    titleEl.style.color = '';
+    msgEl.style.fontSize = '';
+    msgEl.style.maxHeight = '';
+    msgEl.style.overflowY = '';
+    btnEl.style.background = '';
+  };
+  el.style.display = 'flex';
+}
 function showAuthModal(mode){
   const m = document.getElementById('auth-modal');
   if(!m){ alert('Modal auth non chargé'); return; }
@@ -4307,19 +4346,13 @@ async function uploadKycFile(slot){
 }
 
 async function submitKycPresta(){
-  if(!_supabaseClient || !_currentUser){
-    alert('Connexion requise pour soumettre ton KYC. Reconnecte-toi.');
-    goto(1);
-    return;
-  }
+  if(!_supabaseClient){alert('Erreur réseau. Recharge la page.');return;}
   if(!_kycFiles.recto||!_kycFiles.verso||!_kycFiles.selfie){alert('Les 3 documents sont obligatoires (CNI recto, verso, selfie).');return;}
   const dateNaiss=document.getElementById('kyc-date-naissance').value;
   if(!dateNaiss){alert('Date de naissance obligatoire.');return;}
   const services=Array.from(document.querySelectorAll('#kyc-services input:checked')).map(c=>c.value);
   const quartiers=Array.from(document.querySelectorAll('#kyc-quartiers input:checked')).map(c=>c.value);
   if(!services.length||!quartiers.length){alert('Sélectionne au moins 1 service et 1 quartier.');return;}
-
-  // ── Sprint 12.6 : validation identifiants login presta ─────────────
   const numeroLoginRaw = (document.getElementById('kyc-numero-login')?.value||'').replace(/\D/g,'');
   if(numeroLoginRaw.length < 9){alert('Numéro de connexion : 9 chiffres minimum.');document.getElementById('kyc-numero-login').focus();return;}
   const pin1 = (document.getElementById('kyc-pin-1')?.value||'').trim();
@@ -4328,19 +4361,37 @@ async function submitKycPresta(){
   if(pinErr){alert(pinErr);document.getElementById('kyc-pin-1').focus();return;}
   const canalNotif = document.getElementById('kyc-canal-notif')?.value || 'whatsapp';
   if(!['whatsapp','sms'].includes(canalNotif)){alert('Canal de notification invalide.');return;}
-
-  const btn=document.getElementById('kyc-submit-btn');btn.disabled=true;btn.textContent='Upload...';
+  const btn=document.getElementById('kyc-submit-btn');btn.disabled=true;btn.textContent='Création du compte...';
   try{
-    const [recto,verso,selfie]=await Promise.all([uploadKycFile('recto'),uploadKycFile('verso'),uploadKycFile('selfie')]);
-    
-    // ── Sprint 12.6 : set le PIN comme password Supabase Auth ─────────
-    btn.textContent='Définition du PIN...';
-    const upd = await _supabaseClient.auth.updateUser({password: pin1});
-    if(upd.error){
-      throw new Error('Impossible de définir le PIN : '+upd.error.message+'. Réessaie ou contacte l\'admin.');
+    // FIX Sprint 14 : si pas de session active, signup avec numéro+PIN
+    if(!_currentUser){
+      const emailPresta = numeroLoginRaw + '@presta.happyhome.cm';
+      const kycPrenom = (document.getElementById('kyc-prenom')?.value || '').trim();
+      const kycNom = (document.getElementById('kyc-nom')?.value || '').trim();
+      const {data: signUpData, error: signUpErr} = await _supabaseClient.auth.signUp({
+        email: emailPresta,
+        password: pin1,
+        options: { data: { telephone: numeroLoginRaw, nom: kycNom || numeroLoginRaw, prenom: kycPrenom || '' } }
+      });
+      if(signUpErr){
+        // Compte déjà existant => re-soumission : tenter signIn
+        const {data: signInData, error: signInErr} = await _supabaseClient.auth.signInWithPassword({
+          email: emailPresta, password: pin1
+        });
+        if(signInErr) throw new Error('Ce numéro a déjà un compte. Si tu as oublié ton PIN, contacte l\'admin.');
+        _currentUser = signInData.user;
+      } else {
+        _currentUser = signUpData.user;
+      }
+      if(!_currentUser) throw new Error('Impossible de créer la session. Réessaie dans quelques secondes.');
     }
-    console.log('[HH] PIN défini comme password Supabase Auth pour presta', _currentUser.id);
-
+    // Uploads séquentiels — évite Load failed sur 3G
+    btn.textContent='Upload recto...';
+    const recto = await uploadKycFile('recto');
+    btn.textContent='Upload verso...';
+    const verso = await uploadKycFile('verso');
+    btn.textContent='Upload selfie...';
+    const selfie = await uploadKycFile('selfie');
     btn.textContent='Soumission KYC...';
     const {error}=await _supabaseClient.rpc('submit_kyc_presta',{
       p_date_naissance:dateNaiss, p_cni_recto:recto, p_cni_verso:verso, p_selfie:selfie,
@@ -4349,11 +4400,9 @@ async function submitKycPresta(){
       p_numero_login: numeroLoginRaw
     });
     if(error)throw new Error(error.message);
-    
-    // ── Sprint 12.6 : modal succès brandée avec rappel identifiants ──
     showSuccessModal(
       'KYC soumis ✓',
-      "Ton dossier est en cours de validation par l'admin (sous 24h).\n\nIDENTIFIANTS DE CONNEXION (à retenir) :\n• Numéro : "+numeroLoginRaw+"\n• PIN : "+pin1+"\n\nUne fois ton KYC validé, tu pourras te connecter sur l'écran Espace Prestataire.\n\nTu seras notifié(e) par "+(canalNotif==='whatsapp'?'WhatsApp':'SMS')+".",
+      "Ton dossier est en cours de validation par l'admin (sous 24h).\n\nIDENTIFIANTS DE CONNEXION :\n• Numéro : "+numeroLoginRaw+"\n• PIN : "+pin1+"\n\nUne fois validé, connecte-toi sur Espace Prestataire.\n\nTu seras notifié(e) par "+(canalNotif==='whatsapp'?'WhatsApp':'SMS')+".",
       function(){ goto(1); }
     );
   }catch(e){
@@ -4362,8 +4411,6 @@ async function submitKycPresta(){
   }
   finally{btn.disabled=false;btn.textContent='Soumettre pour validation';}
 }
-
-// ── Sprint 12.6 : validation format PIN 6 chiffres ────────────────
 function validatePinFormat(pin1, pin2){
   if(!pin1 || !pin2) return 'Saisis ton PIN deux fois.';
   if(!/^[0-9]{6}$/.test(pin1)) return 'Le PIN doit faire exactement 6 chiffres (0-9 uniquement).';
@@ -8071,7 +8118,7 @@ recalc();
           <div style="margin-top:8px;font-size:11px;">Activation sous 1-2h après réception (validation manuelle phase 1).</div>
         </div>
 
-        <button id="mm-btn-submit" onclick="submitMembreSouscription()" style="width:100%;padding:14px;background:var(--cy);color:#1a1a1a;border:none;border-radius:50px;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;">Confirmer la souscription</button>
+        <div style="font-size:11px;color:var(--t3);text-align:center;margin-bottom:8px;">En confirmant, vous acceptez les <a href="#" onclick="showCguModal('membre');return false;" style="color:var(--cy-text);text-decoration:none;font-weight:700;">conditions d'abonnement</a>.</div><button id="mm-btn-submit" onclick="submitMembreSouscription()" style="width:100%;padding:14px;background:var(--cy);color:#1a1a1a;border:none;border-radius:50px;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;">Confirmer la souscription</button>
       </div>
 
       <!-- Cas 2 : Membre actif — gestion -->
@@ -8183,7 +8230,7 @@ recalc();
       <div style="font-size:11px;color:var(--t3,#888);text-align:center;margin-bottom:8px;">Tu veux juste commander une seule fois ?</div>
       <button type="button" id="auth-skip-signup" onclick="continuerSansEnregistrement()" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--cardb,#333);background:transparent;color:var(--t1,#fff);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;">Continuer sans enregistrement →</button>
     </div>
-    <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--t3,#888);">En continuant, vous acceptez nos CGU.</div>
+    <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--t3,#888);">En continuant, vous acceptez nos <a href="#" onclick="showCguModal('cgu_client');return false;" style="color:var(--cy-text);text-decoration:none;font-weight:700;">CGU</a> et notre <a href="#" onclick="showCguModal('confidentialite');return false;" style="color:var(--cy-text);text-decoration:none;font-weight:700;">Politique de confidentialité</a>.</div>
   </div>
 </div>
 <!-- Modal Mission Entrante Prestataire (Sprint 6 J3) -->

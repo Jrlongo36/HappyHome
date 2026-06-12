@@ -1527,7 +1527,7 @@ textarea.full{min-height:60px;resize:vertical;}
             <div class="pric-row"><span>Frais Mobile Money</span><input id="pric-frais-pct" type="number" class="pric-inp" value="3"> %</div>
             <div class="pric-row"><span>Panier minimum</span><input id="pric-min-cart" type="number" class="pric-inp" value="5000"> FCFA</div>
           </div>
-          <div class="s7-card-t" style="margin-top:18px;">FORMULE</div>
+          <div class="s7-card-t" style="margin-top:18px;color:#1565C0;">COMMISSION RECURRENTS DEGRESSIFS</div>          <div style="font-size:11px;color:var(--t2);margin-bottom:8px;">Mois/mois=20% | 3-6 mois=18% | 6 mois+=15%</div>          <div style="display:flex;flex-direction:column;gap:8px;">            <div class="pric-row"><span>Mois par mois</span><input id="pric-comm-recurrent-mois" type="number" class="pric-inp" value="20"> %</div>            <div class="pric-row"><span>3 a 6 mois</span><input id="pric-comm-recurrent-3-6" type="number" class="pric-inp" value="18"> %</div>            <div class="pric-row"><span>6 mois et plus</span><input id="pric-comm-recurrent-6plus" type="number" class="pric-inp" value="15"> %</div>          </div>          <div class="s7-card-t" style="margin-top:18px;">FORMULE</div>
           <div style="background:var(--inp-bg);padding:12px;border-radius:8px;font-family:monospace;font-size:11px;color:var(--cy-text);">Prix = Base × Caractéristique × Type × (1+Comm/100) × (1+Frais/100)</div>
         </div>
         <div class="s7-card">
@@ -3406,6 +3406,9 @@ let _cmd={service:'menage',base:3500,carac:0.85,carac_id:1,couverts:1.00,type:'S
 // ── PRICING DYNAMIQUE (source unique : table hh_config Supabase) ──────
 // Valeurs par défaut si Supabase indisponible. Synchronisées au démarrage par loadHHConfig().
 let _PRICING = {
+  comm_recurrent_mois: 20,
+  comm_recurrent_3_6mois: 18,
+  comm_recurrent_6plus: 15,
   multi_flash: 1.25,
   multi_standard: 1.00,
   multi_anticipe: 0.90,
@@ -3520,6 +3523,9 @@ async function loadHHConfig(){
       if(r.key==='commission_pct')_PRICING.comm_pct=parseFloat(v)||20;
       if(r.key==='frais_paiement_pct')_PRICING.frais_pct=parseFloat(v)||3;
       if(r.key==='pricing_min_cart')_PRICING.min_cart=parseFloat(v)||5000;
+      if(r.key==='commission_recurrent_mois')_PRICING.comm_recurrent_mois=parseFloat(v)||20;
+      if(r.key==='commission_recurrent_3_6mois')_PRICING.comm_recurrent_3_6mois=parseFloat(v)||18;
+      if(r.key==='commission_recurrent_6plus')_PRICING.comm_recurrent_6plus=parseFloat(v)||15;
     });
     // Mettre à jour les affichages dans s3
     const fmt=n=>n.replace(/(\d{3})(?=\d)/g,'$1 ').trim();
@@ -6377,6 +6383,14 @@ async function loadKycAdmin(){
     .subscribe();
 }
 
+async function deletePrestaAdmin(prestaId,nom){
+  if(!confirm('Supprimer ' + nom + ' ? Action irreversible.')) return;
+  const btn=event.target; btn.disabled=true; btn.textContent='...';
+  const {data,error}=await _supabaseClient.rpc('admin_delete_prestataire',{p_presta_id:prestaId});
+  if(error){alert('Erreur: '+error.message);btn.disabled=false;btn.textContent='Supprimer';return;}
+  alert(nom+' supprime.');
+  loadPrestaAdmin();
+}
 async function triggerKycOcr(prestaId,btn){
   btn.disabled=true; btn.textContent='⏳ OCR en cours…';
   try {
@@ -6614,12 +6628,15 @@ async function loadPrestaAdmin(){
     const ids = (profiles||[]).map(p=>p.id);
     let kycMap = {};
     let stats = {};
+    let quartierMap = {};
     if(ids.length){
-      const [{data:kyc},{data:miss}] = await Promise.all([
-        _supabaseClient.from('kyc_presta').select('presta_id,status').in('prestataire_id',ids),
-        _supabaseClient.from('missions').select('prestataire_id,status,prix_total').in('prestataire_id',ids)
+      const [{data:kyc},{data:miss},{data:qts}] = await Promise.all([
+        _supabaseClient.from('kyc_presta').select('presta_id,status').in('presta_id',ids),
+        _supabaseClient.from('missions').select('prestataire_id,status,prix_total').in('prestataire_id',ids),
+        _supabaseClient.from('presta_quartiers').select('presta_id,quartier_id').in('presta_id',ids)
       ]);
       (kyc||[]).forEach(k=>{ kycMap[k.presta_id]=k.status; });
+      (qts||[]).forEach(q=>{ (quartierMap[q.presta_id]=quartierMap[q.presta_id]||[]).push(q.quartier_id); });
       const now = new Date();
       const startMonth = new Date(now.getFullYear(),now.getMonth(),1).toISOString();
       (miss||[]).forEach(m=>{
@@ -6636,7 +6653,8 @@ async function loadPrestaAdmin(){
       ...p,
       kyc: kycMap[p.id] || 'non_soumis',
       missions: (stats[p.id] && stats[p.id].total) || 0,
-      gains: (stats[p.id] && stats[p.id].gains) || 0
+      gains: (stats[p.id] && stats[p.id].gains) || 0,
+      quartiers: (quartierMap[p.id]||[]).slice(0,4).join(', ') || (p.quartier||'â')
     }));
 
     document.getElementById('presta-title').textContent = `Prestataires · ${_prestaCache.length} inscrit${_prestaCache.length>1?'s':''}`;
@@ -6666,7 +6684,7 @@ function _renderPrestaTable(rows){
       <td>${_fmt(Math.round(p.gains))} FCFA</td>
       <td>${statutPill}</td>
       <td style="white-space:nowrap;">
-        <button class="ad-btn" onclick="alert('ID : ${_esc(p.id)}\\nEmail : ${_esc(p.email||'—')}\\nQuartier : ${_esc(p.quartier||'—')}\\nInscrit le ${_fmtDate(p.created_at)}')">Voir</button>
+        <button class="ad-btn" onclick="alert('ID : ${_esc(p.id)}\\nEmail : ${_esc(p.email||'—')}\\nQuartiers : ${_esc(p.quartiers||'—')}\\nInscrit le ${_fmtDate(p.created_at)}')">Voir</button>
         <button class="ad-btn" style="background:rgba(255,152,0,.15);border-color:var(--co,#FF9800);color:var(--co,#FF9800);margin-left:4px;" onclick="openResetPinModal('${_esc(p.id)}','${_esc(nom)}')">Reset PIN</button>
       </td>
     </tr>`;
@@ -7005,7 +7023,7 @@ async function loadPricingAdmin(){
     const {data, error} = await _supabaseClient
       .from('hh_config')
       .select('key,value')
-      .in('key',['multi_flash','multi_standard','multi_anticipe','commission_pct','frais_paiement_pct','pricing_min_cart']);
+      .in('key',['multi_flash','multi_standard','multi_anticipe','commission_pct','frais_paiement_pct','pricing_min_cart','commission_recurrent_mois','commission_recurrent_3_6mois','commission_recurrent_6plus']);
     if(error) throw error;
     const map = {};
     (data||[]).forEach(r => { map[r.key] = String(r.value).replace(/"/g,''); });
@@ -7019,6 +7037,9 @@ async function loadPricingAdmin(){
     setVal('pric-comm-pct','commission_pct', _PRICING.comm_pct);
     setVal('pric-frais-pct','frais_paiement_pct', _PRICING.frais_pct);
     setVal('pric-min-cart','pricing_min_cart', _PRICING.min_cart);
+    setVal('pric-comm-recurrent-mois','commission_recurrent_mois', _PRICING.comm_recurrent_mois);
+    setVal('pric-comm-recurrent-3-6','commission_recurrent_3_6mois', _PRICING.comm_recurrent_3_6mois);
+    setVal('pric-comm-recurrent-6plus','commission_recurrent_6plus', _PRICING.comm_recurrent_6plus);
     const found = Object.keys(map).length;
     document.getElementById('pricing-title').textContent = found > 0 ? `Configuration Pricing · ${found}/6 clés en base` : 'Configuration Pricing · ⚠️ Initialisation requise (voir SQL fourni)';
   } catch(e){
@@ -7036,7 +7057,10 @@ async function savePricingAdmin(){
     {key:'multi_anticipe', value: String(get('pric-mult-anticipe'))},
     {key:'commission_pct', value: String(get('pric-comm-pct'))},
     {key:'frais_paiement_pct', value: String(get('pric-frais-pct'))},
-    {key:'pricing_min_cart', value: String(get('pric-min-cart'))}
+    {key:'pricing_min_cart', value: String(get('pric-min-cart'))},
+    {key:'commission_recurrent_mois', value: String(get('pric-comm-recurrent-mois'))},
+    {key:'commission_recurrent_3_6mois', value: String(get('pric-comm-recurrent-3-6'))},
+    {key:'commission_recurrent_6plus', value: String(get('pric-comm-recurrent-6plus'))}
   ];
   if(!confirm('Confirmer la sauvegarde du pricing ?\n\nIMPACT IMMÉDIAT :\n• Tous les nouveaux affichages prix utiliseront ces valeurs\n• Toutes les nouvelles missions seront facturées avec ces valeurs (RPC create_mission lit hh_config)\n• Modifier ces valeurs change le revenu effectif HappyHome.')) return;
   try {
@@ -7047,6 +7071,9 @@ async function savePricingAdmin(){
     _PRICING.multi_standard = get('pric-mult-standard');
     _PRICING.multi_anticipe = get('pric-mult-anticipe');
     _PRICING.comm_pct = get('pric-comm-pct');
+    _PRICING.comm_recurrent_mois = get('pric-comm-recurrent-mois');
+    _PRICING.comm_recurrent_3_6mois = get('pric-comm-recurrent-3-6');
+    _PRICING.comm_recurrent_6plus = get('pric-comm-recurrent-6plus');
     _PRICING.frais_pct = get('pric-frais-pct');
     _PRICING.min_cart = get('pric-min-cart');
     alert('✓ Pricing sauvegardé.\n\nLes nouvelles missions seront facturées immédiatement avec ces valeurs (RPC backend lit dynamiquement hh_config).');

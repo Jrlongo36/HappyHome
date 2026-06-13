@@ -6343,7 +6343,7 @@ async function loadKycAdmin(){
     const scoreColor=score>=80?'#4CAF50':score>=50?'#FF9800':'#F44336';
     const scoreBg=score>=80?'rgba(76,175,80,.15)':score>=50?'rgba(255,152,0,.15)':'rgba(244,67,54,.15)';
     const scoreLabel=score>=80?'Pré-validé ✓':score>=50?'À vérifier ⚠':'Attention ✗';
-    const autoActiveBadge=autoActive?`<div style="background:rgba(255,193,7,.2);border:1px solid #FFC107;border-radius:50px;padding:4px 10px;font-size:11px;font-weight:800;color:#e6a800;">🟡 Probatoire · Auto-activé ${p.kyc_taux||score}%</div>`:'';
+    const autoActiveBadge=autoActive?`<div style="background:rgba(255,193,7,.2);border:1px solid #FFC107;border-radius:50px;padding:4px 10px;font-size:11px;font-weight:800;color:#e6a800;">🟡 Actif auto ${p.kyc_taux||score}%</div><button onclick="revokeKycAdmin('${k.presta_id}')" style="padding:4px 10px;border-radius:50px;background:rgba(244,67,54,.15);border:1px solid rgba(244,67,54,.4);color:var(--cr);font-family:inherit;font-weight:700;font-size:11px;cursor:pointer;">Annuler</button>`:'';
     const nomMatch=k.kyc_nom_extrait?`<span style="color:var(--t2);">OCR nom : <strong style="color:var(--text);">${k.kyc_nom_extrait}</strong> (déclaré : ${p.nom||'—'})</span><br>`:'';
     const prenomMatch=k.kyc_prenom_extrait?`<span style="color:var(--t2);">OCR prénom : <strong style="color:var(--text);">${k.kyc_prenom_extrait}</strong> (déclaré : ${p.prenom||'—'})</span><br>`:'';
     const cniNum=k.kyc_num_cni?`<span style="color:var(--t2);">N° CNI extrait : <strong style="color:var(--text);">${k.kyc_num_cni}</strong></span><br>`:'';
@@ -6372,7 +6372,7 @@ async function loadKycAdmin(){
       <!-- Actions -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <button onclick="rejectKycAdmin('${k.presta_id}','${nom.replace(/'/g,'\\\'')}')" style="padding:10px;border-radius:50px;background:rgba(244,67,54,.15);color:var(--cr);border:1px solid rgba(244,67,54,.3);font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">✗ Refuser</button>
-        <button onclick="validateKycAdmin('${k.presta_id}','${nom.replace(/'/g,'\\\'')}','${p.telephone||''}')" style="padding:10px;border-radius:50px;background:var(--cg);color:#fff;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">✓ Valider + SMS</button>
+        <button onclick="autoActive?confirmKycAdmin('${k.presta_id}',nom):validateKycAdmin('${k.presta_id}','${nom.replace(/'/g,'\\\'')}','${p.telephone||''}')" style="padding:10px;border-radius:50px;background:var(--cg);color:#fff;border:none;font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">${autoActive?'✓ Confirmer':'✓ Valider + SMS'}</button>
       </div>
     </div>`;
   }).join('');
@@ -6390,6 +6390,24 @@ async function deletePrestaAdmin(prestaId,nom){
   if(error){alert('Erreur: '+error.message);btn.disabled=false;btn.textContent='Supprimer';return;}
   alert(nom+' supprime.');
   loadPrestaAdmin();
+}
+async function revokeKycAdmin(prestaId){
+  if(!confirm('Annuler activation automatique ?')) return;
+  const btn=event.target; btn.disabled=true; btn.textContent='...';
+  const [a,b]=await Promise.all([
+    _supabaseClient.from('kyc_presta').update({status:'en_attente',kyc_ocr_done:false,kyc_score:0}).eq('presta_id',prestaId),
+    _supabaseClient.from('profiles').update({kyc_valide:false,kyc_auto_active:false,kyc_taux:0}).eq('id',prestaId)
+  ]);
+  if(a.error||b.error){alert('Erreur: '+(a.error?.message||b.error?.message));btn.disabled=false;btn.textContent='Annuler';return;}
+  alert('Activation annulee. Dossier remis en attente de validation manuelle.');
+  loadKycAdmin();
+}
+async function confirmKycAdmin(prestaId,nom){
+  if(!confirm('Confirmer definitivement '+nom+' ? Verification physique validee.')) return;
+  const {error}=await _supabaseClient.from('kyc_presta').update({status:'valide',traite_le:new Date().toISOString()}).eq('presta_id',prestaId);
+  if(error){alert('Erreur: '+error.message);return;}
+  alert(nom+' confirme definitivement.');
+  loadKycAdmin();
 }
 async function triggerKycOcr(prestaId,btn){
   btn.disabled=true; btn.textContent='⏳ OCR en cours…';
@@ -6421,9 +6439,10 @@ async function triggerKycOcr(prestaId,btn){
       return;
     }
 
+    const _ocrJWT = (await _supabaseClient.auth.getSession())?.data?.session?.access_token || SUPABASE_ANON_KEY;
     const resp=await fetch(`${SUPABASE_URL}/functions/v1/kyc-ocr`,{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+_ocrJWT},
       body:JSON.stringify({presta_id:prestaId})
     });
     const d=await resp.json();
@@ -8873,6 +8892,114 @@ function submitS16Rating() {
 
 <!-- ═══════════════════════ UNIVERSAL FLOATING NAVIGATION BAR REMOVED ═══════════════════════ -->
 
+<!-- ══════════════════════════════════════════════════════════
+     JOY SAV WIDGET — HappyHome
+     ══════════════════════════════════════════════════════════ -->
+<style>
+#joy-btn{position:fixed;bottom:24px;right:24px;width:60px;height:60px;border-radius:50%;background:#F5A623;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.25);z-index:9999;display:flex;align-items:center;justify-content:center;transition:transform 0.2s}
+#joy-btn:hover{transform:scale(1.08)}
+#joy-btn svg{width:28px;height:28px;fill:#fff}
+#joy-badge{position:absolute;top:-4px;right:-4px;background:#E53935;color:#fff;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center}
+#joy-window{position:fixed;bottom:96px;right:24px;width:340px;max-height:520px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);z-index:9998;display:none;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#joy-window.open{display:flex}
+#joy-header{background:#F5A623;padding:14px 16px;display:flex;align-items:center;gap:10px}
+#joy-avatar{width:38px;height:38px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px}
+#joy-header-info{flex:1}
+#joy-header-name{color:#fff;font-weight:700;font-size:15px;margin:0}
+#joy-header-status{color:rgba(255,255,255,0.85);font-size:12px;margin:0}
+#joy-close{background:none;border:none;cursor:pointer;color:#fff;font-size:20px;line-height:1;padding:0}
+#joy-messages{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:10px;background:#F4F5F7;min-height:200px;max-height:320px}
+.joy-msg{max-width:82%;padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.45;word-wrap:break-word}
+.joy-msg.bot{background:#fff;color:#222;align-self:flex-start;border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.joy-msg.user{background:#F5A623;color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.joy-msg.typing{background:#fff;color:#999;align-self:flex-start;font-style:italic;font-size:13px}
+#joy-input-area{display:flex;padding:10px 12px;gap:8px;border-top:1px solid #E0E0E0;background:#fff}
+#joy-input{flex:1;border:1.5px solid #E0E0E0;border-radius:20px;padding:8px 14px;font-size:13.5px;outline:none;transition:border-color 0.2s;font-family:inherit;height:38px;line-height:1.4}
+#joy-input:focus{border-color:#F5A623}
+#joy-send{width:38px;height:38px;border-radius:50%;background:#F5A623;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.2s}
+#joy-send:hover{background:#e09510}
+#joy-send:disabled{background:#ccc;cursor:default}
+#joy-send svg{width:18px;height:18px;fill:#fff}
+@media(max-width:400px){#joy-window{width:calc(100vw - 16px);right:8px;bottom:88px}}
+</style>
+
+<button id="joy-btn" onclick="joyToggle()" aria-label="Chat SAV">
+  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+  <span id="joy-badge"></span>
+</button>
+
+<div id="joy-window" role="dialog">
+  <div id="joy-header">
+    <div id="joy-avatar">😊</div>
+    <div id="joy-header-info">
+      <p id="joy-header-name">Joy — HappyHome SAV</p>
+      <p id="joy-header-status">● En ligne</p>
+    </div>
+    <button id="joy-close" onclick="joyToggle()">✕</button>
+  </div>
+  <div id="joy-messages">
+    <div class="joy-msg bot">Bonjour ! Je suis Joy, votre assistante HappyHome 👋 Comment puis-je vous aider ?</div>
+  </div>
+  <div id="joy-input-area">
+    <input id="joy-input" type="text" placeholder="Écrivez votre message..." maxlength="500" onkeydown="if(event.key==='Enter')joySend()" autocomplete="off"/>
+    <button id="joy-send" onclick="joySend()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var TUNNEL='https://motels-profiles-beginners-russell.trycloudflare.com';
+  var win=document.getElementById('joy-window');
+  var msgs=document.getElementById('joy-messages');
+  var inp=document.getElementById('joy-input');
+  var btn=document.getElementById('joy-send');
+  var badge=document.getElementById('joy-badge');
+  var open=false,busy=false,unread=0;
+
+  window.joyToggle=function(){
+    open=!open;
+    win.classList.toggle('open',open);
+    if(open){unread=0;badge.style.display='none';inp.focus();msgs.scrollTop=msgs.scrollHeight;}
+  };
+
+  function addMsg(txt,role){
+    var d=document.createElement('div');
+    d.className='joy-msg '+role;
+    d.textContent=txt;
+    msgs.appendChild(d);
+    msgs.scrollTop=msgs.scrollHeight;
+    return d;
+  }
+
+  window.joySend=async function(){
+    var txt=inp.value.trim();
+    if(!txt||busy)return;
+    busy=true;btn.disabled=true;inp.value='';
+    addMsg(txt,'user');
+    var t=addMsg('Joy écrit…','typing');
+    try{
+      var r=await fetch(TUNNEL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({data:{key:{remoteJid:'web-visitor@happyhome',fromMe:false},message:{conversation:txt}}}),
+        signal:AbortSignal.timeout(35000)
+      });
+      var data=await r.json().catch(function(){return {};});
+      t.remove();
+      var reply=data.reply||'Je traite votre demande. Pour aide urgente : +237 6 53 57 16 59';
+      addMsg(reply,'bot');
+      if(!open){unread++;badge.style.display='flex';badge.textContent=unread>9?'9+':unread;}
+    }catch(e){
+      t.remove();
+      addMsg('Désolée, problème technique. Contactez-nous : +237 6 53 57 16 59','bot');
+    }
+    busy=false;btn.disabled=false;inp.focus();
+  };
+})();
+</script>
+<!-- ══════════════════════════════════════════════════════════ -->
 
 </body>
 </html>

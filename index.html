@@ -1332,8 +1332,7 @@ textarea.full{min-height:60px;resize:vertical;}
             
             let reply = data.reply || '';
             if (reply) {
-              reply = reply.replace(/
-/g, '<br>') + "<br><br>👉 <strong>Cliquez sur le bouton ci-dessous pour valider et remplir vos informations de réservation.</strong>";
+              reply = reply.replace(/\n/g, '<br>') + "<br><br>👉 <strong>Cliquez sur le bouton ci-dessous pour valider et remplir vos informations de réservation.</strong>";
             } else {
               reply = "Je vous propose un prestataire qualifié disponible immédiatement. Cliquez ci-dessous pour démarrer votre réservation et saisir vos informations.";
             }

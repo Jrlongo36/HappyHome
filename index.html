@@ -3078,6 +3078,16 @@ textarea.full{min-height:60px;resize:vertical;}
       </div>
     </div>
 
+    <!-- Sélecteur durée d'engagement récurrent -->
+    <div style="margin-top:14px;padding:16px;background:var(--card);border:1px solid var(--cardb);border-radius:14px;">
+      <label style="font-size:13px;font-weight:800;color:var(--text);display:block;margin-bottom:8px;">Durée d'engagement (Commissions dégressives)</label>
+      <select id="cmd-duree-mois" onchange="_cmd.duree_mois=parseInt(this.value);if(typeof recalc==='function')recalc();" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--cardb);background:var(--inp-bg);color:var(--text);font-family:inherit;font-size:13px;outline:none;">
+        <option value="1">Mois par mois (20%)</option>
+        <option value="3">3 à 6 mois (18%)</option>
+        <option value="6">6 mois et plus (15%)</option>
+      </select>
+    </div>
+
   </div>
 </section>
 
@@ -4233,7 +4243,7 @@ const SERVICES={
 
 // _cmd : objet mission en construction
 // type aligné sur enum DB Supabase : FLASH | STANDARD | ANTICIPE
-let _cmd={service:'menage',base:3500,carac:0.85,carac_id:1,couverts:1.00,type:'STANDARD',duree:4,quartier_id:'bonapriso',adresse:''};
+let _cmd={service:'menage',base:3500,carac:0.85,carac_id:1,couverts:1.00,type:'STANDARD',duree:4,quartier_id:'bonapriso',adresse:'',duree_mois:1};
 
 // ── PRICING DYNAMIQUE (source unique : table hh_config Supabase) ──────
 // Valeurs par défaut si Supabase indisponible. Synchronisées au démarrage par loadHHConfig().
@@ -4300,12 +4310,18 @@ function recalc(){
   if(typeof refreshMembreBanner==='function')refreshMembreBanner();
   // Multiplicateurs et frais lus depuis _PRICING (synchronisé avec hh_config Supabase au démarrage)
   const MULTI_TYPE={FLASH:_PRICING.multi_flash, STANDARD:_PRICING.multi_standard, ANTICIPE:_PRICING.multi_anticipe};
-  const COMM_FACT = 1 + (_PRICING.comm_pct/100);
+  const _typeMulti = MULTI_TYPE[_cmd.type] ?? 1.0;
+  const _commRate = (_cmd.type === 'RECURRENT_EXT')
+    ? (_cmd.duree_mois >= 6 ? _PRICING.comm_recurrent_6plus
+      : _cmd.duree_mois >= 3 ? _PRICING.comm_recurrent_3_6mois
+      : _PRICING.comm_recurrent_mois)
+    : _PRICING.comm_pct;
+  const COMM_FACT = 1 + (_commRate/100);
   const FRAIS_FACT = 1 + (_PRICING.frais_pct/100);
   const b=_cmd.duree===2?Math.round(_cmd.base*0.6):_cmd.base;
   const carac=_cmd.carac*_cmd.couverts;
   const m1=Math.round(b*carac);
-  const m2=Math.round(m1*MULTI_TYPE[_cmd.type]);
+  const m2=Math.round(m1*_typeMulti);
   const m3=Math.round(m2*COMM_FACT);
   let m4=Math.round(m3*FRAIS_FACT);
   // AVANTAGE MEMBRE AUTOMATIQUE -10%
@@ -4316,8 +4332,8 @@ function recalc(){
   }
   document.getElementById('prix-live').textContent=m4.toLocaleString('fr-FR')+' FCFA';
   const detail=_membreActif
-    ? b.toLocaleString('fr-FR')+' × '+carac.toFixed(2)+' × '+MULTI_TYPE[_cmd.type].toFixed(2)+' × '+COMM_FACT.toFixed(2)+' × '+FRAIS_FACT.toFixed(2)+' - 10% MEMBRE'
-    : b.toLocaleString('fr-FR')+' × '+carac.toFixed(2)+' × '+MULTI_TYPE[_cmd.type].toFixed(2)+' × '+COMM_FACT.toFixed(2)+' × '+FRAIS_FACT.toFixed(2);
+    ? b.toLocaleString('fr-FR')+' × '+carac.toFixed(2)+' × '+_typeMulti.toFixed(2)+' × '+COMM_FACT.toFixed(2)+' × '+FRAIS_FACT.toFixed(2)+' - 10% MEMBRE'
+    : b.toLocaleString('fr-FR')+' × '+carac.toFixed(2)+' × '+_typeMulti.toFixed(2)+' × '+COMM_FACT.toFixed(2)+' × '+FRAIS_FACT.toFixed(2);
   document.getElementById('prix-detail').textContent=detail;
   // Badge membre dans barre sticky
   const _mbBadge = document.getElementById('s2-membre-badge');
@@ -7218,6 +7234,17 @@ async function loadKycAdmin(){
         <button onclick="viewKycDoc('${k.cni_verso_path}','CNI verso')" style="padding:8px;border-radius:8px;background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">📄 CNI verso${k.cni_verso_path?' ✓':' ✗'}</button>
         <button onclick="viewKycDoc('${k.selfie_path}','Selfie')" style="padding:8px;border-radius:8px;background:var(--inp-bg);border:1px solid var(--cardb);color:var(--text);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;">📄 Selfie${k.selfie_path?' ✓':' ✗'}</button>
       </div>
+      <!-- Résident permanent (Sprint 13) -->
+      <div style="margin-bottom:10px;padding:10px;background:var(--inp-bg);border-radius:10px;font-size:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:6px;font-weight:800;cursor:pointer;">
+          <input type="checkbox" id="admin-recurrent-res-${k.presta_id}" onchange="document.getElementById('admin-recurrent-res-fin-container-${k.presta_id}').style.display=this.checked?'block':'none'">
+          Résident actif
+        </label>
+        <div id="admin-recurrent-res-fin-container-${k.presta_id}" style="display:none;">
+          <span style="font-weight:700;margin-right:6px;">Date fin contrat :</span>
+          <input type="date" id="admin-recurrent-res-fin-${k.presta_id}" style="padding:4px 8px;border-radius:6px;border:1px solid var(--cardb);background:var(--card);color:var(--text);font-family:inherit;font-size:11px;">
+        </div>
+      </div>
       <!-- Actions -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <button onclick="rejectKycAdmin('${k.presta_id}','${nom.replace(/'/g,'\\\'')}')" style="padding:10px;border-radius:50px;background:rgba(244,67,54,.15);color:var(--cr);border:1px solid rgba(244,67,54,.3);font-family:inherit;font-weight:800;font-size:12px;cursor:pointer;">✗ Refuser</button>
@@ -7251,10 +7278,34 @@ async function revokeKycAdmin(prestaId){
   alert('Activation annulee. Dossier remis en attente de validation manuelle.');
   loadKycAdmin();
 }
+async function _checkAndSaveRecurrentRes(prestaId) {
+  const checkbox = document.getElementById(`admin-recurrent-res-${prestaId}`);
+  const dateInput = document.getElementById(`admin-recurrent-res-fin-${prestaId}`);
+  if (checkbox && checkbox.checked) {
+    const dateFin = dateInput ? dateInput.value : null;
+    const updateData = {
+      presta_en_ligne: false,
+      recurrent_res: true
+    };
+    if (dateFin) {
+      updateData.recurrent_res_fin = dateFin;
+    }
+    try {
+      await Promise.all([
+        _supabaseClient.from('profiles').update(updateData).eq('id', prestaId),
+        _supabaseClient.from('prestataires').update({ statut: 'indisponible' }).eq('user_id', prestaId)
+      ]);
+    } catch (err) {
+      console.warn('[Admin] Erreur update résident récurrent:', err);
+    }
+  }
+}
+
 async function confirmKycAdmin(prestaId,nom){
   if(!confirm('Confirmer definitivement '+nom+' ? Verification physique validee.')) return;
   const {error}=await _supabaseClient.from('kyc_presta').update({status:'valide',traite_le:new Date().toISOString()}).eq('presta_id',prestaId);
   if(error){alert('Erreur: '+error.message);return;}
+  await _checkAndSaveRecurrentRes(prestaId);
   alert(nom+' confirme definitivement.');
   loadKycAdmin();
 }
@@ -7349,6 +7400,7 @@ async function validateKycAdmin(prestaId,nom,telephone){
   if(!confirm('Valider le KYC de '+nom+' ?\n\nLe prestataire recevra un SMS de confirmation et pourra recevoir des missions.'))return;
   const {error}=await _supabaseClient.rpc('admin_validate_kyc',{p_presta_id:prestaId});
   if(error){alert('Erreur: '+error.message);return;}
+  await _checkAndSaveRecurrentRes(prestaId);
   // SMS ETECH KEYS
   if(telephone){
     try {
@@ -9803,6 +9855,14 @@ function submitS16Rating() {
   var btn=document.getElementById('joy-send');
   var badge=document.getElementById('joy-badge');
   var open=false,busy=false,unread=0;
+  var _joyHistory = [];
+  var JOY_MAX_HISTORY = 20;
+  var _joySessionId = (function(){
+    var k='hh_joy_sid';
+    var sid=sessionStorage.getItem(k);
+    if(!sid){sid='web-visitor@happyhome-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);sessionStorage.setItem(k,sid);}
+    return sid;
+  })();
 
   window.joyToggle=function(){
     open=!open;
@@ -9864,6 +9924,7 @@ function submitS16Rating() {
     if(!txt||busy)return;
     busy=true;btn.disabled=true;inp.value='';
     addMsg(txt,'user');
+    _joyHistory.push({role:'user', content:txt});
 
     // ── Mode collecte paiement (guidage Joy étape par étape) ──
     if(_joyPayCtx.active) {
@@ -9916,13 +9977,24 @@ function submitS16Rating() {
       var r=await fetch(TUNNEL,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({data:{key:{remoteJid:'web-visitor@happyhome',fromMe:false},message:{conversation:txt}}}),
+        body:JSON.stringify({
+          data:{
+            key:{remoteJid:_joySessionId,fromMe:false},
+            message:{conversation:txt}
+          },
+          session_id: _joySessionId,
+          history: _joyHistory.slice(0,-1)
+        }),
         signal:AbortSignal.timeout(35000)
       });
       var data=await r.json().catch(function(){return {};});
       t.remove();
       var reply=data.reply||'Je traite votre demande. Pour aide urgente : +237 6 53 57 16 59';
       addMsg(reply,'bot');
+      _joyHistory.push({role:'assistant', content:reply});
+      if(_joyHistory.length > JOY_MAX_HISTORY * 2) {
+        _joyHistory = _joyHistory.slice(-JOY_MAX_HISTORY * 2);
+      }
 
       // ── Intercepter action PREPARE_PAYMENT ──
       if(data.action === 'PREPARE_PAYMENT') {
